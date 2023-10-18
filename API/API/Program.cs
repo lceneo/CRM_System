@@ -37,13 +37,7 @@ builder.Services.AddAuthentication(options => {
 builder.Services.AddAuthorization();
 
 // Register DbContext in DI Container
-builder.Services.AddDbContext<DataContext>(options =>
-{
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), builder =>
-    {
-        builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
-    });
-});
+builder.Services.AddDbContext<DataContext>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
