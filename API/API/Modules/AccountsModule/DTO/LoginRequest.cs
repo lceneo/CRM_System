@@ -1,0 +1,7 @@
+﻿namespace API.Modules.AccountsModule.DTO;
+
+public class LoginRequest
+{
+    public string Login { get; set; }
+    public string Password { get; set; }
+}
