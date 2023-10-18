@@ -1,0 +1,39 @@
+version: '1.0'
+
+networks:
+  Crm-dev:
+    driver: bridge 
+
+services:
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432"
+    restart: always
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+      - ./dbscripts/seed.sql :/docker-entrypoint-initdb.d/seed.sql
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "CRM66bit"
+    networks:
+      - Crm-dev
+
+  backend:
+    image: fnatikjk/back_crm_66bit:latest
+    depends_on:
+      - "postgres"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      DATABASE_CONNECTION: "host=postgres;port=5432;database=CRM66bit;username=postgres;password=password"
+    networks:
+      - Crm-dev  
+  
+
+volumes:
+  db_volume:

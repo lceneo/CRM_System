@@ -14,7 +14,7 @@ public class DataContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
-        options.UseNpgsql(config.GetConnectionString("DefaultConnection"), builder =>
+        options.UseNpgsql(Environment.GetEnvironmentVariable("DATABASE_CONNECTION"), builder =>
         {
             builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
         });
