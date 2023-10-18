@@ -5,8 +5,19 @@ namespace API.DAL;
 
 public class DataContext : DbContext
 {
-    public DataContext(DbContextOptions options) : base(options)
+    private readonly IConfiguration config;
+
+    public DataContext(DbContextOptions options, IConfiguration config) : base(options)
     {
+        this.config = config;
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder options)
+    {
+        options.UseNpgsql(config.GetConnectionString("DefaultConnection"), builder =>
+        {
+            builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+        });
     }
 
     public void RecreateDatabase()
