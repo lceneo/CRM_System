@@ -8,7 +8,7 @@ public class AccountsFiller : IDbFiller
     public static void Fill(DataContext dataContext)
     {
         var set = dataContext.Accounts;
-        set.Add(Account("Admin", "Admin", AccountRole.Admin));
+        set.Add(Account("admin", "admin", AccountRole.Admin));
     }
 
     private static AccountEntity Account(string login, string password, AccountRole role)
@@ -16,6 +16,7 @@ public class AccountsFiller : IDbFiller
         return new AccountEntity
         {
             Login = login,
+            Email = @"admin@admin.com",
             PasswordHash = PasswordHasher.CalculateHashStatic(password),
             Role = role,
         };

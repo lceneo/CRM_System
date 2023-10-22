@@ -9,8 +9,7 @@ public class AccountsServiceMapping : Profile
 {
     public AccountsServiceMapping()
     {
-        CreateMap<RegisterRequest, AccountEntity>()
-            .ForMember(dest => dest.PasswordHash, opt => opt.ConvertUsing<PasswordConverter, string>(src => src.Password));
+        CreateMap<RegisterRequest, AccountEntity>();
 
         CreateMap<RegisterRequest, LoginRequest>();
 

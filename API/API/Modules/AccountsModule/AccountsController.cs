@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using API.Extensions;
 using API.Infrastructure;
 using API.Modules.AccountsModule.DTO;
 using API.Modules.AccountsModule.Models;
@@ -24,17 +25,13 @@ public class AccountsController : ControllerBase
         this.mapper = mapper;
     }
 
+    [Authorize]
     [HttpPost("Register")]
     public async Task<ActionResult<AccountsResponse>> RegisterAsync([FromBody] RegisterRequest regRequest)
     {
         var response = await accountsService.RegisterAsync(regRequest);
-        if (!response.IsSuccess)
-            return response.ActionResult;
-        
-        var principal = new ClaimsPrincipal(response.Value.Credentials);
-        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-        
-        response.Specificate(claimsResp => mapper.Map<AccountsResponse>(claimsResp));
+
+        response.Specificate(resp => new {Id = resp});
         return response.ActionResult;
     }
 
@@ -59,5 +56,23 @@ public class AccountsController : ControllerBase
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
         return NoContent();
+    }
+
+    [Authorize]
+    [HttpPost("Password")]
+    public async Task<ActionResult> ChangePasswordAsync(ChangePasswordRequest changePasswordRequest)
+    {
+        var response = await accountsService.ChangePasswordAsync(User.GetId(), changePasswordRequest);
+
+        return response.ActionResult;
+    }
+
+    [HttpPost("Password/{userId:Guid}")]
+    public async Task<ActionResult> ChangePasswordUnauthorizedAsync([FromRoute] Guid userId,
+        ChangePasswordUnauthorizedRequest changePasswordUnauthorizedReq)
+    {
+        var response = await accountsService.ChangePasswordUnauthorizedAsync(userId, changePasswordUnauthorizedReq);
+
+        return response.ActionResult;
     }
 }
