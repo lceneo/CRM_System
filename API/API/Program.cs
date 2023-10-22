@@ -47,7 +47,11 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddAutoMapper(typeof(BaseMappingProfile));
 
 builder.Services.RegisterModules();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(hubOptions =>
+{
+    hubOptions.EnableDetailedErrors = true;
+    hubOptions.KeepAliveInterval = TimeSpan.FromMinutes(1);
+});
 
 var app = builder.Build();
 
@@ -59,6 +63,7 @@ var app = builder.Build();
 }
 
 app.UseHttpsRedirection();
+app.UseWebSockets();
 
 app.UseAuthentication();
 app.UseAuthorization();
