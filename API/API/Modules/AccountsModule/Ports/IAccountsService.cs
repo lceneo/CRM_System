@@ -6,6 +6,9 @@ namespace API.Modules.AccountsModule.Ports;
 
 public interface IAccountsService
 {
-    Task<Result<ClaimsResponse>> RegisterAsync(RegisterRequest registerRequest);
+    Task<Result<Guid>> RegisterAsync(RegisterRequest registerRequest);
     Task<Result<ClaimsResponse>> LoginAsync(LoginRequest loginRequest);
+    Task<Result<bool>> ChangePasswordAsync(Guid userId, ChangePasswordRequest changePasswordRequest);
+    Task<Result<bool>> ChangePasswordUnauthorizedAsync(Guid userId,
+        ChangePasswordUnauthorizedRequest changePasswordUnauthorizedRequest);
 }
