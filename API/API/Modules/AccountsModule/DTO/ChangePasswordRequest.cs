@@ -2,10 +2,10 @@
 
 namespace API.Modules.AccountsModule.DTO;
 
-public class LoginRequest
+public class ChangePasswordRequest
 {
     [Required]
-    public string Login { get; set; }
+    public string OldPassword { get; set; }
     [Required]
-    public string Password { get; set; }
+    public string NewPassword { get; set; }
 }
