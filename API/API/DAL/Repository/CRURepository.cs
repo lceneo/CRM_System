@@ -45,7 +45,7 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntit
     public async Task<(Guid Id, bool IsCreated)> CreateOrUpdateAsync(TEntity entity)
     {
         var isCreated = false;
-        var cur = await Set.FindAsync(entity);
+        var cur = await Set.FindAsync(entity.Id);
         if (cur == null)
         {
             await Set.AddAsync(entity);

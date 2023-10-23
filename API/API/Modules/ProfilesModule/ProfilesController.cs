@@ -31,10 +31,11 @@ public class ProfilesController : ControllerBase
         return response.ActionResult;
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult> CreateOrUpdateProfileAsync(ProfileDTO profileDto)
     {
-        await profilesService.CreateOrUpdateProfile(profileDto);
+        await profilesService.CreateOrUpdateProfile(User.GetId(), profileDto);
         return NoContent();
     }
 }

@@ -6,5 +6,5 @@ namespace API.Modules.ProfilesModule.Ports;
 public interface IProfilesService
 {
     Task<Result<ProfileOutDTO>> GetProfileAsync(Guid id);
-    Task CreateOrUpdateProfile(ProfileDTO profileDto);
+    Task CreateOrUpdateProfile(Guid accountId, ProfileDTO profileDto);
 }
