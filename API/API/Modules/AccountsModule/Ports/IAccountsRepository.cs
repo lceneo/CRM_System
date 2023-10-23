@@ -3,7 +3,7 @@ using API.Modules.AccountsModule.Models;
 
 namespace API.Modules.AccountsModule.Ports;
 
-public interface IAccountsRepository : ICRUREpository<AccountEntity>
+public interface IAccountsRepository : ICRURepository<AccountEntity>
 {
     public Task<AccountEntity?> GetByLoginAsync(string login);
 }
