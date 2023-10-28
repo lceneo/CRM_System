@@ -1,0 +1,31 @@
+.messages{
+  display: grid;
+
+  &__list{
+    list-style: none;
+    grid-column: 1;
+  }
+
+  &__item{
+    cursor: pointer;
+    border-radius: 6px;
+    padding: 0.8em;
+    &-selected{
+      background-color: #1c6ae1;
+      color: #FFF;
+    }
+  }
+
+  &__hidden{
+    display: none;
+  }
+
+  &__openedDialog{
+    grid-column: 2;
+  }
+}
+
+.dialogOpened {
+  grid-template-columns: 1fr 2fr;
+}
+

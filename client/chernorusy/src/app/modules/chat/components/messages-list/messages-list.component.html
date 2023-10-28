@@ -1,0 +1,35 @@
+<div class="wrapper">
+  <section class="messages"
+   [ngClass]="{
+      dialogOpened: selectedMessage
+   }"
+  >
+      <section class="messages__list">
+        <ul
+          class="messages__list"
+          [ngSwitch]="tabType"
+          *ngLet = "messages$() as messages">
+          <ng-container
+            *ngSwitchCase="tabType === 'Inbox' || tabType === 'Mine' ? tabType : ''"
+          >
+            <li
+              class="messages__item"
+              [ngClass]="{
+               ' messages__item-selected': selectedMessage === message
+              }"
+              *ngFor="let message of messages"
+              (click) = "openDialogMessage(message, dialog)">
+              <app-message
+                [message]="message"
+                [messageType]="tabType"></app-message>
+            </li>
+          </ng-container>
+        </ul>
+    </section>
+    <section #dialog class="messages__openedDialog messages__hidden">
+      <app-message-dialog
+        [message] = selectedMessage
+      ></app-message-dialog>
+    </section>
+  </section>
+</div>
