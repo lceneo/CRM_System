@@ -36,7 +36,7 @@ public class AccountsService : IAccountsService
 
         var accountEntity = mapper.Map<AccountEntity>(registerRequest);
         await accountRepository.CreateAsync(accountEntity);
-        await mailMessagesService.SendVerificationAsync(accountEntity.Login, accountEntity.Id);
+        await mailMessagesService.SendVerificationAsync(accountEntity.Login);
         return Result.Ok(accountEntity.Id);
     }
 

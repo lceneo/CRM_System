@@ -29,15 +29,18 @@ public class MailMessagesService : IMailMessagesService
         if (account == null)
             return;
 
+        account.PasswordHash = null;
+        await accountsRepository.UpdateAsync(account);
+        
         var pattern = MailPatterns.PasswordRecoveryPattern;
         var messageBody = pattern.FormatWith(new(){
             {"login", login},
-            {"url", config.Host + @"/Accounts/Password/Recover"}});
-        
+            {"url", config.Host + @"/Accounts/Password/" + account.Id}});
+
         SendMailsAsync("Восстановление пароля", messageBody, account.Email);
     }
 
-    public async Task SendVerificationAsync(string login, Guid userId)
+    public async Task SendVerificationAsync(string login)
     {
         var account = await accountsRepository.GetByLoginAsync(login);
         if (account == null)
@@ -47,7 +50,7 @@ public class MailMessagesService : IMailMessagesService
         var messageBody = pattern.FormatWith(new(){
             {"login", login},
             {"host", config.Host},
-            {"url", config.Host + @"/Accounts/Password/" + userId}});
+            {"url", config.Host + @"/Accounts/Password/" + account.Id}});
         
         SendMailsAsync("Подтверждение аккаунта", messageBody, account.Email);
     }

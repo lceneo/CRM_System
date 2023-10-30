@@ -2,14 +2,14 @@
 
 public class Config
 {
+    public string Host { get; }
     public string MailBoxLogin { get; }
     public string MailBoxPassword { get; }
-    public string Host { get; }
 
     public Config(WebApplicationBuilder builder)
     {
-        MailBoxLogin = @"chernorusy@mail.ru";
-        MailBoxPassword = @"KGw9Q2bmFZpyptJ4xfKZ";
-        Host = "localhost";
+        Host = Environment.GetEnvironmentVariable("HOST");
+        MailBoxLogin = Environment.GetEnvironmentVariable("MAILBOX_LOGIN");
+        MailBoxPassword = Environment.GetEnvironmentVariable("MAILBOX_PASSWORD");
     }
 }
