@@ -1,7 +1,6 @@
 using API.DAL;
 using API.Infrastructure;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,6 +36,7 @@ builder.Services.AddAuthentication(options => {
 builder.Services.AddAuthorization();
 
 // Register DbContext in DI Container
+builder.Services.AddSingleton<Config>(new Config(builder));
 builder.Services.AddDbContext<DataContext>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
