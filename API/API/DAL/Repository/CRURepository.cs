@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace API.DAL;
 
-public class CRURepository<TEntity> : Repository<TEntity>, ICRUREpository<TEntity>
+public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntity>
     where TEntity : class, IEntity
 {
     protected readonly IMapper mapper;
@@ -13,10 +13,12 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRUREpository<TEntit
         this.mapper = mapper;
     }
 
-    public async Task CreateAsync(TEntity tEntity)
+    public async Task<Guid> CreateAsync(TEntity entity)
     {
-        await Set.AddAsync(tEntity);
+        await Set.AddAsync(entity);
         await SaveChangesAsync();
+
+        return entity.Id;
     }
 
     public async Task<IEnumerable<TEntity>> GetEnumerable(int take = Int32.MaxValue, int skip = 0)
@@ -38,5 +40,24 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRUREpository<TEntit
 
         mapper.Map(updated, existed);
         await SaveChangesAsync();
+    }
+
+    public async Task<(Guid Id, bool IsCreated)> CreateOrUpdateAsync(TEntity entity)
+    {
+        var isCreated = false;
+        var cur = await Set.FindAsync(entity.Id);
+        if (cur == null)
+        {
+            await Set.AddAsync(entity);
+            isCreated = true;
+        }
+        else
+        {
+            mapper.Map(entity, cur);
+        }
+
+        await SaveChangesAsync();
+        
+        return (entity.Id, isCreated);
     }
 }
