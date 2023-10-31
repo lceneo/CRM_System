@@ -5,5 +5,10 @@ namespace API.Modules.ChatsModule;
 
 public class ChatsHub : Hub, IHub
 {
-    public static string Route { get; }
+    public static string Route => "/ChatHub";
+
+    public async Task Send()
+    {
+        
+    }
 }

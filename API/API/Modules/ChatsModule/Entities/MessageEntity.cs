@@ -7,6 +7,7 @@ public class MessageEntity : IEntity
 {
     [Key]
     public Guid Id { get; set; }
-    public string Message { get; set; }
     public ChatEntity ChatId { get; set; }
+    public string Message { get; set; }
+    public DateTime DateTime { get; set; }
 }

@@ -1,4 +1,5 @@
 using API.Modules.AccountsModule.Models;
+using API.Modules.ChatsModule.Entities;
 using API.Modules.ProfilesModule.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,4 +33,6 @@ public class DataContext : DbContext
 
     public DbSet<AccountEntity> Accounts => Set<AccountEntity>();
     public DbSet<ProfileEntity> Profiles => Set<ProfileEntity>();
+    public DbSet<ChatEntity> Chats => Set<ChatEntity>();
+    public DbSet<MessageEntity> Messages => Set<MessageEntity>();
 }
