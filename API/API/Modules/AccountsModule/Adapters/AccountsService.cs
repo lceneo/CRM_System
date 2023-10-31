@@ -28,13 +28,13 @@ public class AccountsService : IAccountsService
         this.mailMessagesService = mailMessagesService;
     }
     
-    public async Task<Result<Guid>> RegisterAsync(RegisterRequest registerRequest)
+    public async Task<Result<Guid>> RegisterAsync(RegisterByAdminRequest registerByAdminRequest)
     {
-        var cur = await accountRepository.GetByLoginAsync(registerRequest.Login);
+        var cur = await accountRepository.GetByLoginAsync(registerByAdminRequest.Login);
         if (cur != null)
             return Result.Fail<Guid>("Такой пользователь уже существует.");
 
-        var accountEntity = mapper.Map<AccountEntity>(registerRequest);
+        var accountEntity = mapper.Map<AccountEntity>(registerByAdminRequest);
         await accountRepository.CreateAsync(accountEntity);
         await mailMessagesService.SendVerificationAsync(accountEntity.Login, accountEntity.Id);
         return Result.Ok(accountEntity.Id);
