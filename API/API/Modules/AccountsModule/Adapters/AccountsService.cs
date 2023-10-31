@@ -4,6 +4,7 @@ using API.Infrastructure;
 using API.Modules.AccountsModule.DTO;
 using API.Modules.AccountsModule.Models;
 using API.Modules.AccountsModule.Ports;
+using API.Modules.MailsModule.Ports;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -14,12 +15,17 @@ public class AccountsService : IAccountsService
     private readonly IMapper mapper;
     private readonly IAccountsRepository accountRepository;
     private readonly IPasswordHasher passwordHasher;
+    private readonly IMailMessagesService mailMessagesService;
 
-    public AccountsService(IMapper mapper, IAccountsRepository accountsRepository, IPasswordHasher passwordHasher)
+    public AccountsService(IMapper mapper,
+        IAccountsRepository accountsRepository,
+        IPasswordHasher passwordHasher,
+        IMailMessagesService mailMessagesService)
     {
         this.mapper = mapper;
         this.accountRepository = accountsRepository;
         this.passwordHasher = passwordHasher;
+        this.mailMessagesService = mailMessagesService;
     }
     
     public async Task<Result<Guid>> RegisterAsync(RegisterRequest registerRequest)
@@ -30,6 +36,7 @@ public class AccountsService : IAccountsService
 
         var accountEntity = mapper.Map<AccountEntity>(registerRequest);
         await accountRepository.CreateAsync(accountEntity);
+        await mailMessagesService.SendVerificationAsync(accountEntity.Login, accountEntity.Id);
         return Result.Ok(accountEntity.Id);
     }
 
@@ -69,6 +76,11 @@ public class AccountsService : IAccountsService
         cur.PasswordHash = passwordHasher.CalculateHash(changePasswordRequest.NewPassword);
         await accountRepository.UpdateAsync(cur);
         return Result.Ok(true, HttpStatusCode.NoContent);
+    }
+
+    public async Task RecoverPasswordAsync(string login)
+    {
+        await mailMessagesService.SendPasswordRecovery(login);
     }
 
     public async Task<Result<bool>> ChangePasswordUnauthorizedAsync(Guid userId, 

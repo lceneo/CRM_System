@@ -4,6 +4,7 @@ using API.Infrastructure;
 using API.Modules.AccountsModule.DTO;
 using API.Modules.AccountsModule.Models;
 using API.Modules.AccountsModule.Ports;
+using API.Modules.MailsModule.Adapters;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -19,7 +20,8 @@ public class AccountsController : ControllerBase
     private readonly IAccountsService accountsService;
     private readonly IMapper mapper;
 
-    public AccountsController(IAccountsService accountsService, IMapper mapper)
+    public AccountsController(IAccountsService accountsService, 
+        IMapper mapper)
     {
         this.accountsService = accountsService;
         this.mapper = mapper;
@@ -59,12 +61,20 @@ public class AccountsController : ControllerBase
     }
 
     [Authorize]
-    [HttpPost("Password")]
+    [HttpPost("Password/Change")]
     public async Task<ActionResult> ChangePasswordAsync(ChangePasswordRequest changePasswordRequest)
     {
         var response = await accountsService.ChangePasswordAsync(User.GetId(), changePasswordRequest);
 
         return response.ActionResult;
+    }
+
+    [HttpPost("Password/Recover")]
+    public async Task<ActionResult> RecoverPasswordAsync([FromBody] PasswordRecoveryReq passwordRecoveryReq)
+    {
+        await accountsService.RecoverPasswordAsync(passwordRecoveryReq.Login);
+
+        return NoContent();
     }
 
     [HttpPost("Password/{userId:Guid}")]

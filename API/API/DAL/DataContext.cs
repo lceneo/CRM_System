@@ -1,4 +1,5 @@
 using API.Modules.AccountsModule.Models;
+using API.Modules.ProfilesModule.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.DAL;
@@ -30,4 +31,5 @@ public class DataContext : DbContext
     }
 
     public DbSet<AccountEntity> Accounts => Set<AccountEntity>();
+    public DbSet<ProfileEntity> Profiles => Set<ProfileEntity>();
 }
