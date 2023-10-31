@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using API.Modules.AccountsModule.Entities;
 using API.Modules.AccountsModule.Models;
 
 namespace API.Modules.AccountsModule.DTO;
 
-public class RegisterRequest
+public class RegisterByAdminRequest
 {
     [Required]
     public string Login { get; set; }

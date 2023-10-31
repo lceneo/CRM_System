@@ -9,6 +9,7 @@ public class AccountsModule : IModule
 {
     public IServiceCollection RegisterModule(IServiceCollection services)
     {
+        services.AddAutoMapper(typeof(AccountsControllerMapping));
         services.AddAutoMapper(typeof(AccountsServiceMapping));
         services.AddScoped<IAccountsRepository, AccountsRepository>();
         services.AddScoped<IPasswordHasher, PasswordHasher>();
