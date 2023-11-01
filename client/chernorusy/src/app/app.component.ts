@@ -1,4 +1,5 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {HttpService} from "./shared/services/http.service";
 
 @Component({
   selector: 'app-root',
@@ -8,4 +9,7 @@ import {ChangeDetectionStrategy, Component} from '@angular/core';
 })
 export class AppComponent {
   title = 'chernorusy';
+  constructor(private httpS: HttpService) {
+    httpS.post('/Accounts/Register', {}).subscribe()
+  }
 }

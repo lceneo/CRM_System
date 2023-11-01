@@ -4,7 +4,6 @@
       dialogOpened: selectedMessage
    }"
   >
-      <section class="messages__list">
         <ul
           class="messages__list"
           [ngSwitch]="tabType"
@@ -15,7 +14,7 @@
             <li
               class="messages__item"
               [ngClass]="{
-               ' messages__item-selected': selectedMessage === message
+               'messages__item-selected': selectedMessage === message
               }"
               *ngFor="let message of messages"
               (click) = "openDialogMessage(message, dialog)">
@@ -25,8 +24,7 @@
             </li>
           </ng-container>
         </ul>
-    </section>
-    <section #dialog class="messages__openedDialog messages__hidden">
+    <section #dialog class="messages__hidden">
       <app-message-dialog
         [message] = selectedMessage
       ></app-message-dialog>

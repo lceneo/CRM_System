@@ -5,7 +5,7 @@ import {RouterModule, Routes} from "@angular/router";
 import {TabsModule} from "ngx-bootstrap/tabs";
 import { MessageComponent } from './components/message/message.component';
 import { MessagesListComponent } from './components/messages-list/messages-list.component';
-import {NgLetDirective} from "../../shared/ng-let.directive";
+import {NgLetDirective} from "../../shared/directives/ng-let.directive";
 import { MessageDialogComponent } from './components/message-dialog/message-dialog.component';
 
 const routes: Routes = [

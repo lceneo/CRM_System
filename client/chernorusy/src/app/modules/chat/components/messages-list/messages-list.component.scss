@@ -3,7 +3,6 @@
 
   &__list{
     list-style: none;
-    grid-column: 1;
   }
 
   &__item{
@@ -18,10 +17,6 @@
 
   &__hidden{
     display: none;
-  }
-
-  &__openedDialog{
-    grid-column: 2;
   }
 }
 

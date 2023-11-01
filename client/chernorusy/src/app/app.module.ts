@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MainChatPageComponent } from './modules/chat/components/main-chat-page/main-chat-page.component';
 import {TooltipModule} from "ngx-bootstrap/tooltip";
+import {HttpClientModule} from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -13,6 +14,7 @@ import {TooltipModule} from "ngx-bootstrap/tooltip";
   imports: [
     BrowserModule,
     AppRoutingModule,
+    HttpClientModule,
     TooltipModule.forRoot()
   ],
   providers: [],
