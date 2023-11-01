@@ -8,6 +8,7 @@ public interface IAccountsService
 {
     Task<Result<Guid>> RegisterAsync(RegisterRequest registerRequest);
     Task<Result<ClaimsResponse>> LoginAsync(LoginRequest loginRequest);
+    Task RecoverPasswordAsync(string login);
     Task<Result<bool>> ChangePasswordAsync(Guid userId, ChangePasswordRequest changePasswordRequest);
     Task<Result<bool>> ChangePasswordUnauthorizedAsync(Guid userId,
         ChangePasswordUnauthorizedRequest changePasswordUnauthorizedRequest);
