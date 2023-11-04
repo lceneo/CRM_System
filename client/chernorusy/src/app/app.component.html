@@ -1,3 +1,26 @@
+
+<nav class="navigation"
+     *ngLet="isAuthorized$ | async as isAuthorized"
+>
+  <button
+    *ngIf = "isAuthorized"
+    class="btn"
+    (click) = "signOut()"
+  >Выйти</button>
+  <a
+    *ngIf = "isAdmin$ | async"
+    class="btn"
+    [routerLink]="['registration']"
+    [routerLinkActive] = "'activeLink'"
+  >Создать пользователя</a>
+  <a
+    *ngIf = "isAuthorized"
+    class="btn"
+    [routerLink]="['main']"
+    [routerLinkActive] = "'activeLink'"
+  >Главная</a>
+</nav>
+
 <div class="contentWrapper">
   <router-outlet></router-outlet>
 </div>

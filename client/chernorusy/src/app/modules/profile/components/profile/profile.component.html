@@ -1,0 +1,17 @@
+
+<ng-container *ngLet="userID$ | async as userID">
+  <tabset>
+    <tab heading="Установка пароля"
+         [disabled] = "passwordSet"
+         >
+      <app-create-password
+        [userID]="userID"
+        (passwordSet$) = "passwordSet = true; tabProfile.disabled = false; tabProfile.active = true"
+      ></app-create-password>
+    </tab>
+    <tab heading="Информация о пользователе" #tabProfile="tab"
+         [disabled] = "!passwordSet">
+      <app-create-profile></app-create-profile>
+    </tab>
+  </tabset>
+</ng-container>

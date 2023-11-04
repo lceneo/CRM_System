@@ -2,6 +2,13 @@
   position: relative;
 }
 
+.navigation {
+ display: flex;
+ justify-content: flex-end;
+  .activeLink {
+    color: cornflowerblue;
+  }
+}
 
 .contentWrapper{
   padding: 5%;

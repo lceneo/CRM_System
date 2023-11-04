@@ -1,5 +1,7 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {HttpService} from "./shared/services/http.service";
+import {AuthorizationService} from "./shared/services/authorization.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-root',
@@ -8,8 +10,15 @@ import {HttpService} from "./shared/services/http.service";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
-  title = 'chernorusy';
-  constructor(private httpS: HttpService) {
-    httpS.post('/Accounts/Register', {}).subscribe()
+  constructor(
+    private authorizationS: AuthorizationService,
+    private router: Router
+  ) {}
+
+  protected isAdmin$ = this.authorizationS.isAdmin$;
+  protected isAuthorized$ = this.authorizationS.authorizationStatus;
+  signOut() {
+    this.authorizationS.logout$()
+      .subscribe(() => this.router.navigate(['login']));
   }
 }
