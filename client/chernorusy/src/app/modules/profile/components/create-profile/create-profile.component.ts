@@ -4,12 +4,12 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {TabsetComponent} from "ngx-bootstrap/tabs";
 
 @Component({
-  selector: 'app-profile',
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss'],
+  selector: 'app-create-profile',
+  templateUrl: './create-profile.component.html',
+  styleUrls: ['./create-profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProfileComponent {
+export class CreateProfileComponent {
 
   @ViewChild('staticTabs') staticTabs?: TabsetComponent;
 
