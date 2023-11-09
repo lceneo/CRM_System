@@ -8,6 +8,9 @@ import {TooltipModule} from "ngx-bootstrap/tooltip";
 import {HttpClientModule} from "@angular/common/http";
 import {NgLetDirective} from "./shared/directives/ng-let.directive";
 import {checkResponseInterceptor} from "./interceptors/check-response-status.interceptor";
+import {BsDropdownModule} from "ngx-bootstrap/dropdown";
+import {AnimationBuilder} from "@angular/animations";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 @NgModule({
   declarations: [
@@ -18,7 +21,9 @@ import {checkResponseInterceptor} from "./interceptors/check-response-status.int
         AppRoutingModule,
         HttpClientModule,
         TooltipModule.forRoot(),
-        NgLetDirective
+        NgLetDirective,
+        BsDropdownModule,
+        BrowserAnimationsModule
     ],
   providers: [
     checkResponseInterceptor

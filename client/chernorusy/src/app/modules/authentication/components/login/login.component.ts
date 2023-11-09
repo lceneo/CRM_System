@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {FormControl, FormGroup} from "@angular/forms";
-import {AuthorizationService} from "../../../shared/services/authorization.service";
+import {AuthorizationService} from "../../../../shared/services/authorization.service";
 import {Router} from "@angular/router";
-import {ILoginRequestDTO} from "../../../shared/models/DTO/request/LoginRequestDTO";
+import {ILoginRequestDTO} from "../../../../shared/models/DTO/request/LoginRequestDTO";
 
 @Component({
   selector: 'app-login',

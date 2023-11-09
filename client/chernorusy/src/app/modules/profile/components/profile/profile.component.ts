@@ -23,11 +23,4 @@ export class ProfileComponent {
   constructor(
     private activateRoute: ActivatedRoute
   ) {}
-
-  selectTab(tabId: number) {
-    if (this.staticTabs?.tabs[tabId]) {
-      this.staticTabs.tabs[tabId].disabled = false;
-      this.staticTabs.tabs[tabId].active = true;
-    }
-  }
 }

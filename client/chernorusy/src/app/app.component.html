@@ -10,7 +10,7 @@
   <a
     *ngIf = "isAdmin$ | async"
     class="btn"
-    [routerLink]="['registration']"
+    [routerLink]="['authentication', 'registration']"
     [routerLinkActive] = "'activeLink'"
   >Создать пользователя</a>
   <a
@@ -19,6 +19,23 @@
     [routerLink]="['main']"
     [routerLinkActive] = "'activeLink'"
   >Главная</a>
+  <div
+    *ngIf = "true"
+    class="btn-group profileBtn" dropdown>
+    <button id="button-basic" dropdownToggle type="button" class="btn dropdown-toggle"
+            aria-controls="dropdown-basic">
+      <i class="bi bi-person-fill icon"></i>
+      <span class="caret"></span>
+    </button>
+    <ul id="dropdown-split" *dropdownMenu class="dropdown-menu dropdown-menu-right"
+        role="menu" aria-labelledby="button-split">
+      <li role="menuitem"><a [routerLink]="['profile']" class="dropdown-item" href="#">Профиль</a></li>
+      <li class="divider dropdown-divider"></li>
+      <li role="menuitem"><a [routerLink]="['profile', 'changePassword']" class="dropdown-item" href="#">Сменить пароль</a>
+      <li role="menuitem"><a class="dropdown-item" href="#">Выйти</a>
+      </li>
+    </ul>
+  </div>
 </nav>
 
 <div class="contentWrapper">

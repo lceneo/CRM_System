@@ -4,9 +4,16 @@
 
 .navigation {
  display: flex;
+ background-color: #f8f9fe;
  justify-content: flex-end;
   .activeLink {
     color: cornflowerblue;
+  }
+  .profileBtn {
+    display: flex;
+  }
+  .icon {
+    font-size: 1.3rem;
   }
 }
 

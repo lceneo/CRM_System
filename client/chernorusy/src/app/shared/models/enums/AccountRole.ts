@@ -1,5 +1,6 @@
 
 export enum AccountRole {
   Admin,
-  Manager
+  Manager,
+  Client
 }
