@@ -12,11 +12,13 @@
   .profileBtn {
     display: flex;
   }
-  .icon {
-    font-size: 1.3rem;
-  }
+
 }
 
 .contentWrapper{
   padding: 5%;
+}
+
+.dropdown li:hover{
+  cursor: pointer;
 }

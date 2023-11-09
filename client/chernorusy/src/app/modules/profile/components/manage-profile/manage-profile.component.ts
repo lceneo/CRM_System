@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {map} from "rxjs";
 import {FormControl, FormGroup} from "@angular/forms";
@@ -6,12 +6,14 @@ import {ProfileService} from "../../../../shared/services/profile.service";
 import {IProfileCreateRequestDTO} from "../../../../shared/models/DTO/request/ProfileCreateRequestDTO";
 
 @Component({
-  selector: 'app-create-profile',
-  templateUrl: './create-profile.component.html',
-  styleUrls: ['./create-profile.component.scss'],
+  selector: 'app-manage-profile',
+  templateUrl: './manage-profile.component.html',
+  styleUrls: ['./manage-profile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateProfileComponent {
+export class ManageProfileComponent implements OnInit{
+
+  @Input() mode: 'create' | 'change' | 'observe' = 'observe';
 
   constructor(
     private profileS: ProfileService,
@@ -25,8 +27,17 @@ export class CreateProfileComponent {
     about: new FormControl<string>('')
   });
 
-  submitForm() {
+  ngOnInit(): void {
+    if (this.mode === 'observe') { this.form.disable(); }
+  }
+  protected submitForm() {
     this.profileS.create$(this.form.value as IProfileCreateRequestDTO)
       .subscribe(() => this.router.navigate(['main']));
+  }
+
+  protected changeMode() {
+    this.mode = this.mode === 'change' ? 'observe' : 'change';
+    if (this.mode === 'observe') { this.form.disable(); }
+    else { this.form.enable(); }
   }
 }

@@ -12,7 +12,7 @@
     </tab>
     <tab heading="Информация о пользователе" #tabProfile="tab"
          [disabled] = "!passwordSet">
-      <app-create-profile></app-create-profile>
+      <app-manage-profile [mode]="'create'"></app-manage-profile>
     </tab>
   </tabset>
 </ng-container>

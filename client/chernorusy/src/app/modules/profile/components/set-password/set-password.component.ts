@@ -36,11 +36,7 @@ export class SetPasswordComponent {
         )
         .subscribe();
     } else {
-      this.authorizationS.changePassword(this.changePasswordForm.value as IChangePasswordRequestDTO)
-        .pipe(
-          tap(() => this.passwordSet$.emit(true))
-        )
-        .subscribe();
+      this.authorizationS.changePassword(this.changePasswordForm.value as IChangePasswordRequestDTO).subscribe();
     }
   }
 }

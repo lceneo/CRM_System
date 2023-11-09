@@ -1,24 +1,25 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {RouterModule, Routes} from "@angular/router";
-import { CreateProfileComponent } from './components/create-profile/create-profile.component';
+import { ManageProfileComponent } from './components/manage-profile/manage-profile.component';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TabsModule} from "ngx-bootstrap/tabs";
 import { ProfileInfoComponent } from './components/profile-info/profile-info.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import {NgLetDirective} from "../../shared/directives/ng-let.directive";
 import {SetPasswordComponent} from "./components/set-password/set-password.component";
+import {BsDropdownModule} from "ngx-bootstrap/dropdown";
 
 const routes: Routes = [
 
-  { path: '', component: CreateProfileComponent, pathMatch: "full"},
+  { path: '', component: ManageProfileComponent, pathMatch: "full"},
   { path: 'changePassword', component: SetPasswordComponent},
   { path: ':id', component: ProfileComponent}
 ]
 
 @NgModule({
   declarations: [
-    CreateProfileComponent,
+    ManageProfileComponent,
     SetPasswordComponent,
     ProfileInfoComponent,
     ProfileComponent
@@ -29,7 +30,8 @@ const routes: Routes = [
     ReactiveFormsModule,
     TabsModule,
     FormsModule,
-    NgLetDirective
+    NgLetDirective,
+    BsDropdownModule
   ]
 })
 export class ProfileModule { }

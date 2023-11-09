@@ -6,6 +6,7 @@ import {ILoginRequestDTO} from "../models/DTO/request/LoginRequestDTO";
 import {IRegistrationRequestDTO} from "../models/DTO/request/RegistrationRequestDTO";
 import {ICreatePasswordRequestDTO} from "../models/DTO/request/CreatePasswordRequestDTO";
 import {IChangePasswordRequestDTO} from "../models/DTO/request/ChangePasswordRequstDTO";
+import {IRecoverPasswordRequestDTO} from "../models/DTO/request/RecoverPasswordRequestDTO";
 
 @Injectable({
   providedIn: 'root'
@@ -57,5 +58,9 @@ export class AuthorizationService {
 
   public changePassword(password: IChangePasswordRequestDTO) {
     return this.httpS.post('/Accounts/Password/Change', password);
+  }
+
+  public recoverPassword(credentials: IRecoverPasswordRequestDTO) {
+    return this.httpS.post('/Accounts/Password/Recover', credentials);
   }
 }
