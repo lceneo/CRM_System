@@ -27,11 +27,21 @@ public class AccountsController : ControllerBase
         this.mapper = mapper;
     }
 
-    [Authorize]
     [HttpPost("Register")]
-    public async Task<ActionResult<AccountsResponse>> RegisterAsync([FromBody] RegisterRequest regRequest)
+    public async Task<ActionResult<AccountsResponse>> RegisterClientAsync([FromBody] RegisterClientRequest regClientRequest)
     {
-        var response = await accountsService.RegisterAsync(regRequest);
+        var requestByAdmin = mapper.Map<RegisterByAdminRequest>(regClientRequest);
+        var response = await accountsService.RegisterAsync(requestByAdmin);
+
+        response.Specificate(resp => new {Id = resp});
+        return response.ActionResult;
+    }
+    
+    [Authorize]
+    [HttpPost("Register/Admin")]
+    public async Task<ActionResult<AccountsResponse>> RegisterAsync([FromBody] RegisterByAdminRequest regByAdminRequest)
+    {
+        var response = await accountsService.RegisterAsync(regByAdminRequest);
 
         response.Specificate(resp => new {Id = resp});
         return response.ActionResult;

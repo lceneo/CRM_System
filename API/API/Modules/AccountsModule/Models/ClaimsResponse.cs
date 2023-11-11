@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using API.Modules.AccountsModule.Entities;
 
 namespace API.Modules.AccountsModule.Models;
 
