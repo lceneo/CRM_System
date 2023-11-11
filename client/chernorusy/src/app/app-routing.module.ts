@@ -3,10 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 import {authorizationGuard} from "./guards/authorizationGuard";
 
 const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', loadChildren: () => import('./modules/login/login.module').then(f => f.LoginModule) },
-  { path: 'registration', loadChildren: () => import('./modules/registration/registration.module').then(f => f.RegistrationModule),
-    canActivate:  [authorizationGuard]},
+  { path: '', redirectTo: 'main', pathMatch: 'full' },
+  { path: 'authentication', loadChildren: () => import('./modules/authentication/authentication.module').then(f => f.AuthenticationModule)},
   { path: 'main', loadChildren: () => import('./modules/chat/chat.module').then(f => f.ChatModule),
     canActivate:  [authorizationGuard] },
   { path: 'profile', loadChildren: () => import('./modules/profile/profile.module').then(f => f.ProfileModule)}

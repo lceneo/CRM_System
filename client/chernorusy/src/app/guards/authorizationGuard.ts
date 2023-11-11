@@ -10,7 +10,7 @@ export const authorizationGuard = () => {
       map(status => !!status),
       tap(status => {
         if (!status) {
-          router.navigate(["login"]);
+          router.navigate(["authentication"]);
         }
       })
     )

@@ -1,9 +1,9 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {FormControl, FormGroup} from "@angular/forms";
-import {ILoginRequestDTO} from "../../../shared/models/DTO/request/LoginRequestDTO";
-import {AccountRole} from "../../../shared/models/enums/AccountRole";
-import {AuthorizationService} from "../../../shared/services/authorization.service";
-import {IRegistrationRequestDTO} from "../../../shared/models/DTO/request/RegistrationRequestDTO";
+import {ILoginRequestDTO} from "../../../../shared/models/DTO/request/LoginRequestDTO";
+import {AccountRole} from "../../../../shared/models/enums/AccountRole";
+import {AuthorizationService} from "../../../../shared/services/authorization.service";
+import {IRegistrationRequestDTO} from "../../../../shared/models/DTO/request/RegistrationRequestDTO";
 
 @Component({
   selector: 'app-registration',

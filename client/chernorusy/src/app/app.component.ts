@@ -19,6 +19,6 @@ export class AppComponent {
   protected isAuthorized$ = this.authorizationS.authorizationStatus;
   signOut() {
     this.authorizationS.logout$()
-      .subscribe(() => this.router.navigate(['login']));
+      .subscribe(() => this.router.navigate(['authentication']));
   }
 }

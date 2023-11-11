@@ -1,45 +1,18 @@
 
-<form class = "authorization" [formGroup]="form" (submit)="submitForm()">
-  <div class="mb-3">
-    <label for="surnameFormControl" class="form-label">Фамилия</label>
-    <input
-      class="form-control"
-      id="surnameFormControl"
-      placeholder="Имя..."
-      formControlName = "surname"
-    >
-  </div>
-
-  <div class="mb-3">
-    <label for="nameFormControl" class="form-label">Имя</label>
-    <input
-      class="form-control"
-      id="nameFormControl"
-      placeholder="Фамилия..."
-      formControlName = "name"
-    >
-  </div>
-
-  <div class="mb-3">
-    <label for="patronimicFormControl" class="form-label">Отчество</label>
-    <input
-      class="form-control"
-      id="patronimicFormControl"
-      placeholder="Отчество..."
-      formControlName = "patronimic"
-    >
-  </div>
-
-  <div class="mb-3">
-    <label for="aboutFormControl" class="form-label">О себе</label>
-    <textarea
-      class="form-control textarea"
-      id="aboutFormControl"
-      placeholder="О себе..."
-      formControlName = "about"
-      rows="10"
-    ></textarea>
-  </div>
-
-  <button class="btn btn-primary enterBtn">Создать профиль</button>
-</form>
+<ng-container *ngLet="userID$ | async as userID">
+  <tabset>
+    <tab heading="Установка пароля"
+         [disabled] = "passwordSet"
+         >
+      <app-set-password
+        [userID]="userID"
+        [mode]="'create'"
+        (passwordSet$) = "passwordSet = true; tabProfile.disabled = false; tabProfile.active = true"
+      ></app-set-password>
+    </tab>
+    <tab heading="Информация о пользователе" #tabProfile="tab"
+         [disabled] = "!passwordSet">
+      <app-manage-profile [mode]="'create'"></app-manage-profile>>
+    </tab>
+  </tabset>
+</ng-container>

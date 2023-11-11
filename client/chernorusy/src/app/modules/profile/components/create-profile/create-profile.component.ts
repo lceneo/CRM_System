@@ -1,9 +1,7 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {Router} from "@angular/router";
+import {ChangeDetectionStrategy, Component, ViewChild} from '@angular/core';
 import {map} from "rxjs";
-import {FormControl, FormGroup} from "@angular/forms";
-import {ProfileService} from "../../../../shared/services/profile.service";
-import {IProfileCreateRequestDTO} from "../../../../shared/models/DTO/request/ProfileCreateRequestDTO";
+import {ActivatedRoute, Router} from "@angular/router";
+import {TabsetComponent} from "ngx-bootstrap/tabs";
 
 @Component({
   selector: 'app-create-profile',
@@ -13,20 +11,16 @@ import {IProfileCreateRequestDTO} from "../../../../shared/models/DTO/request/Pr
 })
 export class CreateProfileComponent {
 
+  @ViewChild('staticTabs') staticTabs?: TabsetComponent;
+
+  protected userID$ = this.activateRoute.paramMap
+    .pipe(
+      map(params => params.get('id'))
+    );
+
+  protected passwordSet: boolean = false;
+
   constructor(
-    private profileS: ProfileService,
-    private router: Router
+    private activateRoute: ActivatedRoute
   ) {}
-
-  protected form = new FormGroup({
-    surname: new FormControl<string>(''),
-    name: new FormControl<string>(''),
-    patronimic: new FormControl<string>(''),
-    about: new FormControl<string>('')
-  });
-
-  submitForm() {
-    this.profileS.create$(this.form.value as IProfileCreateRequestDTO)
-      .subscribe(() => this.router.navigate(['main']));
-  }
 }

@@ -1,0 +1,31 @@
+
+<section class="wrapper">
+  <form class = "authorization" [formGroup]="form" (submit)="submitForm()">
+    <div class="mb-3">
+      <label for="loginFormControl" class="form-label">Логин</label>
+      <input
+        class="form-control"
+        id="loginFormControl"
+        placeholder="Введите логин"
+        formControlName = "login"
+      >
+    </div>
+
+    <div
+      *ngIf="form.controls.password.enabled"
+      class="mb-3">
+      <label for="passwordFormControl" class="form-label">Пароль</label>
+      <input
+        type="password"
+        class="form-control"
+        id="passwordFormControl"
+        placeholder="Введите пароль"
+        formControlName = "password"
+      >
+    </div>
+
+    <button class="btn btn-primary enterBtn">{{mode === 'login' ? 'Войти' : 'Восстановить'}}</button>
+  </form>
+
+  <a class="link" (click) = "changeMode()">{{mode === 'login' ? 'Восстановить пароль' : 'Войти'}}</a>
+</section>

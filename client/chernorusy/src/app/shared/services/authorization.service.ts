@@ -4,7 +4,9 @@ import {BehaviorSubject, catchError, Observable, of, tap} from "rxjs";
 import {ILoginResponseDTO} from "../models/DTO/response/LoginResponseDTO";
 import {ILoginRequestDTO} from "../models/DTO/request/LoginRequestDTO";
 import {IRegistrationRequestDTO} from "../models/DTO/request/RegistrationRequestDTO";
-import {IPasswordRequestDTO} from "../models/DTO/request/PasswordRequestDTO";
+import {ICreatePasswordRequestDTO} from "../models/DTO/request/CreatePasswordRequestDTO";
+import {IChangePasswordRequestDTO} from "../models/DTO/request/ChangePasswordRequstDTO";
+import {IRecoverPasswordRequestDTO} from "../models/DTO/request/RecoverPasswordRequestDTO";
 
 @Injectable({
   providedIn: 'root'
@@ -50,7 +52,15 @@ export class AuthorizationService {
     return this.httpS.post('/Accounts/Register', credentials);
   }
 
-  public createPassword(id: string, password: IPasswordRequestDTO) {
+  public createPassword(id: string, password: ICreatePasswordRequestDTO) {
     return this.httpS.post(`/Accounts/Password/${id}`, password);
+  }
+
+  public changePassword(password: IChangePasswordRequestDTO) {
+    return this.httpS.post('/Accounts/Password/Change', password);
+  }
+
+  public recoverPassword(credentials: IRecoverPasswordRequestDTO) {
+    return this.httpS.post('/Accounts/Password/Recover', credentials);
   }
 }
