@@ -2,7 +2,7 @@ services:
   chernorusyapp:
     container_name: chernorusycontainer
     build: .
-    image: chernorusyimage:v1
+    image: chernorusy-front
     ports:
       - 80:80
     expose:
