@@ -5,28 +5,29 @@ import {HttpClient, HttpHeaders } from "@angular/common/http";
   providedIn: 'root'
 })
 export class HttpService {
+  private url = 'localhost:90';
   constructor(
     private httpClient: HttpClient
   ) {}
 
   public get<T>(method: string) {
-    return this.httpClient.get<T>(`/api${method}`);
+    return this.httpClient.get<T>(`http://${this.url}/api${method}`);
   }
 
   public post<T>(method: string, body: any, options?: { headers: HttpHeaders | {[p: string] : string} }) {
-    return this.httpClient.post<T>(`/api${method}`, body, options);
+    return this.httpClient.post<T>(`http://${this.url}/api${method}`, body, options);
   }
 
   public put(method: string, body: any, options?: { headers: HttpHeaders | {[p: string] : string} }) {
-    return this.httpClient.put(`/api${method}`, body, options);
+    return this.httpClient.put(`http://${this.url}/api${method}`, body, options);
   }
 
   public patch(method: string, body: any, options?: { headers: HttpHeaders | {[p: string] : string} }) {
-    return this.httpClient.patch(`/api${method}`, body, options);
+    return this.httpClient.patch(`http://${this.url}/api${method}`, body, options);
   }
 
   public delete(method: string, options?: { headers: HttpHeaders | {[p: string] : string} }) {
-    return this.httpClient.delete(`/api${method}`, options);
+    return this.httpClient.delete(`http://${this.url}/api${method}`, options);
   }
 
 }
