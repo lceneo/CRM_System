@@ -1,4 +1,6 @@
-﻿namespace API.Modules.AccountsModule.Models;
+﻿using API.Modules.AccountsModule.Entities;
+
+namespace API.Modules.AccountsModule.Models;
 
 public class AccountsResponse
 {

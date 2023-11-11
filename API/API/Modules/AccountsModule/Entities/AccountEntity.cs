@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using API.DAL;
+using API.Modules.AccountsModule.Entities;
 
 namespace API.Modules.AccountsModule.Models;
 

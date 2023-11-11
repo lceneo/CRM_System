@@ -4,6 +4,7 @@ using API.Infrastructure;
 using API.Modules.AccountsModule.DTO;
 using API.Modules.AccountsModule.Models;
 using API.Modules.AccountsModule.Ports;
+using API.Modules.MailsModule.Adapters;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -19,17 +20,28 @@ public class AccountsController : ControllerBase
     private readonly IAccountsService accountsService;
     private readonly IMapper mapper;
 
-    public AccountsController(IAccountsService accountsService, IMapper mapper)
+    public AccountsController(IAccountsService accountsService, 
+        IMapper mapper)
     {
         this.accountsService = accountsService;
         this.mapper = mapper;
     }
 
-    [Authorize]
     [HttpPost("Register")]
-    public async Task<ActionResult<AccountsResponse>> RegisterAsync([FromBody] RegisterRequest regRequest)
+    public async Task<ActionResult<AccountsResponse>> RegisterClientAsync([FromBody] RegisterClientRequest regClientRequest)
     {
-        var response = await accountsService.RegisterAsync(regRequest);
+        var requestByAdmin = mapper.Map<RegisterByAdminRequest>(regClientRequest);
+        var response = await accountsService.RegisterAsync(requestByAdmin);
+
+        response.Specificate(resp => new {Id = resp});
+        return response.ActionResult;
+    }
+    
+    [Authorize]
+    [HttpPost("Register/Admin")]
+    public async Task<ActionResult<AccountsResponse>> RegisterAsync([FromBody] RegisterByAdminRequest regByAdminRequest)
+    {
+        var response = await accountsService.RegisterAsync(regByAdminRequest);
 
         response.Specificate(resp => new {Id = resp});
         return response.ActionResult;
@@ -59,12 +71,20 @@ public class AccountsController : ControllerBase
     }
 
     [Authorize]
-    [HttpPost("Password")]
+    [HttpPost("Password/Change")]
     public async Task<ActionResult> ChangePasswordAsync(ChangePasswordRequest changePasswordRequest)
     {
         var response = await accountsService.ChangePasswordAsync(User.GetId(), changePasswordRequest);
 
         return response.ActionResult;
+    }
+
+    [HttpPost("Password/Recover")]
+    public async Task<ActionResult> RecoverPasswordAsync([FromBody] PasswordRecoveryReq passwordRecoveryReq)
+    {
+        await accountsService.RecoverPasswordAsync(passwordRecoveryReq.Login);
+
+        return NoContent();
     }
 
     [HttpPost("Password/{userId:Guid}")]
