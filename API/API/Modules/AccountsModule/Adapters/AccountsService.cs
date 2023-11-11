@@ -32,7 +32,7 @@ public class AccountsService : IAccountsService
     {
         var cur = await accountRepository.GetByLoginAsync(registerByAdminRequest.Login);
         if (cur != null)
-            return Result.Fail<Guid>("Такой пользователь уже существует.");
+            return Result.BadRequest<Guid>("Такой пользователь уже существует.");
 
         var accountEntity = mapper.Map<AccountEntity>(registerByAdminRequest);
         await accountRepository.CreateAsync(accountEntity);
@@ -44,14 +44,14 @@ public class AccountsService : IAccountsService
     {
         var cur = await accountRepository.GetByLoginAsync(loginRequest.Login);
         if (cur == null)
-            return Result.Fail<ClaimsResponse>("Такого пользователя не существует.", HttpStatusCode.NotFound);
+            return Result.NotFound<ClaimsResponse>("Такого пользователя не существует.");
 
         if (cur.PasswordHash == null)
-            return Result.Fail<ClaimsResponse>("Пользователь не установил себе пароль.");
+            return Result.BadRequest<ClaimsResponse>("Пользователь не установил себе пароль.");
         
         var isPasswordValid = passwordHasher.IsPasswordEqualHashed(cur.PasswordHash, loginRequest.Password);
         if (!isPasswordValid)
-            return Result.Fail<ClaimsResponse>("Неправильный пароль.");
+            return Result.BadRequest<ClaimsResponse>("Неправильный пароль.");
 
         var claims = new List<Claim>
         {
@@ -67,15 +67,15 @@ public class AccountsService : IAccountsService
     {
         var cur = await accountRepository.GetByIdAsync(userId);
         if (cur == null)
-            return Result.Fail<bool>("Такого пользователя нет.", HttpStatusCode.NotFound);
+            return Result.NotFound<bool>("Такого пользователя нет.");
         
         var isPasswordValid = passwordHasher.IsPasswordEqualHashed(cur.PasswordHash, changePasswordRequest.OldPassword);
         if (!isPasswordValid)
-            return Result.Fail<bool>("Неправильный пароль.");
+            return Result.BadRequest<bool>("Неправильный пароль.");
 
         cur.PasswordHash = passwordHasher.CalculateHash(changePasswordRequest.NewPassword);
         await accountRepository.UpdateAsync(cur);
-        return Result.Ok(true, HttpStatusCode.NoContent);
+        return Result.NoContent<bool>();
     }
 
     public async Task RecoverPasswordAsync(string login)
@@ -88,13 +88,13 @@ public class AccountsService : IAccountsService
     {
         var cur = await accountRepository.GetByIdAsync(userId);
         if (cur == null)
-            return Result.Fail<bool>("Такого пользователя нет.", HttpStatusCode.NotFound);
+            return Result.NotFound<bool>("Такого пользователя нет.");
 
         if (cur.PasswordHash != null)
-            return Result.Fail<bool>("У пользователя уже есть пароль.");
+            return Result.BadRequest<bool>("У пользователя уже есть пароль.");
 
         cur.PasswordHash = passwordHasher.CalculateHash(changePasswordUnauthorizedRequest.Password);
         await accountRepository.UpdateAsync(cur);
-        return Result.Ok(true, HttpStatusCode.NoContent);
+        return Result.NoContent<bool>();
     }
 }

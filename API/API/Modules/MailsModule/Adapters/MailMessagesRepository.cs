@@ -1,4 +1,5 @@
 ﻿using API.DAL;
+using API.DAL.Repository;
 using API.Modules.MailsModule.Entities;
 using API.Modules.MailsModule.Ports;
 using AutoMapper;
