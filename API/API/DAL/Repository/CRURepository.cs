@@ -1,7 +1,8 @@
-﻿using AutoMapper;
+﻿using API.Infrastructure.BaseApiDTOs;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.DAL;
+namespace API.DAL.Repository;
 
 public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntity>
     where TEntity : class, IEntity
@@ -42,7 +43,7 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntit
         await SaveChangesAsync();
     }
 
-    public async Task<(Guid Id, bool IsCreated)> CreateOrUpdateAsync(TEntity entity)
+    public async Task<CreateResponse> CreateOrUpdateAsync(TEntity entity)
     {
         var isCreated = false;
         var cur = await Set.FindAsync(entity.Id);
@@ -57,7 +58,11 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntit
         }
 
         await SaveChangesAsync();
-        
-        return (entity.Id, isCreated);
+
+        return new CreateResponse
+        {
+            Id = entity.Id, 
+            IsCreated = isCreated
+        };
     }
 }

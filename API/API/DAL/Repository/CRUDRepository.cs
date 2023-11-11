@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace API.DAL;
+namespace API.DAL.Repository;
 
 public class CRUDRepository<TEntity> : CRURepository<TEntity>, ICRUDRepository<TEntity>
     where TEntity : class, IEntity
