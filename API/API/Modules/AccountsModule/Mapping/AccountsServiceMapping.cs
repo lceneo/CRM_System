@@ -9,9 +9,9 @@ public class AccountsServiceMapping : Profile
 {
     public AccountsServiceMapping()
     {
-        CreateMap<RegisterRequest, AccountEntity>();
+        CreateMap<RegisterByAdminRequest, AccountEntity>();
 
-        CreateMap<RegisterRequest, LoginRequest>();
+        CreateMap<RegisterByAdminRequest, LoginRequest>();
 
     }
     

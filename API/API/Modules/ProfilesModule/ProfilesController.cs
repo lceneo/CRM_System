@@ -1,4 +1,6 @@
 ﻿using API.Extensions;
+using API.Infrastructure.BaseApiDTOs;
+using API.Modules.ProfilesModule.ApiDTO;
 using API.Modules.ProfilesModule.DTO;
 using API.Modules.ProfilesModule.Ports;
 using Microsoft.AspNetCore.Authorization;
@@ -20,9 +22,7 @@ public class ProfilesController : ControllerBase
     [Authorize]
     [HttpGet("My")]
     public async Task<ActionResult<ProfileOutDTO>> GetOwnProfileAsync()
-    {
-        return await GetProfileAsync(User.GetId());
-    }
+        => await GetProfileAsync(User.GetId());
     
     [HttpGet("{id:Guid}")]
     public async Task<ActionResult<ProfileOutDTO>> GetProfileAsync([FromRoute] Guid id)
@@ -33,9 +33,17 @@ public class ProfilesController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    public async Task<ActionResult> CreateOrUpdateProfileAsync(ProfileDTO profileDto)
+    public async Task<ActionResult<CreateResponse>> CreateOrUpdateProfileAsync(ProfileDTO profileDto)
     {
-        await profilesService.CreateOrUpdateProfile(User.GetId(), profileDto);
-        return NoContent();
+        var response = await profilesService.CreateOrUpdateProfile(User.GetId(), profileDto);
+        return response.ActionResult;
+    }
+
+    [Authorize]
+    [HttpGet]
+    public ActionResult<ProfilesSearchResponse> SearchProfiles([FromQuery] ProfilesSearchRequest searchReq)
+    {
+        var response = profilesService.Search(searchReq);
+        return response.ActionResult;
     }
 }
