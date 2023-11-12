@@ -3,6 +3,7 @@ using API.Infrastructure;
 using API.Modules.ChatsModule.ApiDTO;
 using API.Modules.ChatsModule.DTO;
 using API.Modules.ChatsModule.Ports;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,10 +15,13 @@ namespace API.Modules.ChatsModule;
 public class ChatsController : ControllerBase
 {
     private readonly IChatsService chatsService;
+    private readonly IMapper mapper;
 
-    public ChatsController(IChatsService chatsService)
+    public ChatsController(IChatsService chatsService,
+        IMapper mapper)
     {
         this.chatsService = chatsService;
+        this.mapper = mapper;
     }
 
     [HttpGet("My")]
@@ -32,7 +36,7 @@ public class ChatsController : ControllerBase
     }
 
     [HttpPost("Messages")]
-    public async Task<ActionResult> SendMessageAsync(SendMessageRequest request)
+    public async Task<ActionResult<MessageInChatDTO>> SendMessageAsync(SendMessageRequest request)
     {
         var senderId = User.GetId();
         var response = await chatsService.SendMessageAsync(
@@ -44,10 +48,6 @@ public class ChatsController : ControllerBase
             return BadRequest(response.Error);
         
         var message = response.Value.message;
-        return Ok(new
-        {
-            ChatId = message.Chat.Id,
-            MessageId = message.Id,
-        });
+        return Ok(mapper.Map<MessageInChatDTO>(message));
     }
 }
