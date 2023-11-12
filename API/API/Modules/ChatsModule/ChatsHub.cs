@@ -26,9 +26,10 @@ public class ChatsHub : Hub, IHub
 
     public async Task Send(SendMessageRequest request)
     {
+        var senderId = Context.User.GetId();
         var response = await chatsService.SendMessageAsync(
             request.RecipientId, 
-            request.SenderId, 
+            senderId, 
             request.Message);
         if (!response.IsSuccess)
         {
@@ -37,7 +38,7 @@ public class ChatsHub : Hub, IHub
         }
 
         var chat = response.Value.chat;
-        var othersInGroup = chat.Profiles.Where(p => p.Id != request.SenderId);
+        var othersInGroup = chat.Profiles.Where(p => p.Id != senderId);
         foreach (var user in othersInGroup)
             await Clients.Group(user.Id.ToString()).SendAsync("Recieve", mapper.Map<MessageInChatDTO>(response.Value.message));
 

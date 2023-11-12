@@ -36,7 +36,8 @@ builder.Services.AddAuthentication(options => {
 builder.Services.AddAuthorization();
 
 // Register DbContext in DI Container
-builder.Services.AddSingleton<Config>(new Config(builder));
+builder.Services.AddSingleton(new Config(builder));
+
 builder.Services.AddDbContext<DataContext>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
