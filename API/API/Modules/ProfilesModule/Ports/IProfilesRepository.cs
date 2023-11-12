@@ -8,4 +8,5 @@ namespace API.Modules.ProfilesModule.Ports;
 public interface IProfilesRepository : ICRURepository<ProfileEntity>
 {
     public SearchResponseBaseDTO<ProfileEntity> Search(ProfilesSearchRequest searchReq);
+    Task<ProfileEntity?> GetByIdAsync(Guid id);
 }
