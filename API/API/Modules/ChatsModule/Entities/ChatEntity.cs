@@ -9,4 +9,6 @@ public class ChatEntity : IEntity
     [Key]
     public Guid Id { get; set; }
     public HashSet<ProfileEntity> Profiles { get; set; }
+    public List<MessageEntity> Messages { get; set; }
+    public string Name { get; set; }
 }
