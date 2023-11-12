@@ -16,6 +16,13 @@ public class ProfilesRepository : CRURepository<ProfileEntity>,
     {
     }
 
+    public Task<ProfileEntity?> GetByIdAsync(Guid id)
+    {
+        return Set
+            .Include(p => p.Account)
+            .FirstOrDefaultAsync(p => p.Id == id);
+    }
+
     public SearchResponseBaseDTO<ProfileEntity> Search(ProfilesSearchRequest searchReq)
     {
         var query = Set
