@@ -33,6 +33,14 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntit
     public async Task<TEntity?> GetByIdAsync(Guid id) 
         => await Set.FindAsync(id);
 
+    public Task<List<TEntity>> GetByIdsAsync(IEnumerable<Guid> ids)
+    {
+        var hashSet = ids.ToHashSet();
+        return Set
+            .Where(p => ids.Contains(p.Id))
+            .ToListAsync();
+    }
+
     public async Task UpdateAsync(TEntity updated)
     {
         var existed = await Set.FindAsync(updated.Id);
