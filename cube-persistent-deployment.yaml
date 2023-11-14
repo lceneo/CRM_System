@@ -35,14 +35,14 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres_db-service
+  name: postgres-db-service
   namespace: application
   labels:
-    app: postgres_db-service
+    app: postgres-db-service
 spec:
   ports:
   - protocol: TCP
     port: 5432
     targetPort: 5432
   selector:
-    app: postgres_db
+    app: postgres-db
