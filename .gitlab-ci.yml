@@ -1,0 +1,46 @@
+k8s_deploy:
+  stage: deploy
+  image: hub.66bit.ru/shared/stk8s:1.26.2
+  script:
+    - kubectl create namespace application
+    #- kubectl delete -f cube-deployment.yaml
+    - kubectl apply -f cube-database.yaml
+    - kubectl apply -f cube-deployment.yaml
+    - kubectl apply -f cube-persistent-deployment.yaml
+    - kubectl apply -f cube-networking.yaml
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+
+k8s_deploy_rebuild_services:
+  stage: deploy
+  image: hub.66bit.ru/shared/stk8s:1.26.2
+  script:
+    - kubectl delete -f cube-deployment.yaml
+    - kubectl delete -f cube-persistent-deployment.yaml
+    - kubectl delete -f cube-networking.yaml
+    - kubectl apply -f cube-deployment.yaml
+    - kubectl apply -f cube-persistent-deployment.yaml
+    - kubectl apply -f cube-networking.yaml
+
+    - kubectl apply -f cube-database.yaml
+
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+
+k8s_deploy_rebuild_full:
+  stage: deploy
+  image: hub.66bit.ru/shared/stk8s:1.26.2
+  script:
+    - kubectl delete -f cube-deployment.yaml
+    - kubectl delete -f cube-persistent-deployment.yaml
+    - kubectl delete -f cube-database.yaml
+    - kubectl delete -f cube-networking.yaml
+    - kubectl apply -f cube-deployment.yaml
+    - kubectl apply -f cube-persistent-deployment.yaml
+    - kubectl apply -f cube-database.yaml
+    - kubectl apply -f cube-networking.yaml
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual

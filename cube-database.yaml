@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres_db
+  namespace: application
+spec:
+  selector:
+    matchLabels:
+      app: postgres_db
+  serviceName: "postgres_db"
+  replicas: 1
+  minReadySeconds: 5
+  template:
+    metadata:
+      labels:
+        app: postgres_db
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: postgres_db
+        image: postgres:15-alpine
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: postgres_db
+          mountPath: /var/lib/postgresql/data
+          # subPath: data
+        env:
+        - name: POSTGRES_USER
+          value: postgres
+        - name: POSTGRES_PASSWORD
+          value: password
+        - name: POSTGRES_DB
+          value: CRM66bit
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+      initContainers:
+      - name: db-rights-to-data
+        image: busybox
+        command: ["sh","-c","mkdir -p /var/lib/postgresql/data/pgdata && chown -R 999:999 /var/lib/postgresql/data/pgdata"]
+        securityContext:
+          runAsUser: 0
+          privileged: true
+        volumeMounts:
+        - name: postgres_db
+          mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres_db
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "rook-ceph-block"
+      resources:
+        requests:
+          storage: 2Gi
