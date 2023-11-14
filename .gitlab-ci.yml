@@ -2,7 +2,6 @@ k8s_deploy:
   stage: deploy
   image: hub.66bit.ru/shared/stk8s:1.26.2
   script:
-    - kubectl create namespace application
     #- kubectl delete -f cube-deployment.yaml
     - kubectl apply -f cube-database.yaml
     - kubectl apply -f cube-deployment.yaml
