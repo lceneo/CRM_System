@@ -19,7 +19,13 @@ COPY default.conf /etc/nginx/conf.d
 
 COPY --from=build /app/dist/chernorusy /usr/share/nginx/html
 
+WORKDIR /start
+
+COPY ./start-app.sh .
+
 EXPOSE 80
+
+CMD [ "sh", "start-app.sh" ]
 
 
 
