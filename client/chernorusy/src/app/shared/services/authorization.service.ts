@@ -1,12 +1,13 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpService} from "./http.service";
-import {BehaviorSubject, catchError, Observable, of, tap} from "rxjs";
+import {BehaviorSubject, catchError, of, tap} from "rxjs";
 import {ILoginResponseDTO} from "../models/DTO/response/LoginResponseDTO";
 import {ILoginRequestDTO} from "../models/DTO/request/LoginRequestDTO";
 import {IRegistrationRequestDTO} from "../models/DTO/request/RegistrationRequestDTO";
 import {ICreatePasswordRequestDTO} from "../models/DTO/request/CreatePasswordRequestDTO";
 import {IChangePasswordRequestDTO} from "../models/DTO/request/ChangePasswordRequstDTO";
 import {IRecoverPasswordRequestDTO} from "../models/DTO/request/RecoverPasswordRequestDTO";
+import {AccountRole} from "../models/enums/AccountRole";
 
 @Injectable({
   providedIn: 'root'
@@ -22,12 +23,19 @@ export class AuthorizationService {
 
   public isAdmin$ = this._isAdmin$.asObservable();
   public authorizationStatus = this._authorizationStatus.asObservable();
+
+  public initialAuthentication(success: boolean, role?: AccountRole) {
+    this._authorizationStatus.next(success);
+    if (role === undefined) { this._isAdmin$.next(false); }
+    else { this._isAdmin$.next(role === AccountRole.Admin)}
+  }
+
   public login$(credentials: ILoginRequestDTO) {
     return this.httpS.post<ILoginResponseDTO>('/Accounts/Login', credentials)
       .pipe(
         tap(roleObj => {
           this._authorizationStatus.next(true);
-          this._isAdmin$.next(roleObj.role === 0);
+          this._isAdmin$.next(roleObj.role === AccountRole.Admin);
         }),
         catchError(err => of(false))
       );
@@ -48,8 +56,9 @@ export class AuthorizationService {
       );
   }
 
-  public registrate$(credentials: IRegistrationRequestDTO) {
-    return this.httpS.post('/Accounts/Register', credentials);
+  public registrate$(credentials: IRegistrationRequestDTO, mode: 'admin' | 'user') {
+    return mode === 'admin' ? this.httpS.post('/Accounts/Register/Admin', credentials)
+      : this.httpS.post('/Accounts/Register', credentials);
   }
 
   public createPassword(id: string, password: ICreatePasswordRequestDTO) {

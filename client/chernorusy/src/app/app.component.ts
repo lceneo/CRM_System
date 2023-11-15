@@ -1,7 +1,9 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {HttpService} from "./shared/services/http.service";
 import {AuthorizationService} from "./shared/services/authorization.service";
 import {Router} from "@angular/router";
+import {ProfileService} from "./shared/services/profile.service";
+import {SocketService} from "./shared/services/socket.service";
 
 @Component({
   selector: 'app-root',
@@ -9,9 +11,11 @@ import {Router} from "@angular/router";
   styleUrls: ['./app.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
   constructor(
     private authorizationS: AuthorizationService,
+    private profileS: ProfileService,
+    private socketS: SocketService,
     private router: Router
   ) {}
 
@@ -20,5 +24,9 @@ export class AppComponent {
   signOut() {
     this.authorizationS.logout$()
       .subscribe(() => this.router.navigate(['authentication']));
+  }
+
+  ngOnInit(): void {
+    this.profileS.determineInitialState();
   }
 }

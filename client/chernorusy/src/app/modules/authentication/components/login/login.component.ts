@@ -4,6 +4,8 @@ import {AuthorizationService} from "../../../../shared/services/authorization.se
 import {Router} from "@angular/router";
 import {ILoginRequestDTO} from "../../../../shared/models/DTO/request/LoginRequestDTO";
 import {IRecoverPasswordRequestDTO} from "../../../../shared/models/DTO/request/RecoverPasswordRequestDTO";
+import {ProfileService} from "../../../../shared/services/profile.service";
+import {tap} from "rxjs";
 
 @Component({
   selector: 'app-login',
@@ -15,10 +17,12 @@ export class LoginComponent {
 
   constructor(
     private authorizationS: AuthorizationService,
+    private profileS: ProfileService,
     private router: Router
   ) {}
 
-  protected mode: 'login' | 'recover' = 'login';
+  protected passwordMode: 'login' | 'recover' = 'login';
+  protected authMode: 'login' | 'registration' = 'login';
 
   protected form = new FormGroup({
     login: new FormControl<string>(''),
@@ -26,8 +30,13 @@ export class LoginComponent {
   });
 
   protected submitForm() {
-    if (this.mode === 'login') {
+    if (this.passwordMode === 'login') {
     this.authorizationS.login$(this.form.value as ILoginRequestDTO)
+        .pipe(
+            tap((loginResult) => {
+              if (loginResult) { this.profileS.updateProfile();}
+            })
+        )
       .subscribe(loginResult => {
         if (loginResult) { this.router.navigate(['main']); }
       });
@@ -36,13 +45,17 @@ export class LoginComponent {
     }
   }
 
-  protected changeMode() {
-    if (this.mode === 'login') {
-      this.mode = 'recover';
+  protected changePasswordMode() {
+    if (this.passwordMode === 'login') {
+      this.passwordMode = 'recover';
       this.form.controls.password.disable();
     } else {
-      this.mode = 'login';
+      this.passwordMode = 'login';
       this.form.controls.password.enable();
     }
+  }
+
+  protected changeAuthMode() {
+    this.authMode = this.authMode === 'login' ? 'registration' : 'login';
   }
 }
