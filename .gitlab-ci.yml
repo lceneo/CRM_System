@@ -43,3 +43,15 @@ k8s_deploy_rebuild_full:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
+
+k8s_fullInfo:
+  stage: deploy
+  image: hub.66bit.ru/shared/stk8s:1.26.2
+  script:
+    - kubectl describe pods -n cal-core
+    - kubectl describe deployments -n cal-core
+    - kubectl describe services -n cal-core
+    - kubectl describe ingress -n cal-core
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
