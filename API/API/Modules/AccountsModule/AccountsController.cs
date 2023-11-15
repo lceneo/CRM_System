@@ -92,7 +92,12 @@ public class AccountsController : ControllerBase
         ChangePasswordUnauthorizedRequest changePasswordUnauthorizedReq)
     {
         var response = await accountsService.ChangePasswordUnauthorizedAsync(userId, changePasswordUnauthorizedReq);
+        if (!response.IsSuccess)
+            return response.ActionResult;
+        
+        var principal = new ClaimsPrincipal(response.Value.Credentials);
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-        return response.ActionResult;
+        return NoContent();
     }
 }
