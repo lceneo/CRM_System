@@ -24,7 +24,7 @@ spec:
             - containerPort: 80
           env:
           - name: ASPNETCORE_ENVIRONMENT
-            value: Release
+            value: Debug
           - name: HOST
             value: "request.stk8s.66bit.ru"
           - name: DATABASE_CONNECTION
