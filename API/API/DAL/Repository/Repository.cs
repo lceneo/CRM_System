@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace API.DAL;
+namespace API.DAL.Repository;
 
 public abstract class Repository<TEntity>
     where TEntity : class
