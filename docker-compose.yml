@@ -33,18 +33,18 @@ services:
     networks:
       - ${NETWORK}
 
-  front:
-    image: ${FRONT_IMAGE}
-    ports:
-      - "80:80"
-    expose:
-      - 80
-    environment:
-      API_URL: ${API_URL}
-      API_PROTOCOL: ${API_PROTOCOL}
-      API_HUB_URL: ${API_HUB_URL}
-    networks:
-      - ${NETWORK}
+#  front:
+#    image: ${FRONT_IMAGE}
+#    ports:
+#      - "80:80"
+#    expose:
+#      - 80
+#    environment:
+#      API_URL: ${API_URL}
+#      API_PROTOCOL: ${API_PROTOCOL}
+#      API_HUB_URL: ${API_HUB_URL}
+#    networks:
+#      - ${NETWORK}
   
   
 volumes:
