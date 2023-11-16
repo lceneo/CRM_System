@@ -52,15 +52,8 @@ public class AccountsService : IAccountsService
         var isPasswordValid = passwordHasher.IsPasswordEqualHashed(cur.PasswordHash, loginRequest.Password);
         if (!isPasswordValid)
             return Result.BadRequest<ClaimsResponse>("Неправильный пароль.");
-
-        var claims = new List<Claim>
-        {
-            new Claim(ClaimTypes.NameIdentifier, cur.Id.ToString()),
-            new Claim(ClaimTypes.Role, cur.Role.ToString()),
-        };
-        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         
-        return Result.Ok(new ClaimsResponse(claimsIdentity, cur.Role));
+        return Result.Ok(GetClaims(cur));
     }
 
     public async Task<Result<bool>> ChangePasswordAsync(Guid userId, ChangePasswordRequest changePasswordRequest)
@@ -83,18 +76,31 @@ public class AccountsService : IAccountsService
         await mailMessagesService.SendPasswordRecovery(login);
     }
 
-    public async Task<Result<bool>> ChangePasswordUnauthorizedAsync(Guid userId, 
+    public async Task<Result<ClaimsResponse>> ChangePasswordUnauthorizedAsync(Guid userId, 
         ChangePasswordUnauthorizedRequest changePasswordUnauthorizedRequest)
     {
         var cur = await accountRepository.GetByIdAsync(userId);
         if (cur == null)
-            return Result.NotFound<bool>("Такого пользователя нет.");
+            return Result.NotFound<ClaimsResponse>("Такого пользователя нет.");
 
         if (cur.PasswordHash != null)
-            return Result.BadRequest<bool>("У пользователя уже есть пароль.");
+            return Result.BadRequest<ClaimsResponse>("У пользователя уже есть пароль.");
 
         cur.PasswordHash = passwordHasher.CalculateHash(changePasswordUnauthorizedRequest.Password);
         await accountRepository.UpdateAsync(cur);
-        return Result.NoContent<bool>();
+        
+        return Result.Ok<ClaimsResponse>(GetClaims(cur));
+    }
+
+    private ClaimsResponse GetClaims(AccountEntity account)
+    {
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, account.Id.ToString()),
+            new Claim(ClaimTypes.Role, account.Role.ToString()),
+        };
+        var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+        return new ClaimsResponse(claimsIdentity, account.Role);
     }
 }
