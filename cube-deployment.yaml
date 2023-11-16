@@ -28,7 +28,7 @@ spec:
           - name: HOST
             value: "request.stk8s.66bit.ru"
           - name: DATABASE_CONNECTION
-            value: "host=postgres-db;port=5432;database=CRM66bit;username=postgres;password=password"
+            value: "host=postgres-db-service;port=5432;database=CRM66bit;username=postgres;password=password"
           - name: MAILBOX_LOGIN
             value: "chernorusy@mail.ru"
           - name: MAILBOX_PASSWORD
