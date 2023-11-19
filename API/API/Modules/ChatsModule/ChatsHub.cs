@@ -5,11 +5,13 @@ using API.Modules.ChatsModule.DTO;
 using API.Modules.ChatsModule.Ports;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.Modules.ChatsModule;
 
 [Authorize]
+[EnableCors("ChatPolicy")]
 public class ChatsHub : Hub, IHub
 {
     public static string Route => "/Chats/Hub";

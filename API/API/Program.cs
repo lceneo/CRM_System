@@ -54,6 +54,16 @@ builder.Services.AddSignalR(hubOptions =>
     hubOptions.KeepAliveInterval = TimeSpan.FromMinutes(1);
 });
 
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("ChatPolicy", policy =>
+    {
+        policy.AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowAnyOrigin();
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -62,6 +72,8 @@ var app = builder.Build();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors();
 
 app.UseHttpsRedirection();
 app.UseWebSockets();
