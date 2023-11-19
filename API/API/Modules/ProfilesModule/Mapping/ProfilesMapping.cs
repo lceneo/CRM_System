@@ -10,6 +10,7 @@ public class ProfilesMapping : Profile
     {
         CreateMap<ProfileEntity, ProfileOutDTO>()
             .ForMember(dest => dest.Role, opt => opt.MapFrom(src => src.Account.Role));
+        CreateMap<ProfileEntity, ProfileOutShortDTO>();
 
         CreateMap<ProfileDTO, ProfileEntity>();
     }
