@@ -89,7 +89,7 @@ public class AccountsService : IAccountsService
         cur.PasswordHash = passwordHasher.CalculateHash(changePasswordUnauthorizedRequest.Password);
         await accountRepository.UpdateAsync(cur);
         
-        return Result.Ok<ClaimsResponse>(GetClaims(cur));
+        return Result.Ok(GetClaims(cur));
     }
 
     private ClaimsResponse GetClaims(AccountEntity account)
@@ -101,6 +101,6 @@ public class AccountsService : IAccountsService
         };
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-        return new ClaimsResponse(claimsIdentity, account.Role);
+        return new ClaimsResponse(claimsIdentity, account.Id, account.Role);
     }
 }
