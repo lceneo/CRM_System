@@ -3,14 +3,16 @@ using API.Modules.AccountsModule.Entities;
 
 namespace API.Modules.AccountsModule.Models;
 
-public struct ClaimsResponse
+public class ClaimsResponse
 {
     public ClaimsIdentity Credentials;
+    public Guid Id;
     public AccountRole Role;
 
-    public ClaimsResponse(ClaimsIdentity credentials, AccountRole role)
+    public ClaimsResponse(ClaimsIdentity credentials, Guid id, AccountRole role)
     {
         Credentials = credentials;
+        Id = id;
         Role = role;
     }
 }
