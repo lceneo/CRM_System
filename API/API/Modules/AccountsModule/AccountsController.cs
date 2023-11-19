@@ -48,7 +48,7 @@ public class AccountsController : ControllerBase
     }
 
     [HttpPost("Login")]
-    public async Task<ActionResult> LoginAsync([FromBody] LoginRequest loginRequest)
+    public async Task<ActionResult<AccountsResponse>> LoginAsync([FromBody] LoginRequest loginRequest)
     {
         var response = await accountsService.LoginAsync(loginRequest);
         if (!response.IsSuccess)
@@ -88,7 +88,7 @@ public class AccountsController : ControllerBase
     }
 
     [HttpPost("Password/{userId:Guid}")]
-    public async Task<ActionResult> ChangePasswordUnauthorizedAsync([FromRoute] Guid userId,
+    public async Task<ActionResult<AccountsResponse>> ChangePasswordUnauthorizedAsync([FromRoute] Guid userId,
         ChangePasswordUnauthorizedRequest changePasswordUnauthorizedReq)
     {
         var response = await accountsService.ChangePasswordUnauthorizedAsync(userId, changePasswordUnauthorizedReq);
@@ -98,6 +98,7 @@ public class AccountsController : ControllerBase
         var principal = new ClaimsPrincipal(response.Value.Credentials);
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-        return NoContent();
+        response.Specificate((claimsResp) => mapper.Map<AccountsResponse>(claimsResp));
+        return response.ActionResult;
     }
 }
