@@ -7,7 +7,8 @@ const routes: Routes = [
   { path: 'authentication', loadChildren: () => import('./modules/authentication/authentication.module').then(f => f.AuthenticationModule)},
   { path: 'main', loadChildren: () => import('./modules/chat/chat.module').then(f => f.ChatModule),
     canActivate:  [authorizationGuard] },
-  { path: 'profile', loadChildren: () => import('./modules/profile/profile.module').then(f => f.ProfileModule), canActivate: [authorizationGuard]}
+  { path: 'profile', loadChildren: () => import('./modules/profile/profile.module').then(f => f.ProfileModule)},
+  { path: '**', loadComponent: () => import('./shared/components/not-found/not-found.component').then(f => f.NotFoundComponent) }
 ];
 
 @NgModule({

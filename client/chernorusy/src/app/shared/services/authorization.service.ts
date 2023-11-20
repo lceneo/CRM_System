@@ -8,6 +8,7 @@ import {ICreatePasswordRequestDTO} from "../models/DTO/request/CreatePasswordReq
 import {IChangePasswordRequestDTO} from "../models/DTO/request/ChangePasswordRequstDTO";
 import {IRecoverPasswordRequestDTO} from "../models/DTO/request/RecoverPasswordRequestDTO";
 import {AccountRole} from "../models/enums/AccountRole";
+import {SocketService} from "./socket.service";
 
 @Injectable({
   providedIn: 'root'
@@ -15,33 +16,53 @@ import {AccountRole} from "../models/enums/AccountRole";
 export class AuthorizationService {
 
   constructor(
-    private httpS: HttpService
-  ) { }
+    private httpS: HttpService,
+    private socketS: SocketService
+  ) { this._userID = localStorage.getItem('userID') ?? undefined }
 
   private _isAdmin$= new BehaviorSubject<boolean | null>(null);
   private _authorizationStatus = new BehaviorSubject<boolean | null>(null);
 
   public isAdmin$ = this._isAdmin$.asObservable();
   public authorizationStatus = this._authorizationStatus.asObservable();
+  private _userID?: string;
 
-  public initialAuthentication(success: boolean, role?: AccountRole) {
-    this._authorizationStatus.next(success);
-    if (role === undefined) { this._isAdmin$.next(false); }
-    else { this._isAdmin$.next(role === AccountRole.Admin)}
+
+  get userID(): string | undefined {
+    return this._userID;
+  }
+
+  set userID(value: string | undefined) {
+    this._userID = value;
+    if (value) { localStorage.setItem('userID', value); }
+  }
+
+  public initialAuthentication(success: boolean, userData?: ILoginResponseDTO) {
+    if (success) {
+      this._authorizationStatus.next(true);
+      this._isAdmin$.next(userData ? userData.role === AccountRole.Admin : false);
+      if (!this.socketS.isConnected()) { this.socketS.init(); }
+    } else {
+      this._authorizationStatus.next(false);
+      this._isAdmin$.next(false);
+    }
   }
 
   public login$(credentials: ILoginRequestDTO) {
     return this.httpS.post<ILoginResponseDTO>('/Accounts/Login', credentials)
       .pipe(
-        tap(roleObj => {
+        tap(loginResponse => {
           this._authorizationStatus.next(true);
-          this._isAdmin$.next(roleObj.role === AccountRole.Admin);
+          this._isAdmin$.next(loginResponse.role === AccountRole.Admin);
+          this.userID = loginResponse.id;
+          if (!this.socketS.isConnected()) { this.socketS.init(); }
         }),
         catchError(err => of(false))
       );
   }
 
   public logout$(fromResponse: boolean = false) {
+    this.socketS.stopConnection();
     if (fromResponse) {
       this._authorizationStatus.next(false);
       this._isAdmin$.next(false);
@@ -52,6 +73,8 @@ export class AuthorizationService {
         tap(roleObj => {
           this._authorizationStatus.next(false);
           this._isAdmin$.next(false);
+          this.userID = undefined;
+          localStorage.removeItem('userID')
         })
       );
   }
@@ -62,7 +85,14 @@ export class AuthorizationService {
   }
 
   public createPassword(id: string, password: ICreatePasswordRequestDTO) {
-    return this.httpS.post(`/Accounts/Password/${id}`, password);
+    return this.httpS.post<ILoginResponseDTO>(`/Accounts/Password/${id}`, password)
+      .pipe(
+        tap((loginResponse) => {
+          this._authorizationStatus.next(true);
+          this._isAdmin$.next(loginResponse?.role === AccountRole.Admin);
+          this.userID = loginResponse.id;
+        })
+      )
   }
 
   public changePassword(password: IChangePasswordRequestDTO) {

@@ -17,11 +17,22 @@ export class AppComponent implements OnInit{
     private profileS: ProfileService,
     private socketS: SocketService,
     private router: Router
-  ) {}
+  ) {
+    // const ws = new WebSocket('ws://localhost:4200/Chats/Hub');
+    // setTimeout(() => {
+    //   ws.send('test')
+    // }, 5000)
+
+
+    this.socketS.init();
+  }
 
   protected isAdmin$ = this.authorizationS.isAdmin$;
   protected isAuthorized$ = this.authorizationS.authorizationStatus;
+
+  protected profile = this.profileS.profile;
   signOut() {
+    this.profileS.signOut();
     this.authorizationS.logout$()
       .subscribe(() => this.router.navigate(['authentication']));
   }

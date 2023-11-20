@@ -1,7 +1,7 @@
 
-<section>
+<section *ngLet="profile$ | async as profile">
   <button
-    *ngIf="mode !== 'create'"
+    *ngIf="mode !== 'create' && profile?.id === myProfile()?.id"
     id="button-basic" type="button" class="btn editProfile" (click) = "changeMode()">
     <i class="bi bi-pencil-square icon"></i>
   </button>
@@ -47,6 +47,10 @@
       ></textarea>
     </div>
 
-    <button class="btn btn-primary enterBtn">Создать профиль</button>
+    <button
+      *ngIf="mode === 'change' || mode === 'create'"
+      class="btn btn-primary enterBtn">
+      {{ mode === 'change' ? 'Сохранить изменения' : 'Создать профиль'}}
+    </button>
   </form>
 </section>

@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {RouterModule, Routes} from "@angular/router";
 import {LoginComponent} from "./components/login/login.component";
-import {ChangePasswordComponent} from "./components/recover-password/change-password.component";
+import {ChangePasswordComponent} from "./components/change-password/change-password.component";
 import {RegistrationComponent} from "./components/registration/registration.component";
 import {authorizationGuard} from "../../guards/authorizationGuard";
 import {ReactiveFormsModule} from "@angular/forms";

@@ -34,7 +34,7 @@ export class LoginComponent {
     this.authorizationS.login$(this.form.value as ILoginRequestDTO)
         .pipe(
             tap((loginResult) => {
-              if (loginResult) { this.profileS.updateProfile();}
+              if (loginResult) { this.profileS.updateProfileByHTTP().subscribe();}
             })
         )
       .subscribe(loginResult => {

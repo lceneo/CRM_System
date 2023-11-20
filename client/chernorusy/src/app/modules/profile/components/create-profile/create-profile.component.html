@@ -5,14 +5,14 @@
          [disabled] = "passwordSet"
          >
       <app-set-password
-        [userID]="userID"
+        [userID]="userID!"
         [mode]="'create'"
         (passwordSet$) = "passwordSet = true; tabProfile.disabled = false; tabProfile.active = true"
       ></app-set-password>
     </tab>
     <tab heading="Информация о пользователе" #tabProfile="tab"
          [disabled] = "!passwordSet">
-      <app-manage-profile [mode]="'create'"></app-manage-profile>>
+      <app-manage-profile [mode]="'create'"></app-manage-profile>
     </tab>
   </tabset>
 </ng-container>

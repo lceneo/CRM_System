@@ -19,7 +19,7 @@
     class="btn-group profileBtn" dropdown>
     <button id="button-basic" dropdownToggle type="button" class="btn dropdown-toggle"
             aria-controls="dropdown-basic">
-      <i class="bi bi-person-fill icon"></i>
+      {{profile()?.name}}  <i class="bi bi-person-fill icon"></i>
       <span class="caret"></span>
     </button>
     <ul id="dropdown-split" *dropdownMenu class="dropdown-menu dropdown-menu-right dropdown"

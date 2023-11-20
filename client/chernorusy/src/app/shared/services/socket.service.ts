@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import {HubConnection, HubConnectionBuilder} from "@microsoft/signalr";
+import {Injectable} from '@angular/core';
+import {HubConnection, HubConnectionBuilder, HubConnectionState} from "@microsoft/signalr";
 import {config} from "../../../main";
 
 @Injectable({
@@ -11,7 +11,9 @@ export class SocketService {
   private url = config.apiUrl;
   private hubUrl = config.hubUrl;
   private protocol = config.protocol;
-  constructor() {
+  constructor() {}
+
+  public init() {
     this.establishConnection();
   }
 
@@ -23,5 +25,13 @@ export class SocketService {
     this.hubConnection.start()
         .then(() => console.log('Соединение по сокету установлено'))
         .catch(() => console.error('Не удалось установить соединение по сокету'));
+  }
+
+  public stopConnection() {
+    this.hubConnection?.stop();
+  }
+
+  public isConnected() {
+    return this.hubConnection && (this.hubConnection.state === HubConnectionState.Connected || this.hubConnection.state === HubConnectionState.Connecting);
   }
 }
