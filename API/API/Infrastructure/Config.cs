@@ -2,14 +2,12 @@
 
 public class Config
 {
-    public string Host { get; }
-    public string MailBoxLogin { get; }
-    public string MailBoxPassword { get; }
-
-    public Config(WebApplicationBuilder builder)
-    {
-        Host = Environment.GetEnvironmentVariable("HOST");
-        MailBoxLogin = Environment.GetEnvironmentVariable("MAILBOX_LOGIN");
-        MailBoxPassword = Environment.GetEnvironmentVariable("MAILBOX_PASSWORD");
-    }
+<<<<<<< HEAD
+    public static string MailBoxLogin = Environment.GetEnvironmentVariable("MAILBOX_LOGIN");
+    public static string MailBoxPassword = Environment.GetEnvironmentVariable("MAILBOX_PASSWORD");
+    public static string Host = Environment.GetEnvironmentVariable("HOST");
+    public static string JwtSecurityKey = "Token with 16 ch";
+=======
+    
+>>>>>>> development
 }

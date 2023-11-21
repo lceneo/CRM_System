@@ -2,6 +2,7 @@
 using API.Extensions;
 using API.Infrastructure;
 using API.Modules.AccountsModule.DTO;
+using API.Modules.AccountsModule.Entities;
 using API.Modules.AccountsModule.Models;
 using API.Modules.AccountsModule.Ports;
 using API.Modules.MailsModule.Adapters;
@@ -37,7 +38,7 @@ public class AccountsController : ControllerBase
         return response.ActionResult;
     }
     
-    [Authorize]
+    [Authorize(Roles = nameof(AccountRole.Admin))]
     [HttpPost("Register/Admin")]
     public async Task<ActionResult<AccountsResponse>> RegisterAsync([FromBody] RegisterByAdminRequest regByAdminRequest)
     {

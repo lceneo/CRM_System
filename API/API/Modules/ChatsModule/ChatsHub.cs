@@ -4,17 +4,18 @@ using API.Modules.ChatsModule.ApiDTO;
 using API.Modules.ChatsModule.DTO;
 using API.Modules.ChatsModule.Ports;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.Modules.ChatsModule;
 
-[Authorize]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
 [EnableCors("ChatPolicy")]
 public class ChatsHub : Hub, IHub
 {
-    public static string Route => "/Chats/Hub";
+    public static string Route => "/Hub/Chats";
     
     private readonly IChatsService chatsService;
     private readonly IMapper mapper;

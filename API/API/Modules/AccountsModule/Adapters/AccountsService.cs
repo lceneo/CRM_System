@@ -1,4 +1,4 @@
-﻿using System.Net;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using API.Infrastructure;
 using API.Modules.AccountsModule.DTO;
@@ -7,6 +7,7 @@ using API.Modules.AccountsModule.Ports;
 using API.Modules.MailsModule.Ports;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API.Modules.AccountsModule.Adapters;
 
@@ -17,7 +18,8 @@ public class AccountsService : IAccountsService
     private readonly IPasswordHasher passwordHasher;
     private readonly IMailMessagesService mailMessagesService;
 
-    public AccountsService(IMapper mapper,
+    public AccountsService(
+        IMapper mapper,
         IAccountsRepository accountsRepository,
         IPasswordHasher passwordHasher,
         IMailMessagesService mailMessagesService)
@@ -101,6 +103,23 @@ public class AccountsService : IAccountsService
         };
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-        return new ClaimsResponse(claimsIdentity, account.Id, account.Role);
+        return new ClaimsResponse(claimsIdentity, account.Id, account.Role, CreateToken(claims));
+    }
+    
+    public string CreateToken(List<Claim> claims)
+    {
+        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
+            Config.JwtSecurityKey));
+
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
+
+        var token = new JwtSecurityToken(
+            claims: claims,
+            expires: DateTime.Now.AddDays(1),
+            signingCredentials: creds);
+
+        var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+        return jwt;
     }
 }

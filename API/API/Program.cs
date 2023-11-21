@@ -1,6 +1,5 @@
 using API.DAL;
 using API.Infrastructure;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,32 +11,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Add Cookie Auth.
-builder.Services.AddAuthentication(options => {
-        options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;})
-    .AddCookie(opt =>
-    {
-        opt.Events = new CookieAuthenticationEvents()
-        {
-            OnRedirectToLogin = (context) =>
-            {
-                context.Response.StatusCode = 401;
-                return Task.CompletedTask;
-            },
-            OnRedirectToAccessDenied = (context) =>
-            {
-                context.Response.StatusCode = 403;
-                return Task.CompletedTask;
-            },
-        };
-        opt.LoginPath = "/api/Accounts/Login";
-    });
-builder.Services.AddAuthorization();
+StartupBuilder.ConfigureAuthorization(builder.Services, builder.Configuration);
 
 // Register DbContext in DI Container
-builder.Services.AddSingleton(new Config(builder));
-
 builder.Services.AddDbContext<DataContext>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -73,7 +49,7 @@ var app = builder.Build();
     app.UseSwaggerUI();
 }
 
-app.UseCors();
+app.UseCors(opt => opt.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
 app.UseHttpsRedirection();
 app.UseWebSockets();
