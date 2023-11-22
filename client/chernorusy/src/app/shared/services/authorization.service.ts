@@ -1,12 +1,14 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpService} from "./http.service";
-import {BehaviorSubject, catchError, Observable, of, tap} from "rxjs";
+import {BehaviorSubject, catchError, of, tap} from "rxjs";
 import {ILoginResponseDTO} from "../models/DTO/response/LoginResponseDTO";
 import {ILoginRequestDTO} from "../models/DTO/request/LoginRequestDTO";
 import {IRegistrationRequestDTO} from "../models/DTO/request/RegistrationRequestDTO";
 import {ICreatePasswordRequestDTO} from "../models/DTO/request/CreatePasswordRequestDTO";
 import {IChangePasswordRequestDTO} from "../models/DTO/request/ChangePasswordRequstDTO";
 import {IRecoverPasswordRequestDTO} from "../models/DTO/request/RecoverPasswordRequestDTO";
+import {AccountRole} from "../models/enums/AccountRole";
+import {SocketService} from "./socket.service";
 
 @Injectable({
   providedIn: 'root'
@@ -14,26 +16,53 @@ import {IRecoverPasswordRequestDTO} from "../models/DTO/request/RecoverPasswordR
 export class AuthorizationService {
 
   constructor(
-    private httpS: HttpService
-  ) { }
+    private httpS: HttpService,
+    private socketS: SocketService
+  ) { this._userID = localStorage.getItem('userID') ?? undefined }
 
   private _isAdmin$= new BehaviorSubject<boolean | null>(null);
   private _authorizationStatus = new BehaviorSubject<boolean | null>(null);
 
   public isAdmin$ = this._isAdmin$.asObservable();
   public authorizationStatus = this._authorizationStatus.asObservable();
+  private _userID?: string;
+
+
+  get userID(): string | undefined {
+    return this._userID;
+  }
+
+  set userID(value: string | undefined) {
+    this._userID = value;
+    if (value) { localStorage.setItem('userID', value); }
+  }
+
+  public initialAuthentication(success: boolean, userData?: ILoginResponseDTO) {
+    if (success) {
+      this._authorizationStatus.next(true);
+      this._isAdmin$.next(userData ? userData.role === AccountRole.Admin : false);
+      if (!this.socketS.isConnected()) { this.socketS.init(); }
+    } else {
+      this._authorizationStatus.next(false);
+      this._isAdmin$.next(false);
+    }
+  }
+
   public login$(credentials: ILoginRequestDTO) {
     return this.httpS.post<ILoginResponseDTO>('/Accounts/Login', credentials)
       .pipe(
-        tap(roleObj => {
+        tap(loginResponse => {
           this._authorizationStatus.next(true);
-          this._isAdmin$.next(roleObj.role === 0);
+          this._isAdmin$.next(loginResponse.role === AccountRole.Admin);
+          this.userID = loginResponse.id;
+          if (!this.socketS.isConnected()) { this.socketS.init(); }
         }),
         catchError(err => of(false))
       );
   }
 
   public logout$(fromResponse: boolean = false) {
+    this.socketS.stopConnection();
     if (fromResponse) {
       this._authorizationStatus.next(false);
       this._isAdmin$.next(false);
@@ -44,16 +73,27 @@ export class AuthorizationService {
         tap(roleObj => {
           this._authorizationStatus.next(false);
           this._isAdmin$.next(false);
+          this.userID = undefined;
+          localStorage.removeItem('userID')
         })
       );
   }
 
-  public registrate$(credentials: IRegistrationRequestDTO) {
-    return this.httpS.post('/Accounts/Register', credentials);
+  public registrate$(credentials: IRegistrationRequestDTO, mode: 'admin' | 'user') {
+    return mode === 'admin' ? this.httpS.post('/Accounts/Register/Admin', credentials)
+      : this.httpS.post('/Accounts/Register', credentials);
   }
 
   public createPassword(id: string, password: ICreatePasswordRequestDTO) {
-    return this.httpS.post(`/Accounts/Password/${id}`, password);
+    return this.httpS.post<ILoginResponseDTO>(`/Accounts/Password/${id}`, password)
+      .pipe(
+        tap((loginResponse) => {
+          this._authorizationStatus.next(true);
+          this._isAdmin$.next(loginResponse?.role === AccountRole.Admin);
+          this.userID = loginResponse.id;
+          if (!this.socketS.isConnected()) { this.socketS.init(); }
+        })
+      )
   }
 
   public changePassword(password: IChangePasswordRequestDTO) {

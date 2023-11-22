@@ -4,5 +4,8 @@
   row-gap: 10px;
   .link {
     align-self: center;
+    &:hover{
+      cursor: pointer;
+    }
   }
 }

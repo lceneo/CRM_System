@@ -22,7 +22,7 @@ export class CheckResponseStatusInterceptor implements HttpInterceptor {
           if (err.status === 401) { // если ошибка авторизации, то разлогиниваемся
             this.authorizationS.logout$(true);
           }
-          return throwError(() => Error('Ошибка авторизации'))
+          return throwError(() => err)
         })
       )
   }

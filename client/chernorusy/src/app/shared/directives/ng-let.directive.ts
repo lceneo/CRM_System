@@ -4,7 +4,7 @@ import {Directive, Input, TemplateRef, ViewContainerRef} from '@angular/core';
   selector: '[ngLet]',
   standalone: true
 })
-export class NgLetDirective {
+export class NgLetDirective<T> {
 
   constructor(
     private templateRef: TemplateRef<any>,
@@ -15,7 +15,7 @@ export class NgLetDirective {
   private rerender = false;
 
   @Input()
-  set ngLet(context: unknown) {
+  set ngLet(context: T) {
     this.context.$implicit = this.context.ngLet = context;
     if (!this.hasNgLet || this.rerender) {
       this.vcRef.clear();
@@ -29,12 +29,18 @@ export class NgLetDirective {
     this.rerender = !!rerender;
   }
 
-  private context: {
-    $implicit: unknown;
-    ngLet: unknown;
-  } = {
+  private context: NgLetContext<T> = {
+    // @ts-expect-error
     $implicit: null,
+    // @ts-expect-error
     ngLet: null,
   };
+  static ngTemplateContextGuard<T>(dir: NgLetDirective<T>, ctx: unknown): ctx is NgLetContext<T> { return true; };
+}
 
+class NgLetContext<T = unknown> {
+  // @ts-expect-error
+  $implicit: T = null;
+  // @ts-expect-error
+  ngLet: T = null;
 }

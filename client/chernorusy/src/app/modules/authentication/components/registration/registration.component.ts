@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {FormControl, FormGroup} from "@angular/forms";
 import {ILoginRequestDTO} from "../../../../shared/models/DTO/request/LoginRequestDTO";
 import {AccountRole} from "../../../../shared/models/enums/AccountRole";
@@ -13,6 +13,8 @@ import {IRegistrationRequestDTO} from "../../../../shared/models/DTO/request/Reg
 })
 export class RegistrationComponent {
 
+  @Input() mode: 'admin' | 'user' = 'admin';
+
   protected form = new FormGroup({
     login: new FormControl<string>(''),
     email: new FormControl<string>(''),
@@ -26,8 +28,9 @@ export class RegistrationComponent {
 
   submitForm() {
     //@ts-ignore
-    this.authorizationS.registrate$({...this.form.value, role: +this.form.value.role} as IRegistrationRequestDTO)
-      .subscribe();
+    const credentials: IRegistrationRequestDTO = {...this.form.value, role: +this.form.value.role};
+    if (this.mode === 'user') { delete credentials.role; }
+    this.authorizationS.registrate$(credentials, this.mode).subscribe();
   }
 
   protected readonly AccountRole = AccountRole;
