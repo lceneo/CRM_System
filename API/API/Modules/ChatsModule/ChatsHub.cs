@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.SignalR;
 namespace API.Modules.ChatsModule;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-[EnableCors(Config.HubsPolicyName)]
 public class ChatsHub : Hub, IHub
 {
     public static string Route => "/Hubs/Chats";
@@ -55,6 +54,6 @@ public class ChatsHub : Hub, IHub
     public override Task OnConnectedAsync()
     {
         Groups.AddToGroupAsync(Context.ConnectionId, Context.User.GetId().ToString());
-        return base.OnConnectedAsync();
+         return base.OnConnectedAsync();
     }
 }

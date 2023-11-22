@@ -1,12 +1,6 @@
 {
   "/api/": {
-    "target": "http://localhost:80",
+    "target": "https://localhost:7156",
     "secure": false
-  },
-  "/Chats/": {
-    "target": "http://localhost:80",
-    "secure": false
-  },
-  "logLevel": "debug",
-  "ws": true
+  }
 }
