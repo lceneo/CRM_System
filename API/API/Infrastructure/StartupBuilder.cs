@@ -35,8 +35,7 @@ public static class StartupBuilder
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
-                        .GetBytes(configurationManager.GetSection("AppSettings:Token").Value)),
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Config.JwtSecurityKey)),
                     ValidateIssuer = false,
                     ValidateAudience = false,
                     RequireExpirationTime = true,

@@ -12,10 +12,10 @@ using Microsoft.AspNetCore.SignalR;
 namespace API.Modules.ChatsModule;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-[EnableCors("ChatPolicy")]
+[EnableCors(Config.HubsPolicyName)]
 public class ChatsHub : Hub, IHub
 {
-    public static string Route => "/Hub/Chats";
+    public static string Route => "/Hubs/Chats";
     
     private readonly IChatsService chatsService;
     private readonly IMapper mapper;
