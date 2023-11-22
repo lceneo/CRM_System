@@ -1,0 +1,37 @@
+
+<form class = "authorization" [formGroup]="form" (submit)="submitForm()">
+  <div class="mb-3">
+    <label for="loginFormControl" class="form-label">Логин</label>
+    <input
+      class="form-control"
+      id="loginFormControl"
+      placeholder="Введите логин"
+      formControlName = "login"
+    >
+  </div>
+
+  <div class="mb-3">
+    <label for="emailFormControl" class="form-label">Почта</label>
+    <input
+      class="form-control"
+      id="emailFormControl"
+      placeholder="Введите почту"
+      formControlName = "email"
+    >
+  </div>
+
+  <div class="mb-3">
+    <label for="roleFormControl" class="form-label">Почта</label>
+    <select
+      class="form-select"
+      id="roleFormControl"
+      formControlName = "role"
+    >
+      <option [value]="AccountRole.Admin">Админ</option>
+      <option [value]="AccountRole.Manager">Менеджер</option>
+      <option [value]="AccountRole.Client">Клиент</option>
+    </select>
+  </div>
+
+  <button class="btn btn-primary enterBtn">Создать</button>
+</form>

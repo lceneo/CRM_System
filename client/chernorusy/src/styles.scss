@@ -1,0 +1,11 @@
+@import './assets/styles/form';
+@import "bootstrap-icons/font/bootstrap-icons";
+
+@include form();
+
+body{
+  overflow: hidden;
+  .icon {
+    font-size: 1.3rem;
+  }
+}

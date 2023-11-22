@@ -1,0 +1,16 @@
+@mixin form() {
+  form.authorization {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .mb-3 {
+      width: 40%;
+    }
+    .enterBtn {
+      width: 40%;
+    }
+    .textarea {
+      resize: none;
+    }
+  }
+}

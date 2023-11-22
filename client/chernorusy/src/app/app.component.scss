@@ -1,0 +1,24 @@
+:host{
+  position: relative;
+}
+
+.navigation {
+ display: flex;
+ background-color: #f8f9fe;
+ justify-content: flex-end;
+  .activeLink {
+    color: cornflowerblue;
+  }
+  .profileBtn {
+    display: flex;
+  }
+
+}
+
+.contentWrapper{
+  padding: 5%;
+}
+
+.dropdown li:hover{
+  cursor: pointer;
+}

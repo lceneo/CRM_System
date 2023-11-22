@@ -1,0 +1,52 @@
+
+<section>
+  <button
+    *ngIf="mode !== 'create'"
+    id="button-basic" type="button" class="btn editProfile" (click) = "changeMode()">
+    <i class="bi bi-pencil-square icon"></i>
+  </button>
+  <form class = "authorization" [formGroup]="form" (submit)="submitForm()">
+    <div class="mb-3">
+      <label for="surnameFormControl" class="form-label">Фамилия</label>
+      <input
+        class="form-control"
+        id="surnameFormControl"
+        placeholder="Имя..."
+        formControlName = "surname"
+      >
+    </div>
+
+    <div class="mb-3">
+      <label for="nameFormControl" class="form-label">Имя</label>
+      <input
+        class="form-control"
+        id="nameFormControl"
+        placeholder="Фамилия..."
+        formControlName = "name"
+      >
+    </div>
+
+    <div class="mb-3">
+      <label for="patronimicFormControl" class="form-label">Отчество</label>
+      <input
+        class="form-control"
+        id="patronimicFormControl"
+        placeholder="Отчество..."
+        formControlName = "patronimic"
+      >
+    </div>
+
+    <div class="mb-3">
+      <label for="aboutFormControl" class="form-label">О себе</label>
+      <textarea
+        class="form-control textarea"
+        id="aboutFormControl"
+        placeholder="О себе..."
+        formControlName = "about"
+        rows="10"
+      ></textarea>
+    </div>
+
+    <button class="btn btn-primary enterBtn">Создать профиль</button>
+  </form>
+</section>
