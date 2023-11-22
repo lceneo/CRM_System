@@ -18,7 +18,10 @@ export class AuthorizationService {
   constructor(
     private httpS: HttpService,
     private socketS: SocketService
-  ) { this._userID = localStorage.getItem('userID') ?? undefined }
+  ) {
+    this._userID = localStorage.getItem('userID') ?? undefined ;
+    this._token = localStorage.getItem('jwtToken') ?? undefined;
+  }
 
   private _isAdmin$= new BehaviorSubject<boolean | null>(null);
   private _authorizationStatus = new BehaviorSubject<boolean | null>(null);
@@ -26,7 +29,17 @@ export class AuthorizationService {
   public isAdmin$ = this._isAdmin$.asObservable();
   public authorizationStatus = this._authorizationStatus.asObservable();
   private _userID?: string;
+  private _token?: string;
 
+
+  get token(): string | undefined {
+    return this._token;
+  }
+
+  set token(value: string) {
+    this._token = value;
+    if (value) { localStorage.setItem('jwtToken', value); }
+  }
 
   get userID(): string | undefined {
     return this._userID;
@@ -37,7 +50,7 @@ export class AuthorizationService {
     if (value) { localStorage.setItem('userID', value); }
   }
 
-  public initialAuthentication(success: boolean, userData?: ILoginResponseDTO) {
+  public initialAuthentication(success: boolean, userData?: Partial<ILoginResponseDTO>) {
     if (success) {
       this._authorizationStatus.next(true);
       this._isAdmin$.next(userData ? userData.role === AccountRole.Admin : false);
@@ -55,6 +68,7 @@ export class AuthorizationService {
           this._authorizationStatus.next(true);
           this._isAdmin$.next(loginResponse.role === AccountRole.Admin);
           this.userID = loginResponse.id;
+          this.token = loginResponse.jwtToken;
           if (!this.socketS.isConnected()) { this.socketS.init(); }
         }),
         catchError(err => of(false))
@@ -91,6 +105,7 @@ export class AuthorizationService {
           this._authorizationStatus.next(true);
           this._isAdmin$.next(loginResponse?.role === AccountRole.Admin);
           this.userID = loginResponse.id;
+          this.token = loginResponse.jwtToken;
           if (!this.socketS.isConnected()) { this.socketS.init(); }
         })
       )
