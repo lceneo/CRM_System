@@ -91,6 +91,7 @@ export class AuthorizationService {
           this._authorizationStatus.next(true);
           this._isAdmin$.next(loginResponse?.role === AccountRole.Admin);
           this.userID = loginResponse.id;
+          if (!this.socketS.isConnected()) { this.socketS.init(); }
         })
       )
   }

@@ -15,17 +15,8 @@ export class AppComponent implements OnInit{
   constructor(
     private authorizationS: AuthorizationService,
     private profileS: ProfileService,
-    private socketS: SocketService,
     private router: Router
-  ) {
-    // const ws = new WebSocket('ws://localhost:4200/Chats/Hub');
-    // setTimeout(() => {
-    //   ws.send('test')
-    // }, 5000)
-
-
-    this.socketS.init();
-  }
+  ) {}
 
   protected isAdmin$ = this.authorizationS.isAdmin$;
   protected isAuthorized$ = this.authorizationS.authorizationStatus;
