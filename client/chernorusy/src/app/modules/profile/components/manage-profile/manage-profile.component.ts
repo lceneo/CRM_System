@@ -5,7 +5,6 @@ import {FormControl, FormGroup} from "@angular/forms";
 import {ProfileService} from "../../../../shared/services/profile.service";
 import {IProfileCreateRequestDTO} from "../../../../shared/models/DTO/request/ProfileCreateRequestDTO";
 import {IProfileResponseDTO} from "../../../../shared/models/DTO/response/ProfileResponseDTO";
-import {IProfileSearchResult} from "../../../../shared/models/helperts/ProfileSearchResult";
 import {AuthorizationService} from "../../../../shared/services/authorization.service";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
@@ -61,7 +60,7 @@ export class ManageProfileComponent implements OnInit{
               this.mode = 'create';
               this.form.enable();
               return of(null);
-            }
+            } 
           }),
           tap(profile => {
             if (!profile) { return; }
