@@ -20,7 +20,7 @@
     >
   </div>
 
-  <div class="mb-3">
+  <div class="mb-3" *ngIf="mode === 'admin'">
     <label for="roleFormControl" class="form-label">Почта</label>
     <select
       class="form-select"

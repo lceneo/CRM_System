@@ -1,6 +1,6 @@
 
 <section class="wrapper">
-  <form class = "authorization" [formGroup]="form" (submit)="submitForm()">
+  <form *ngIf="authMode === 'login'; else registrationMode" class = "authorization" [formGroup]="form" (submit)="submitForm()">
     <div class="mb-3">
       <label for="loginFormControl" class="form-label">Логин</label>
       <input
@@ -24,8 +24,13 @@
       >
     </div>
 
-    <button class="btn btn-primary enterBtn">{{mode === 'login' ? 'Войти' : 'Восстановить'}}</button>
+    <button class="btn btn-primary enterBtn">{{passwordMode === 'login' ? 'Войти' : 'Восстановить'}}</button>
   </form>
 
-  <a class="link" (click) = "changeMode()">{{mode === 'login' ? 'Восстановить пароль' : 'Войти'}}</a>
+  <ng-template #registrationMode>
+    <app-registration [mode]="'user'"></app-registration>
+  </ng-template>
+
+  <a class="link" (click) = "changePasswordMode()">{{passwordMode === 'login' ? 'Восстановить пароль' : 'Войти'}}</a>
+  <a class="link" (click) = "changeAuthMode()">{{authMode === 'login' ? 'Регистрация' : 'Авторизация'}}</a>
 </section>

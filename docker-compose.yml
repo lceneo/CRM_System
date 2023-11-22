@@ -24,26 +24,27 @@ services:
     depends_on:
       - ${DB_SERVICE}
     ports:
-      - "90:90"
+      - "80:80"
     environment:
-      HOST: "localhost:90"
+      HOST: "localhost:80"
       DATABASE_CONNECTION: "host=${DB_SERVICE};port=5432;database=CRM66bit;username=postgres;password=password"
       MAILBOX_LOGIN: "chernorusy@mail.ru"
       MAILBOX_PASSWORD: "KGw9Q2bmFZpyptJ4xfKZ"
     networks:
       - ${NETWORK}
 
-  front:
-    image: ${FRONT_IMAGE}
-    ports:
-      - "80:80"
-    expose:
-      - 80
-    environment:
-      API_URL: ${API_URL}
-      API_PROTOCOL: ${API_PROTOCOL}
-    networks:
-      - ${NETWORK}
+#  front:
+#    image: ${FRONT_IMAGE}
+#    ports:
+#      - "80:80"
+#    expose:
+#      - 80
+#    environment:
+#      API_URL: ${API_URL}
+#      API_PROTOCOL: ${API_PROTOCOL}
+#      API_HUB_URL: ${API_HUB_URL}
+#    networks:
+#      - ${NETWORK}
   
   
 volumes:

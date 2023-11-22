@@ -8,12 +8,17 @@ import { CreateProfileComponent } from './components/create-profile/create-profi
 import {NgLetDirective} from "../../shared/directives/ng-let.directive";
 import {SetPasswordComponent} from "./components/set-password/set-password.component";
 import {BsDropdownModule} from "ngx-bootstrap/dropdown";
+import {redirectToMyProfileGuard} from "../../guards/redirectToMyProfileGuard";
+import {authorizationGuard} from "../../guards/authorizationGuard";
+import {unauthorizationGuard} from "../../guards/unauthorizationGuard";
+import {profileGuard} from "../../guards/profileGuard";
 
 const routes: Routes = [
-
-  { path: '', component: ManageProfileComponent, pathMatch: "full"},
-  { path: 'changePassword', component: SetPasswordComponent},
-  { path: ':id', component: CreateProfileComponent}
+  { path: '', pathMatch: 'full', canActivate: [redirectToMyProfileGuard],
+    loadComponent: () => import('./../../shared/components/not-found/not-found.component').then(f => f.NotFoundComponent)},
+  { path: 'create/:id', component: CreateProfileComponent, canActivate: [unauthorizationGuard]},
+  { path: 'changePassword', component: SetPasswordComponent, canActivate: [authorizationGuard]},
+  { path: ':id', component: ManageProfileComponent, pathMatch: "full", canActivate: [authorizationGuard, profileGuard]}
 ]
 
 @NgModule({
