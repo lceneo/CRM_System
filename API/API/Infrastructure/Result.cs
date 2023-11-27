@@ -41,13 +41,23 @@ public struct Result<T>
 
 public static class Result
 {
-    public static Result<T> Ok<T>(T value, HttpStatusCode statusCode = HttpStatusCode.OK)
+    public static Result<T> Ok<T>(T value)
     {
-        return new Result<T>(null, statusCode,  value);
+        return new Result<T>(null, HttpStatusCode.OK,  value);
+    }
+    
+    public static Result<T> NoContent<T>()
+    {
+        return new Result<T>(null, HttpStatusCode.NoContent);
     }
 
-    public static Result<T> Fail<T>(string e, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
+    public static Result<T> BadRequest<T>(string e)
     {
-        return new Result<T>(e, statusCode);
+        return new Result<T>(e, HttpStatusCode.BadRequest);
+    }
+    
+    public static Result<T> NotFound<T>(string e)
+    {
+        return new Result<T>(e, HttpStatusCode.NotFound);
     }
 }

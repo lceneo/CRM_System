@@ -1,7 +1,8 @@
-﻿using AutoMapper;
+﻿using API.Infrastructure.BaseApiDTOs;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.DAL;
+namespace API.DAL.Repository;
 
 public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntity>
     where TEntity : class, IEntity
@@ -32,6 +33,14 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntit
     public async Task<TEntity?> GetByIdAsync(Guid id) 
         => await Set.FindAsync(id);
 
+    public Task<List<TEntity>> GetByIdsAsync(IEnumerable<Guid> ids)
+    {
+        var hashSet = ids.ToHashSet();
+        return Set
+            .Where(p => ids.Contains(p.Id))
+            .ToListAsync();
+    }
+
     public async Task UpdateAsync(TEntity updated)
     {
         var existed = await Set.FindAsync(updated.Id);
@@ -42,7 +51,7 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntit
         await SaveChangesAsync();
     }
 
-    public async Task<(Guid Id, bool IsCreated)> CreateOrUpdateAsync(TEntity entity)
+    public async Task<CreateResponse> CreateOrUpdateAsync(TEntity entity)
     {
         var isCreated = false;
         var cur = await Set.FindAsync(entity.Id);
@@ -57,7 +66,11 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntit
         }
 
         await SaveChangesAsync();
-        
-        return (entity.Id, isCreated);
+
+        return new CreateResponse
+        {
+            Id = entity.Id, 
+            IsCreated = isCreated
+        };
     }
 }

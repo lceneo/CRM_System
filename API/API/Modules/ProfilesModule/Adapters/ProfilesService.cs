@@ -1,6 +1,7 @@
-﻿using System.Net;
-using API.Infrastructure;
+﻿using API.Infrastructure;
+using API.Infrastructure.BaseApiDTOs;
 using API.Modules.AccountsModule.Ports;
+using API.Modules.ProfilesModule.ApiDTO;
 using API.Modules.ProfilesModule.DTO;
 using API.Modules.ProfilesModule.Entities;
 using API.Modules.ProfilesModule.Ports;
@@ -27,15 +28,29 @@ public class ProfilesService : IProfilesService
     {
         var profile = await profilesRepository.GetByIdAsync(id);
         if (profile == null)
-            return Result.Fail<ProfileOutDTO>("Профиль не существует", HttpStatusCode.NotFound);
+            return Result.NotFound<ProfileOutDTO>("Профиль не существует");
 
         return Result.Ok(mapper.Map<ProfileOutDTO>(profile));
     }
 
-    public async Task CreateOrUpdateProfile(Guid accountId, ProfileDTO profileDto)
+    public async Task<Result<CreateResponse>> CreateOrUpdateProfile(Guid accountId, ProfileDTO profileDto)
     {
         var profile = mapper.Map<ProfileEntity>(profileDto);
+        profile.Id = accountId;
         profile.Account = await accountsRepository.GetByIdAsync(accountId);
-        await profilesRepository.CreateOrUpdateAsync(profile);
+        var response = await profilesRepository.CreateOrUpdateAsync(profile);
+        return Result.Ok(response);
+    }
+
+    public Result<ProfilesSearchResponse> Search(ProfilesSearchRequest searchReq)
+    {
+        var response = profilesRepository.Search(searchReq);
+        return Result.Ok(new ProfilesSearchResponse
+        {
+            TotalCount = response.TotalCount,
+            Items = response.Items
+                .Select(mapper.Map<ProfileOutDTO>)
+                .ToList(),
+        });
     }
 }

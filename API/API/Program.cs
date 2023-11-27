@@ -1,6 +1,5 @@
 using API.DAL;
 using API.Infrastructure;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,31 +11,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Add Cookie Auth.
-builder.Services.AddAuthentication(options => {
-        options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;})
-    .AddCookie(opt =>
-    {
-        opt.Events = new CookieAuthenticationEvents()
-        {
-            OnRedirectToLogin = (context) =>
-            {
-                context.Response.StatusCode = 401;
-                return Task.CompletedTask;
-            },
-            OnRedirectToAccessDenied = (context) =>
-            {
-                context.Response.StatusCode = 403;
-                return Task.CompletedTask;
-            },
-        };
-        opt.LoginPath = "/api/Accounts/Login";
-    });
-builder.Services.AddAuthorization();
+StartupBuilder.ConfigureAuthorization(builder.Services, builder.Configuration);
 
 // Register DbContext in DI Container
-builder.Services.AddSingleton<Config>(new Config(builder));
 builder.Services.AddDbContext<DataContext>();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -47,7 +24,22 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 builder.Services.AddAutoMapper(typeof(BaseMappingProfile));
 
 builder.Services.RegisterModules();
-builder.Services.AddSignalR();
+builder.Services.AddSignalR(hubOptions =>
+{
+    hubOptions.EnableDetailedErrors = true;
+    hubOptions.KeepAliveInterval = TimeSpan.FromMinutes(1);
+});
+
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy(Config.HubsPolicyName, policy =>
+    {
+        policy.AllowAnyHeader()
+            .AllowAnyMethod()
+            .SetIsOriginAllowed(_ => true)
+            .AllowCredentials();
+    });
+});
 
 var app = builder.Build();
 
@@ -58,7 +50,14 @@ var app = builder.Build();
     app.UseSwaggerUI();
 }
 
+/*app.UseCors(opt => 
+    opt.AllowAnyHeader()
+        .AllowAnyMethod()
+        .SetIsOriginAllowed(origin => true)
+        .AllowCredentials());*/
+
 app.UseHttpsRedirection();
+app.UseWebSockets();
 
 app.UseAuthentication();
 app.UseAuthorization();

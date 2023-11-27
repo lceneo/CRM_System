@@ -1,4 +1,5 @@
 using API.Modules.AccountsModule.Models;
+using API.Modules.ChatsModule.Entities;
 using API.Modules.ProfilesModule.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,7 @@ public class DataContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         options.UseNpgsql(config.GetConnectionString("DefaultConnection"), builder =>
         {
             builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
@@ -32,4 +34,6 @@ public class DataContext : DbContext
 
     public DbSet<AccountEntity> Accounts => Set<AccountEntity>();
     public DbSet<ProfileEntity> Profiles => Set<ProfileEntity>();
+    public DbSet<ChatEntity> Chats => Set<ChatEntity>();
+    public DbSet<MessageEntity> Messages => Set<MessageEntity>();
 }

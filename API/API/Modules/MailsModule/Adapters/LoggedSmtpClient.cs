@@ -8,21 +8,18 @@ namespace API.Modules.MailsModule.Adapters;
 
 public class LoggedSmtpClient : ILoggedSmtpClient
 {
-    private readonly Config config;
     private readonly SmtpClient smtpClient;
     private readonly IMailMessagesRepository mailMessagesRepository;
     
-    public LoggedSmtpClient(Config config, 
-        IMailMessagesRepository mailMessagesRepository)
+    public LoggedSmtpClient(IMailMessagesRepository mailMessagesRepository)
     {
-        this.config = config;
         this.mailMessagesRepository = mailMessagesRepository;
         this.smtpClient = ConfigureSmtpClient();
     }
 
     public void SendAsync(MailMessage mailMessage)
     {
-        mailMessage.From = new MailAddress(config.MailBoxLogin);
+        mailMessage.From = new MailAddress(Config.MailBoxLogin);
         
         smtpClient.SendAsync(mailMessage, null);
     }
@@ -35,7 +32,7 @@ public class LoggedSmtpClient : ILoggedSmtpClient
             Port = 587,
             DeliveryMethod = SmtpDeliveryMethod.Network,
             UseDefaultCredentials = false,
-            Credentials = new NetworkCredential(config.MailBoxLogin, config.MailBoxPassword),
+            Credentials = new NetworkCredential(Config.MailBoxLogin, Config.MailBoxPassword),
             EnableSsl = true,
         };
         
