@@ -49,7 +49,7 @@ public static class StartupBuilder
                         // если запрос направлен хабу
                         var path = context.HttpContext.Request.Path;
                         if (!string.IsNullOrEmpty(accessToken)
-                            && path.StartsWithSegments("/Hub"))
+                            && path.StartsWithSegments("/Hubs"))
                         {
                             // получаем токен из строки запроса
                             context.Token = accessToken;
