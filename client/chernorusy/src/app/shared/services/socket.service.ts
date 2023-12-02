@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionState} from "@microsoft/signalr";
 import {config} from "../../../main";
 import {ISendMessageRequest} from "../models/DTO/request/SendMessageRequest";
+import {Subject, take} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,7 @@ export class SocketService {
   private url = config.apiUrl;
   private hubUrl = config.hubUrl;
   private protocol = config.protocol;
+  private connected$ = new Subject<void>();
   constructor() {}
 
   public init() {
@@ -29,11 +31,10 @@ export class SocketService {
         })
           .build();
     this.hubConnection.start()
-        .then(() => {console.log('Соединение по сокету установлено'); this.sendMessage('Send', {
-          "recipientId": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-          "message": "privet",
-          "requestNumber": 12
-        })})
+        .then(() => {
+          console.log('Соединение по сокету установлено');
+          this.connected$.next();
+        })
         .catch(() => console.error('Не удалось установить соединение по сокету'));
   }
   public stopConnection() {
@@ -43,6 +44,18 @@ export class SocketService {
     return this.hubConnection && (this.hubConnection.state === HubConnectionState.Connected || this.hubConnection.state === HubConnectionState.Connecting);
   }
   public sendMessage(methodName: string, message: ISendMessageRequest) {
-    if (this.hubConnection.state === HubConnectionState.Connected) { this.hubConnection.send(methodName, message); }
+    if (this.hubConnection.state === HubConnectionState.Connected) { return this.hubConnection.send(methodName, message); }
+    return Promise.reject('Не удалось отправить сообщение');
+  }
+
+  public listenMethod(methodName: string, handler: (...args: any[]) => void)  {
+    if (this.isConnected()) {
+      this.hubConnection.on(methodName, handler);
+    } else {
+      this.connected$
+        .pipe(
+          take(1)
+        ).subscribe(() => this.hubConnection.on(methodName, handler));
+    }
   }
 }
