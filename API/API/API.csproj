@@ -16,9 +16,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Modules\VidjetsModule\Adapters\" />
-    <Folder Include="Modules\VidjetsModule\Ports\" />
-  </ItemGroup>
-
 </Project>
