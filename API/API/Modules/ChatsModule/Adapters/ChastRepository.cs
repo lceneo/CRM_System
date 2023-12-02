@@ -1,12 +1,9 @@
 ﻿using API.DAL;
 using API.DAL.Repository;
-using API.Infrastructure.BaseApiDTOs;
-using API.Modules.ChatsModule.DTO;
 using API.Modules.ChatsModule.Entities;
 using API.Modules.ChatsModule.Ports;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace API.Modules.ChatsModule.Adapters;
 

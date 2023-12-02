@@ -55,6 +55,14 @@ public class ChatsService : IChatsService
         return Result.Ok(mapper.Map<IEnumerable<ChatOutDTO>>(chats, opt => opt.Items["userId"] = userId));
     }
 
+    public async Task<Result<ChatOutDTO>> GetChatByIdAsync(Guid chatId)
+    {
+        var chat = await chatsRepository.GetByIdAsync(chatId);
+        return chat == null
+            ? Result.NotFound<ChatOutDTO>("Чат с таким Id не найден")
+            : Result.Ok(mapper.Map<ChatOutDTO>(chat));
+    }
+
     public Result<SearchResponseBaseDTO<MessageInChatDTO>> SearchMessages(Guid chatId, MessagesSearchRequest messagesSearchReq)
     {
         var result = messagesRepository.SearchAsync(chatId, messagesSearchReq);

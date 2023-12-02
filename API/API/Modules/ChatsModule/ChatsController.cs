@@ -31,6 +31,13 @@ public class ChatsController : ControllerBase
         return  response.ActionResult;
     }
 
+    [HttpGet("{chatId:Guid}")]
+    public async Task<ActionResult<ChatOutDTO>> GetChatByIdAsync()
+    {
+        var response = await chatsService.GetChatsByUser(User.GetId());
+        return response.ActionResult;
+    }
+
     [HttpPost("Messages")]
     public async Task<ActionResult<MessageInChatDTO>> SendMessageAsync(SendMessageRequest request)
     {
