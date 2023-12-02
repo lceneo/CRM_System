@@ -33,10 +33,10 @@ export class AppComponent implements OnInit{
   }
 
   sendToAdmin(){
-    this.messageS.sendMessage('5968110c-d992-420a-9fe8-af487151b83d', 'msgToAdmin', 0);
+    this.messageS.sendMessage('d6b45035-9d11-4b17-bb21-75e429328a28', 'msgToAdmin', 0);
   }
 
   sendToClient(){
-    this.messageS.sendMessage('91685c6e-e598-44e6-b550-3d94041da2aa', 'msgToClient', 0);
+    this.messageS.sendMessage('685cf3f5-b323-4ad2-8c8d-6881f6191adc', 'msgToClient', 0);
   }
 }

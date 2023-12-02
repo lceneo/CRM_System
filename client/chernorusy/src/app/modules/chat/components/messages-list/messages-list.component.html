@@ -1,5 +1,5 @@
 <div class="wrapper">
-  <section class="messages"
+  <section class="chats"
    [ngClass]="{
       dialogOpened: selectedChat
    }"
@@ -14,7 +14,7 @@
             <li
               class="chats__item"
               [ngClass]="{
-               'chats__item-selected': selectedChat === chat
+               'chats__item-selected': selectedChat && selectedChat.id === chat.id
               }"
               *ngFor="let chat of chats"
               (click) = "openDialogMessage(chat, dialog)">
@@ -26,9 +26,10 @@
           </ng-container>
         </ul>
     <section #dialog class="chats__hidden">
-<!--      <app-message-dialog-->
-<!--        [message] = selectedChat-->
-<!--      ></app-message-dialog>-->
+      <app-message-dialog
+        [chat] = selectedChat
+        [isVisible] = !!selectedChat
+      ></app-message-dialog>
     </section>
   </section>
 </div>

@@ -58,4 +58,9 @@ export class SocketService {
         ).subscribe(() => this.hubConnection.on(methodName, handler));
     }
   }
+
+  public unsubscribeFromMethod(methodName: string, fn?: (...args: any[]) => void) {
+    if (fn) { this.hubConnection.off(methodName, fn); }
+    else { this.hubConnection.off(methodName); }
+  }
 }

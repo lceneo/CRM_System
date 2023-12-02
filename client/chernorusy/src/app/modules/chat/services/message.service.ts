@@ -1,5 +1,8 @@
 import {Injectable, signal} from '@angular/core';
 import {SocketService} from "../../../shared/services/socket.service";
+import {HttpService} from "../../../shared/services/http.service";
+import {IMessageInChat} from "../../../shared/models/entities/MessageInChat";
+import {IMessageInChatResponseDTO} from "../../../shared/models/DTO/request/MessageInChatResponseDTO";
 
 @Injectable({
   providedIn: 'root'
@@ -7,14 +10,12 @@ import {SocketService} from "../../../shared/services/socket.service";
 export class MessageService {
 
   constructor(
-    private socketS: SocketService
+    private socketS: SocketService,
+    private httpS: HttpService
   ) { }
 
-  public getMessages$() {
-    return signal<IMessage[]>([
-      { author: 'Nikita', text: 'First Message', timestamp: new Date().toISOString()},
-      { author: 'Egor', text: 'Second Message', timestamp: new Date().toISOString()},
-    ])
+  public getMessages$(chatID: string) {
+    return this.httpS.get<IMessageInChatResponseDTO>(`/Chats/${chatID}/Messages`);
   }
 
   public sendMessage(userOrChatID: string, messageText: string, requestNumber: number) {
@@ -24,10 +25,4 @@ export class MessageService {
       "requestNumber": requestNumber
     });
   }
-}
-
-export interface IMessage{
-  author: string;
-  text: string;
-  timestamp: string;
 }

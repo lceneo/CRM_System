@@ -44,6 +44,10 @@ export class EntityStateManager<T> {
     );
   }
 
+  public updateState(state: Partial<IEntityState<T>>) {
+    this.entityState.set({...this.entityState(), ...state});
+  }
+
   public getEntitiesSync() {
     return this.entityState().entities;
   }

@@ -54,7 +54,7 @@ public class ChatsController : ControllerBase
         return Ok(mapper.Map<MessageOutDTO>(message));
     }
 
-    [HttpPost("{chatId:Guid}/Messages")]
+    [HttpGet("{chatId:Guid}/Messages")]
     public async Task<ActionResult<IEnumerable<MessageInChatDTO>>> SearchMessagesAsync(
         [FromRoute] Guid chatId,
         [FromQuery]MessagesSearchRequest messagesSearchReq)
