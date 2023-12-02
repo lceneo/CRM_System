@@ -51,7 +51,7 @@ public class ChatsController : ControllerBase
             return BadRequest(response.Error);
         
         var message = response.Value.message;
-        return Ok(mapper.Map<MessageInChatDTO>(message));
+        return Ok(mapper.Map<MessageOutDTO>(message));
     }
 
     [HttpPost("{chatId:Guid}/Messages")]

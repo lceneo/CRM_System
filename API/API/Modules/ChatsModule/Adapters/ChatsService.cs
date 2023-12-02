@@ -31,8 +31,10 @@ public class ChatsService : IChatsService
         Guid senderId, 
         string message)
     {
+        var lazyUsers = new Lazy<Guid[]>(() => new[] {recipientId, senderId});
         var chat = await chatsRepository.GetByIdAsync(recipientId) 
-                   ?? await CreateChatWithUsers(new[] {recipientId, senderId});
+                   ?? await chatsRepository.GetByUsers(new HashSet<Guid>(lazyUsers.Value))
+                   ?? await CreateChatWithUsers(lazyUsers.Value);
         if (chat == null)
             return Result.NotFound<(ChatEntity chat, MessageEntity message)>("Неправильный идентификатор чата/пользователя");
 
