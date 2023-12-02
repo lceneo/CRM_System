@@ -2,6 +2,7 @@
 using API.Extensions;
 using API.Infrastructure;
 using API.Modules.AccountsModule.DTO;
+using API.Modules.AccountsModule.Entities;
 using API.Modules.AccountsModule.Models;
 using API.Modules.AccountsModule.Ports;
 using API.Modules.MailsModule.Adapters;
@@ -37,7 +38,7 @@ public class AccountsController : ControllerBase
         return response.ActionResult;
     }
     
-    [Authorize]
+    [Authorize(Roles = nameof(AccountRole.Admin))]
     [HttpPost("Register/Admin")]
     public async Task<ActionResult<AccountsResponse>> RegisterAsync([FromBody] RegisterByAdminRequest regByAdminRequest)
     {
@@ -48,7 +49,7 @@ public class AccountsController : ControllerBase
     }
 
     [HttpPost("Login")]
-    public async Task<ActionResult> LoginAsync([FromBody] LoginRequest loginRequest)
+    public async Task<ActionResult<AccountsResponse>> LoginAsync([FromBody] LoginRequest loginRequest)
     {
         var response = await accountsService.LoginAsync(loginRequest);
         if (!response.IsSuccess)
@@ -88,11 +89,17 @@ public class AccountsController : ControllerBase
     }
 
     [HttpPost("Password/{userId:Guid}")]
-    public async Task<ActionResult> ChangePasswordUnauthorizedAsync([FromRoute] Guid userId,
+    public async Task<ActionResult<AccountsResponse>> ChangePasswordUnauthorizedAsync([FromRoute] Guid userId,
         ChangePasswordUnauthorizedRequest changePasswordUnauthorizedReq)
     {
         var response = await accountsService.ChangePasswordUnauthorizedAsync(userId, changePasswordUnauthorizedReq);
+        if (!response.IsSuccess)
+            return response.ActionResult;
+        
+        var principal = new ClaimsPrincipal(response.Value.Credentials);
+        await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
+        response.Specificate((claimsResp) => mapper.Map<AccountsResponse>(claimsResp));
         return response.ActionResult;
     }
 }

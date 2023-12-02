@@ -10,6 +10,6 @@ public interface IAccountsService
     Task<Result<ClaimsResponse>> LoginAsync(LoginRequest loginRequest);
     Task RecoverPasswordAsync(string login);
     Task<Result<bool>> ChangePasswordAsync(Guid userId, ChangePasswordRequest changePasswordRequest);
-    Task<Result<bool>> ChangePasswordUnauthorizedAsync(Guid userId,
+    Task<Result<ClaimsResponse>> ChangePasswordUnauthorizedAsync(Guid userId,
         ChangePasswordUnauthorizedRequest changePasswordUnauthorizedRequest);
 }

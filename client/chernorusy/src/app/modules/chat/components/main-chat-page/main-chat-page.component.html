@@ -1,0 +1,22 @@
+
+<div class="wrapper">
+  <h2 class="title">Диалоги</h2>
+  <tabset>
+
+    <tab heading="Входящие" #tabA="tab">
+      <app-messages-list
+        [tabType]="'Inbox'"></app-messages-list>
+    </tab>
+
+    <tab heading="Мои" #tabB="tab">
+      <app-messages-list
+        [tabType]="'Mine'"></app-messages-list>
+    </tab>
+
+    <tab heading="Диалоги" #tabC="tab">
+      <app-messages-list
+        [tabType]="'All'"
+      ></app-messages-list>
+    </tab>
+  </tabset>
+</div>
