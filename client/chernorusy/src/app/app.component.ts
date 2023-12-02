@@ -3,8 +3,6 @@ import {HttpService} from "./shared/services/http.service";
 import {AuthorizationService} from "./shared/services/authorization.service";
 import {Router} from "@angular/router";
 import {ProfileService} from "./shared/services/profile.service";
-import {SocketService} from "./shared/services/socket.service";
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
