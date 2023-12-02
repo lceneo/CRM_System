@@ -1,4 +1,5 @@
 ﻿using API.Infrastructure;
+using API.Infrastructure.BaseApiDTOs;
 using API.Modules.ChatsModule.DTO;
 using API.Modules.ChatsModule.Entities;
 using API.Modules.ChatsModule.Ports;
@@ -51,7 +52,17 @@ public class ChatsService : IChatsService
     {
         var chats = await chatsRepository.GetAllByUser(userId);
         
-        return Result.Ok(mapper.Map<IEnumerable<ChatOutDTO>>(chats));
+        return Result.Ok(mapper.Map<IEnumerable<ChatOutDTO>>(chats, opt => opt.Items["userId"] = userId));
+    }
+
+    public Result<SearchResponseBaseDTO<MessageInChatDTO>> SearchMessages(Guid chatId, MessagesSearchRequest messagesSearchReq)
+    {
+        var result = messagesRepository.SearchAsync(chatId, messagesSearchReq);
+        return Result.Ok(new SearchResponseBaseDTO<MessageInChatDTO>
+        {
+            Items = mapper.Map<List<MessageInChatDTO>>(result.Items),
+            TotalCount = result.TotalCount,
+        });
     }
 
     private static long chatsCounter = 0;
