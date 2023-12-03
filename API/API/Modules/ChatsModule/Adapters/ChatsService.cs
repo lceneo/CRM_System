@@ -1,4 +1,5 @@
 ﻿using API.Infrastructure;
+using API.Infrastructure.BaseApiDTOs;
 using API.Modules.ChatsModule.DTO;
 using API.Modules.ChatsModule.Entities;
 using API.Modules.ChatsModule.Ports;
@@ -30,8 +31,10 @@ public class ChatsService : IChatsService
         Guid senderId, 
         string message)
     {
+        var lazyUsers = new Lazy<Guid[]>(() => new[] {recipientId, senderId});
         var chat = await chatsRepository.GetByIdAsync(recipientId) 
-                   ?? await CreateChatWithUsers(new[] {recipientId, senderId});
+                   ?? await chatsRepository.GetByUsers(new HashSet<Guid>(lazyUsers.Value))
+                   ?? await CreateChatWithUsers(lazyUsers.Value);
         if (chat == null)
             return Result.NotFound<(ChatEntity chat, MessageEntity message)>("Неправильный идентификатор чата/пользователя");
 
@@ -51,7 +54,25 @@ public class ChatsService : IChatsService
     {
         var chats = await chatsRepository.GetAllByUser(userId);
         
-        return Result.Ok(mapper.Map<IEnumerable<ChatOutDTO>>(chats));
+        return Result.Ok(mapper.Map<IEnumerable<ChatOutDTO>>(chats, opt => opt.Items["userId"] = userId));
+    }
+
+    public async Task<Result<ChatOutDTO>> GetChatByIdAsync(Guid userId, Guid chatId)
+    {
+        var chat = await chatsRepository.GetByIdAsync(chatId);
+        return chat == null
+            ? Result.NotFound<ChatOutDTO>("Чат с таким Id не найден")
+            : Result.Ok(mapper.Map<ChatOutDTO>(chat, opt => opt.Items["userId"] = userId));
+    }
+
+    public Result<SearchResponseBaseDTO<MessageInChatDTO>> SearchMessages(Guid chatId, MessagesSearchRequest messagesSearchReq)
+    {
+        var result = messagesRepository.SearchAsync(chatId, messagesSearchReq);
+        return Result.Ok(new SearchResponseBaseDTO<MessageInChatDTO>
+        {
+            Items = mapper.Map<List<MessageInChatDTO>>(result.Items),
+            TotalCount = result.TotalCount,
+        });
     }
 
     private static long chatsCounter = 0;

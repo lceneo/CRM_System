@@ -1,3 +1,10 @@
-<p>{{message?.author}}</p>
-<p>{{message?.text}}</p>
-<p>{{message?.timestamp}}</p>
+<section class="chat">
+  <ul class="chat__messages">
+    <li *ngFor="let message of messages()">
+      <p>{{message.message}}</p>
+    </li>
+  </ul>
+  <textarea [(ngModel)] = "msgValue"
+            (keydown)="pressKey($event)"
+            class="chat__sendMsg"></textarea>
+</section>

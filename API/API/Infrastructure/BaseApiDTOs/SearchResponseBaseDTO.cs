@@ -2,6 +2,6 @@
 
 public class SearchResponseBaseDTO<T>
 {
-    public int TotalCount { get; set; }
+    public long TotalCount { get; set; }
     public List<T> Items { get; set; }
 }
