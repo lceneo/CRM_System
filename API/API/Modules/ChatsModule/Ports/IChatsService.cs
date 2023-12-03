@@ -14,7 +14,7 @@ public interface IChatsService
 
     Task<Result<IEnumerable<ChatOutDTO>>> GetChatsByUser(Guid userId);
 
-    Task<Result<ChatOutDTO>> GetChatByIdAsync(Guid chatId);
+    Task<Result<ChatOutDTO>> GetChatByIdAsync(Guid userId, Guid chatId);
 
     Result<SearchResponseBaseDTO<MessageInChatDTO>> SearchMessages(Guid chatId, MessagesSearchRequest messagesSearchReq);
 }

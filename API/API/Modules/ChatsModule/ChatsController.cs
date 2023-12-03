@@ -32,9 +32,9 @@ public class ChatsController : ControllerBase
     }
 
     [HttpGet("{chatId:Guid}")]
-    public async Task<ActionResult<ChatOutDTO>> GetChatByIdAsync()
+    public async Task<ActionResult<ChatOutDTO>> GetChatByIdAsync([FromRoute] Guid chatId)
     {
-        var response = await chatsService.GetChatsByUser(User.GetId());
+        var response = await chatsService.GetChatByIdAsync(User.GetId(), chatId);
         return response.ActionResult;
     }
 
