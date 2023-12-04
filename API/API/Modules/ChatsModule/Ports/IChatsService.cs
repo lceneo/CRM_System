@@ -17,4 +17,8 @@ public interface IChatsService
     Task<Result<ChatOutDTO>> GetChatByIdAsync(Guid userId, Guid chatId);
 
     Result<SearchResponseBaseDTO<MessageInChatDTO>> SearchMessages(Guid chatId, MessagesSearchRequest messagesSearchReq);
+    
+    Task<ChatEntity?> CreateChatWithUsers(Guid[] userIds);
+
+    Task<ChatEntity?> GetOrCreateChatWithUsers(Guid[] userIds);
 }
