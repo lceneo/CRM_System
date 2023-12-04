@@ -76,13 +76,32 @@ public class ChatsService : IChatsService
     }
 
     private static long chatsCounter = 0;
-    private async Task<ChatEntity?> CreateChatWithUsers(Guid[] userIds)
+    public async Task<ChatEntity?> CreateChatWithUsers(Guid[] userIds)
     {
         var users = await profilesRepository.GetByIdsAsync(userIds);
         if (users.Count() != userIds.Length)
             return null;
 
         var chat = new ChatEntity
+        {
+            Name = $"№{chatsCounter++}",
+            Profiles = users.ToHashSet(),
+        };
+        await chatsRepository.CreateAsync(chat);
+        return chat;
+    }
+    
+    public async Task<ChatEntity?> GetOrCreateChatWithUsers(Guid[] userIds)
+    {
+        var chat = await chatsRepository.GetByUsers(userIds.ToHashSet());
+        if (chat != null)
+            return chat;
+        
+        var users = await profilesRepository.GetByIdsAsync(userIds);
+        if (users.Count() != userIds.Length)
+            return null;
+
+        chat = new ChatEntity
         {
             Name = $"№{chatsCounter++}",
             Profiles = users.ToHashSet(),

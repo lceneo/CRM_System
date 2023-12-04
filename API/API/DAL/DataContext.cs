@@ -38,5 +38,4 @@ public class DataContext : DbContext
     public DbSet<ChatEntity> Chats => Set<ChatEntity>();
     public DbSet<MessageEntity> Messages => Set<MessageEntity>();
     public DbSet<VidjetEntity> Vidjets => Set<VidjetEntity>();
-    public DbSet<PatternEntity> Patterns => Set<PatternEntity>();
 }

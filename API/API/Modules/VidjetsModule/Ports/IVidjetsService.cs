@@ -15,4 +15,6 @@ public interface IVidjetsService
     Task<Result<CreateResponse>> CreateOrUpdateVidjet(VidjetCreateRequest vidjetCreateRequest);
 
     Task<ActionResult> DeleteVidjetAsync([FromRoute] Guid vidjetId);
+
+    Task<Result<VidjetResponse>> ResolveVidjetForUserAsync(VidjetRequest vidjetReq, long ip);
 }

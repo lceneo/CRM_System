@@ -1,4 +1,5 @@
 ﻿using API.Modules.VidjetsModule.Models;
+using API.Modules.VidjetsModule.Ports;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,12 @@ namespace API.Modules.VidjetsModule;
 [ApiController]
 public class VidjetsController : ControllerBase
 {
+    private readonly IVidjetsService vidjetsService;
+
+    public VidjetsController(IVidjetsService vidjetsService)
+    {
+        this.vidjetsService = vidjetsService;
+    }
 
     [HttpGet]
     public async Task<ActionResult> GetVidjetsAsync()
@@ -35,16 +42,15 @@ public class VidjetsController : ControllerBase
     }
 
     [AllowAnonymous]
-    [HttpPost("VidjetInfo")]
+    [HttpPost("Init")]
     public async Task<ActionResult<VidjetResponse>> GetTokenAsync(VidjetRequest request)
     {
         var ip = HttpContext.Connection.RemoteIpAddress;
         if (ip == null)
             return BadRequest("IP is required");
 
-        return new VidjetResponse
-        {
-            
-        };
+        var response = await vidjetsService.ResolveVidjetForUserAsync(request, ip.MapToIPv4().GetHashCode());
+
+        return response.ActionResult;
     }
 }

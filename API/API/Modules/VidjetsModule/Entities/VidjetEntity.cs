@@ -9,5 +9,5 @@ public class VidjetEntity : IEntity
     [Key]
     public Guid Id { get; set; }
     public AccountEntity Account { get; set; }
-    public HashSet<string> Domens { get; set; }
+    public string Domen { get; set; }
 }
