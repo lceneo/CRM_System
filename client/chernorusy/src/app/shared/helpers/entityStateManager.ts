@@ -14,7 +14,7 @@ export class EntityStateManager<T> {
     error: null
   });
 
-  private httpS = inject(HttpService);
+  protected httpS = inject(HttpService);
   constructor() {}
 
   protected initStore() {

@@ -4,6 +4,8 @@ import {AuthorizationService} from "./shared/services/authorization.service";
 import {Router} from "@angular/router";
 import {ProfileService} from "./shared/services/profile.service";
 import {MessageService} from "./modules/chat/services/message.service";
+import {map} from "rxjs";
+import {IProfileResponseDTO} from "./shared/models/DTO/response/ProfileResponseDTO";
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -33,10 +35,16 @@ export class AppComponent implements OnInit{
   }
 
   sendToAdmin(){
-    this.messageS.sendMessage('d6b45035-9d11-4b17-bb21-75e429328a28', 'msgToAdmin', 0);
+    this.profileS.getProfiles$()
+      .pipe(
+        map(profiles => (profiles?.items.find(p => p.name === 'Name of admin') as IProfileResponseDTO).id)
+      ).subscribe(id => this.messageS.sendMessage(id, 'msgToAdmin', 0));
   }
 
   sendToClient(){
-    this.messageS.sendMessage('685cf3f5-b323-4ad2-8c8d-6881f6191adc', 'msgToClient', 0);
+    this.profileS.getProfiles$()
+      .pipe(
+        map(profiles => (profiles?.items.find(p => p.name === 'Name of client') as IProfileResponseDTO).id)
+      ).subscribe(id => this.messageS.sendMessage(id, 'msgToClient', 0));
   }
 }

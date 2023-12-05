@@ -53,8 +53,12 @@ export class MessageDialogComponent implements OnChanges{
     this.messageS.getMessages$(chatID)
       .pipe(
         tap(() => {
-          this.existingReceiveFn = (msg: IMessageReceive) => this.messages.update(msgs => [...msgs, msgReceiveToMsgInChat(msg)]);
+          this.existingReceiveFn = (msg: IMessageReceive) => {
+            if (msg.chatId !== this.chat?.id) { return; }
+            this.messages.update(msgs => [...msgs, msgReceiveToMsgInChat(msg)])
+          };
           this.existingSuccessFn = (msg: IMessageSuccess) => {
+            if (msg.chatId !== this.chat?.id) { return; }
             this.messages.update(msgs => [...msgs, {
               message: this.msgs[msg.requestNumber],
               dateTime: new Date().toLocaleDateString(),

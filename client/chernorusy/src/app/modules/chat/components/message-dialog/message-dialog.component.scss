@@ -1,9 +1,9 @@
 :host{
-  position: absolute;
-  top: 15%;
-  border: 1px solid;
-  height: 100%;
-  width: 100%;
+  //position: absolute;
+  //top: 15%;
+  //border: 1px solid;
+  //height: 100%;
+  //width: 100%;
 }
 
 .chat {
@@ -11,11 +11,11 @@
   flex-direction: column;
   height: inherit;
   &__messages {
-    height: 95%;
+    height: 80%;
     overflow-y: scroll;
   }
   &__sendMsg {
-    min-height: 5%;
+    height: 20%;
     resize: none;
   }
 }
