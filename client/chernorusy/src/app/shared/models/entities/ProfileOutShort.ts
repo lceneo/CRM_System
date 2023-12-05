@@ -1,4 +1,4 @@
 export interface IProfileOutShort {
-  Id: string;
-  Name: string;
+  id: string;
+  name: string;
 }

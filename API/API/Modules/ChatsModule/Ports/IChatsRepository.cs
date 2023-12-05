@@ -6,4 +6,5 @@ namespace API.Modules.ChatsModule.Ports;
 public interface IChatsRepository : ICRURepository<ChatEntity>
 {
     Task<List<ChatEntity>> GetAllByUser(Guid userId);
+    Task<ChatEntity?> GetByUsers(HashSet<Guid> userIds);
 }

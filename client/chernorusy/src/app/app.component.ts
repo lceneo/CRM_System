@@ -3,8 +3,9 @@ import {HttpService} from "./shared/services/http.service";
 import {AuthorizationService} from "./shared/services/authorization.service";
 import {Router} from "@angular/router";
 import {ProfileService} from "./shared/services/profile.service";
-import {SocketService} from "./shared/services/socket.service";
-
+import {MessageService} from "./modules/chat/services/message.service";
+import {map} from "rxjs";
+import {IProfileResponseDTO} from "./shared/models/DTO/response/ProfileResponseDTO";
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -15,6 +16,7 @@ export class AppComponent implements OnInit{
   constructor(
     private authorizationS: AuthorizationService,
     private profileS: ProfileService,
+    private messageS: MessageService,
     private router: Router
   ) {}
 
@@ -30,5 +32,19 @@ export class AppComponent implements OnInit{
 
   ngOnInit(): void {
     this.profileS.determineInitialState();
+  }
+
+  sendToAdmin(){
+    this.profileS.getProfiles$()
+      .pipe(
+        map(profiles => (profiles?.items.find(p => p.name === 'Name of admin') as IProfileResponseDTO).id)
+      ).subscribe(id => this.messageS.sendMessage(id, 'msgToAdmin', 0));
+  }
+
+  sendToClient(){
+    this.profileS.getProfiles$()
+      .pipe(
+        map(profiles => (profiles?.items.find(p => p.name === 'Name of client') as IProfileResponseDTO).id)
+      ).subscribe(id => this.messageS.sendMessage(id, 'msgToClient', 0));
   }
 }

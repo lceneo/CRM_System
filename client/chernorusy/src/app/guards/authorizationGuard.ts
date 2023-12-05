@@ -1,6 +1,6 @@
 import {inject} from "@angular/core";
 import {AuthorizationService} from "../shared/services/authorization.service";
-import {map, take, tap} from "rxjs";
+import {filter, map, take, tap} from "rxjs";
 import {Router} from "@angular/router";
 
 export const authorizationGuard = () => {
@@ -8,12 +8,13 @@ export const authorizationGuard = () => {
   const authS = inject(AuthorizationService);
   return authS.authorizationStatus
     .pipe(
-      take(1),
+      filter(status => typeof status === 'boolean'),
       map(status => !!status),
       tap(status => {
         if (!status) {
           router.navigate(["authentication"]);
         }
-      })
+      }),
+      take(1)
     )
 }

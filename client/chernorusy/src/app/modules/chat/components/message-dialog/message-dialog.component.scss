@@ -1,7 +1,21 @@
 :host{
-  position: absolute;
-  top: 0;
-  border: 1px solid;
-  height: 100vh;
-  width: 100%;
+  //position: absolute;
+  //top: 15%;
+  //border: 1px solid;
+  //height: 100%;
+  //width: 100%;
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  height: inherit;
+  &__messages {
+    height: 80%;
+    overflow-y: scroll;
+  }
+  &__sendMsg {
+    height: 20%;
+    resize: none;
+  }
 }

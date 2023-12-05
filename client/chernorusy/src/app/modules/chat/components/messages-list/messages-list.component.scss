@@ -1,4 +1,8 @@
-.messages{
+:host {
+  overflow-y: scroll;
+}
+
+.chats{
   display: grid;
 
   &__list{

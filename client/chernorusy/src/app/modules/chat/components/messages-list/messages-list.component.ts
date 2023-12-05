@@ -1,5 +1,6 @@
-import {ChangeDetectionStrategy, Component, Input, signal} from '@angular/core';
-import {IMessage, MessageService} from "../../services/message.service";
+import {ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import {ChatService} from "../../services/chat.service";
+import {IChatResponseDTO} from "../../../../shared/models/DTO/response/ChatResponseDTO";
 
 @Component({
   selector: 'app-messages-list',
@@ -10,21 +11,21 @@ import {IMessage, MessageService} from "../../services/message.service";
 export class MessagesListComponent {
   @Input({required: true}) tabType!: TabType;
 
-  protected messages$ = this.messageS.getMessages$();
-  protected selectedMessage: IMessage | null = null;
+  protected chats = this.chatService.getEntitiesAsync();
+  protected selectedChat: IChatResponseDTO | null = null;
 
   constructor(
-    private messageS: MessageService
+    private chatService: ChatService
   ) {}
 
-  protected openDialogMessage(message: IMessage, dialog: HTMLElement) {
-    if (this.selectedMessage === message) {
-      this.selectedMessage = null;
-      dialog.classList.add('messages__hidden');
+  protected openDialogMessage(chat: IChatResponseDTO, dialog: HTMLElement) {
+    if (this.selectedChat === chat) {
+      this.selectedChat = null;
+      dialog.classList.add('chats__hidden');
       return;
     }
-    this.selectedMessage = message;
-    dialog.classList.remove('messages__hidden');
+    this.selectedChat = chat;
+    dialog.classList.remove('chats__hidden');
   }
 }
 
