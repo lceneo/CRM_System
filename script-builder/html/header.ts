@@ -1,64 +1,92 @@
 import { notNull } from "../helpers/notNull";
+import { useOnClickOutside } from "../helpers/useOnClickOutside";
 
-export function createButton({ text, id, className, keepCircle, styles }: {
+export function createHeader({ text, id, className, styles }: {
 	text?: string,
 	id?: string,
+	positionX?: PositionX,
+	positionY?: PositionY,
 	className?: string,
-	keepCircle?: boolean,
 	styles?: Partial<CSSStyleDeclaration>
-}): [HTMLButtonElement, () => void, (show: boolean) => void] {
-	const button = document.createElement('button');
+}): [HTMLDivElement, () => void, (show: boolean) => void] {
+	const dialog = document.createElement('div')
+	const listeners: (() => void)[] = [];
 
 	if (notNull(text)) {
-		button.textContent = text;
+		dialog.textContent = text;
 	}
 	if (notNull(id)) {
-		button.id = id;
+		dialog.id = id;
 	}
 	if (notNull(className)) {
-		button.classList.add(className);
+		dialog.classList.add(className);
 	}
 
-	const style = button.style;
-	dropButtonStyles(style);
-	setButtonStyles(style);
+	const style = dialog.style;
+	dropDivStyles(style);
+	applyDialogStyles(style);
 	Object.assign(style, styles);
 
-	const showButton = (show: boolean) => {
-		if (show) {
-			button.style.visibility = 'visible';
-		} else {
-			button.style.visibility = 'hidden';
+	setPositionX(positionX, style);
+	setPositionY(positionY, style);
+
+
+	const closeDialog = () => {
+		document.body.removeChild(dialog)
+		if (listeners) {
+			listeners.forEach(l => l());
 		}
 	}
 
-	if (keepCircle) {
-		const [width, height] = [button.offsetWidth, button.offsetHeight];
-		const size = Math.max(width, height);
-		button.style.width = size + 'px';
-		button.style.height = size + 'px';
+	const showDialog = (show: boolean) => {
+		if (show) {
+			dialog.style.visibility = 'visible';
+		} else {
+			dialog.style.visibility = 'hidden';
+		}
 	}
 
-	return [button, () => document.removeChild(button), showButton];
+	return [dialog, closeDialog, showDialog];
 }
 
-function setButtonStyles(style: CSSStyleDeclaration) {
+function setPositionX(position: PositionX, styles: CSSStyleDeclaration) {
+	switch(position) {
+		case PositionX.BOTTOM:
+			styles.top = '';
+			styles.bottom = '0%';
+			break;
+		case PositionX.TOP:
+			styles.top = '0%';
+			styles.bottom = '';
+			break;
+	}
+}
+
+function setPositionY(position: PositionY, styles: CSSStyleDeclaration) {
+	switch(position) {
+		case PositionY.LEFT:
+			styles.right = '';
+			styles.left = '0%';
+			break;
+		case PositionY.RIGHT:
+			styles.right = '0%';
+			styles.left = '';
+			break;
+	}
+}
+
+function applyDialogStyles(style: CSSStyleDeclaration) {
 	style.position = 'fixed';
-	style.right = '5%';
-	style.bottom = '5%';
-
-	style.backgroundColor = 'orange';
-	style.outline = 'none';
-	style.border = 'none';
-	style.borderRadius = '50%';
-
-	style.display = 'flex';
-	style.justifyContent = 'center';
-	style.alignItems = 'center';
+	/*style.left = '50%';
+	style.top = '50%';*/
+	/*style.transform = 'translate(-50%,-50%)'*/
+	style.width = '50%';
+	style.height = '50%';
+	style.backgroundColor = 'grey';
 }
 
-function dropButtonStyles(style: CSSStyleDeclaration) {
-	style.cssText = `display: inline-block;
+function dropDivStyles(style: CSSStyleDeclaration) {
+	style.cssText = `display: block;
 position: static;
 float: none;
 clear: none;
@@ -166,6 +194,5 @@ letter-spacing: normal;
 text-transform: none;
 direction: ltr;
 unicode-bidi: normal;
-color: black;
-`
+color: black;`
 }
