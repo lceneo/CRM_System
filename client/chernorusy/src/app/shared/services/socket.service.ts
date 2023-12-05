@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, isDevMode} from '@angular/core';
 import {HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionState} from "@microsoft/signalr";
 import {config} from "../../../main";
 import {ISendMessageRequest} from "../models/DTO/request/SendMessageRequest";
@@ -10,9 +10,7 @@ import {Subject, take} from "rxjs";
 export class SocketService {
 
   private hubConnection!: HubConnection;
-  private url = config.apiUrl;
-  private hubUrl = config.hubUrl;
-  private protocol = config.protocol;
+  private hubUrl = isDevMode() ? 'https://localhost:7156/Hubs/Chats' : `${config.protocol}://${config.apiUrl}/${config.hubUrl}`;
   private connected$ = new Subject<void>();
   constructor() {}
 
@@ -23,7 +21,7 @@ export class SocketService {
   private establishConnection() {
     this.hubConnection = new HubConnectionBuilder()
         .withAutomaticReconnect()
-        .withUrl(`https://localhost:7156/${this.hubUrl}`, {
+        .withUrl(this.hubUrl, {
           withCredentials: true,
           accessTokenFactory(): string | Promise<string> {
             return localStorage.getItem('jwtToken') as string;
