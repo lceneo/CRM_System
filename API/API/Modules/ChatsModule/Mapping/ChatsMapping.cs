@@ -10,6 +10,15 @@ public class ChatsMapping : Profile
     {
         CreateMap<ChatEntity, ChatOutDTO>()
             .ForMember(dest => dest.LastMessage,
-                opt => opt.MapFrom(src => src.Messages.OrderBy(m => m.DateTime).Last()));
+                opt => opt.MapFrom(src => src.Messages.OrderBy(m => m.DateTime).Last()))
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(GetChatName));
+    }
+
+    private string GetChatName(ChatEntity src, ChatOutDTO dest, string _, ResolutionContext context)
+    {
+        if (src.Profiles.Count != 2)
+            return src.Name;
+
+        return src.Profiles.First(e => e.Id != (Guid)context.Items["userId"]).Name;
     }
 }

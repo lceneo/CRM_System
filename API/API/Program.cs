@@ -32,11 +32,12 @@ builder.Services.AddSignalR(hubOptions =>
 
 builder.Services.AddCors(opt =>
 {
-    opt.AddPolicy("ChatPolicy", policy =>
+    opt.AddPolicy(Config.HubsPolicyName, policy =>
     {
         policy.AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowAnyOrigin();
+            .SetIsOriginAllowed(_ => true)
+            .AllowCredentials();
     });
 });
 
@@ -49,7 +50,11 @@ var app = builder.Build();
     app.UseSwaggerUI();
 }
 
-app.UseCors(opt => opt.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+app.UseCors(opt =>
+    opt.AllowAnyHeader()
+        .AllowAnyMethod()
+        .SetIsOriginAllowed(origin => true)
+        .AllowCredentials());
 
 app.UseHttpsRedirection();
 app.UseWebSockets();

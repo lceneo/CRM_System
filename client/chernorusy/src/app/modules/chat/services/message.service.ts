@@ -1,23 +1,28 @@
-import {computed, effect, Injectable, signal} from '@angular/core';
-import {of} from "rxjs";
+import {Injectable, signal} from '@angular/core';
+import {SocketService} from "../../../shared/services/socket.service";
+import {HttpService} from "../../../shared/services/http.service";
+import {IMessageInChat} from "../../../shared/models/entities/MessageInChat";
+import {IMessageInChatResponseDTO} from "../../../shared/models/DTO/request/MessageInChatResponseDTO";
 
 @Injectable({
   providedIn: 'root'
 })
 export class MessageService {
 
-  constructor() { }
+  constructor(
+    private socketS: SocketService,
+    private httpS: HttpService
+  ) { }
 
-  public getMessages$() {
-    return signal<IMessage[]>([
-      { author: 'Nikita', text: 'First Message', timestamp: new Date().toISOString()},
-      { author: 'Egor', text: 'Second Message', timestamp: new Date().toISOString()},
-    ])
+  public getMessages$(chatID: string) {
+    return this.httpS.get<IMessageInChatResponseDTO>(`/Chats/${chatID}/Messages`);
   }
-}
 
-export interface IMessage{
-  author: string;
-  text: string;
-  timestamp: string;
+  public sendMessage(userOrChatID: string, messageText: string, requestNumber: number) {
+    return this.socketS.sendMessage('Send', {
+      "recipientId": userOrChatID,
+      "message": messageText,
+      "requestNumber": requestNumber
+    });
+  }
 }

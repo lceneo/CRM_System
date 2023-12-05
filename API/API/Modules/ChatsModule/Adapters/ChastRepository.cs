@@ -31,4 +31,14 @@ public class ChatsRepository : CRURepository<ChatEntity>, IChatsRepository
             .Where(c => c.Profiles.Any(p => p.Id == userId))
             .ToListAsync();
     }
+
+    public async Task<ChatEntity?> GetByUsers(HashSet<Guid> userIds)
+    {
+        return await Set
+            .Include(c => c.Profiles)
+                .ThenInclude(p => p.Account)
+            .Include(c => c.Messages)
+            .FirstOrDefaultAsync(c => c.Profiles.Count == userIds.Count 
+                                      && c.Profiles.All(p => userIds.Contains(p.Id)));
+    }
 }

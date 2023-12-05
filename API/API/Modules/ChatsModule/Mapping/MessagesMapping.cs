@@ -11,7 +11,7 @@ public class MessagesMapping : Profile
         CreateMap<MessageEntity, MessageInChatDTO>()
             .ForMember(dest => dest.Sender, opt => opt.MapFrom(src => src.Sender));
         CreateMap<MessageEntity, MessageOutDTO>()
-            .ForMember(dest => dest.SenderId, opt => opt.MapFrom(src => src.Sender.Id))
+            .ForMember(dest => dest.Sender, opt => opt.MapFrom(src => src.Sender))
             .ForMember(dest => dest.ChatId, opt => opt.MapFrom(src => src.Chat.Id));
     }
 }
