@@ -1,21 +1,58 @@
 :host{
-  //position: absolute;
-  //top: 15%;
-  //border: 1px solid;
-  //height: 100%;
-  //width: 100%;
+  height: 100%;
 }
 
 .chat {
-  display: flex;
-  flex-direction: column;
   height: inherit;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  padding-top: 10px;
   &__messages {
-    height: 80%;
-    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  &__message {
+    display: inline-block;
+    padding: 5px;
+    max-width: 80%;
+    min-width: 8%;
+    border: 1px solid rgba(0,0,0,.1490196078);
+    border-radius: 1rem;
+    text-align: left;
+    word-break: break-word;
+    margin-bottom: 0.5rem;
+    &-wrapper {
+      display: grid;
+      align-items: end;
+      column-gap: 5px;
+      grid-template-areas:
+        "message message datе";
+       &__text {
+         margin: 0;
+         display: inline-block;
+         grid-area: message;
+      }
+       &__date {
+         grid-area: datе;
+         font-size: 12px;
+       }
+    }
   }
   &__sendMsg {
-    height: 20%;
     resize: none;
+  }
+  &__myMsg {
+    align-self: flex-end;
+    background-color: #109cf1;
+    color: #fff;
+  }
+
+  &__companionMsg {
+    align-self: flex-start;
+    .chat__message-wrapper__date {
+      color: #b2b2bd;
+    }
   }
 }

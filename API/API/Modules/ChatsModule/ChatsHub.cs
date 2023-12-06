@@ -47,6 +47,9 @@ public class ChatsHub : Hub, IHub
         await Clients.Caller.SendAsync("Success", new SendMessageResponse
         {
             ChatId = chat.Id,
+            MessageId = response.Value.message.Id,
+            Text = response.Value.message.Message,
+            TimeStamp = DateTime.Now,
             RequestNumber = request.RequestNumber
         });
     }
