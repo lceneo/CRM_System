@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using API.DAL;
 using API.Modules.AccountsModule.Entities;
+using API.Modules.ProfilesModule.Entities;
 
 namespace API.Modules.AccountsModule.Models;
 
@@ -14,4 +15,5 @@ public class AccountEntity : IEntity
     public string Email { get; set; }
     public string? PasswordHash { get; set; }
     public AccountRole Role { get; set; }
+    public HashSet<ProfileEntity> Profiles { get; set; }
 }

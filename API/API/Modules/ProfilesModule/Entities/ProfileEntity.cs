@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using API.DAL;
 using API.Modules.AccountsModule.Models;
+using API.Modules.ChatsModule.Entities;
 
 namespace API.Modules.ProfilesModule.Entities;
 
@@ -16,4 +17,5 @@ public class ProfileEntity : IEntity
     public string Name { get; set; }
     public string? Patronimic { get; set; }
     public string? About { get; set; }
+    public HashSet<ChatEntity> Chats { get; set; }
 }

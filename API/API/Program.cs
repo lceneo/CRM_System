@@ -50,11 +50,11 @@ var app = builder.Build();
     app.UseSwaggerUI();
 }
 
-/*app.UseCors(opt => 
+app.UseCors(opt =>
     opt.AllowAnyHeader()
         .AllowAnyMethod()
         .SetIsOriginAllowed(origin => true)
-        .AllowCredentials());*/
+        .AllowCredentials());
 
 app.UseHttpsRedirection();
 app.UseWebSockets();

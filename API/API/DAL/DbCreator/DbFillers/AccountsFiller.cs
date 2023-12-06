@@ -13,16 +13,23 @@ public class AccountsFiller : IDbFiller
         var profiles = dataContext.Profiles;
         var adminAcc = Account("admin", "admin", AccountRole.Admin);
         var emptyAcc = Account("empty", "empty", AccountRole.Manager);
-        var normalAcc = Account("manager", "manager", AccountRole.Manager);
+        var managerAcc = Account("manager", "manager", AccountRole.Manager);
         var clientAcc = Account("client", "client", AccountRole.Client);
         accounts.Add(adminAcc);
         accounts.Add(emptyAcc);
-        accounts.Add(normalAcc);
+        accounts.Add(managerAcc);
         accounts.Add(clientAcc);
 
         profiles.Add(Profile(adminAcc));
-        profiles.Add(Profile(normalAcc));
+        profiles.Add(Profile(managerAcc));
         profiles.Add(Profile(clientAcc));
+
+        var clientOfClient = Profile(clientAcc);
+        clientOfClient.Id = new Guid();
+        clientOfClient.Name = "Real client";
+        clientOfClient.Surname = "surname";
+        clientOfClient.Patronimic = "patron";
+        profiles.Add(clientOfClient);
     }
 
     private static AccountEntity Account(string login, string password, AccountRole role)

@@ -1,12 +1,9 @@
 ﻿using API.DAL;
 using API.DAL.Repository;
-using API.Infrastructure.BaseApiDTOs;
-using API.Modules.ChatsModule.DTO;
 using API.Modules.ChatsModule.Entities;
 using API.Modules.ChatsModule.Ports;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 
 namespace API.Modules.ChatsModule.Adapters;
 
@@ -33,5 +30,15 @@ public class ChatsRepository : CRURepository<ChatEntity>, IChatsRepository
             .Include(c => c.Messages)
             .Where(c => c.Profiles.Any(p => p.Id == userId))
             .ToListAsync();
+    }
+
+    public async Task<ChatEntity?> GetByUsers(HashSet<Guid> userIds)
+    {
+        return await Set
+            .Include(c => c.Profiles)
+                .ThenInclude(p => p.Account)
+            .Include(c => c.Messages)
+            .FirstOrDefaultAsync(c => c.Profiles.Count == userIds.Count 
+                                      && c.Profiles.All(p => userIds.Contains(p.Id)));
     }
 }

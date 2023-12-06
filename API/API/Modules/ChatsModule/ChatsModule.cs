@@ -1,6 +1,7 @@
 ﻿using API.Infrastructure;
 using API.Modules.ChatsModule.Adapters;
 using API.Modules.ChatsModule.Entities;
+using API.Modules.ChatsModule.Mapping;
 using API.Modules.ChatsModule.Ports;
 
 namespace API.Modules.ChatsModule;
@@ -12,6 +13,9 @@ public class ChatsModule : IModule
         services.AddScoped<IMessagesRepository, MessagesRepository>();
         services.AddScoped<IChatsRepository, ChatsRepository>();
         services.AddScoped<IChatsService, ChatsService>();
+
+        services.AddAutoMapper(typeof(ChatsMapping));
+        services.AddAutoMapper(typeof(MessagesMapping));
 
         return services;
     }

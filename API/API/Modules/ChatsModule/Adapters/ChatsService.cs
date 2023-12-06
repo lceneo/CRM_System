@@ -31,8 +31,10 @@ public class ChatsService : IChatsService
         Guid senderId, 
         string message)
     {
+        var lazyUsers = new Lazy<Guid[]>(() => new[] {recipientId, senderId});
         var chat = await chatsRepository.GetByIdAsync(recipientId) 
-                   ?? await CreateChatWithUsers(new[] {recipientId, senderId});
+                   ?? await chatsRepository.GetByUsers(new HashSet<Guid>(lazyUsers.Value))
+                   ?? await CreateChatWithUsers(lazyUsers.Value);
         if (chat == null)
             return Result.NotFound<(ChatEntity chat, MessageEntity message)>("Неправильный идентификатор чата/пользователя");
 
@@ -55,6 +57,14 @@ public class ChatsService : IChatsService
         return Result.Ok(mapper.Map<IEnumerable<ChatOutDTO>>(chats, opt => opt.Items["userId"] = userId));
     }
 
+    public async Task<Result<ChatOutDTO>> GetChatByIdAsync(Guid userId, Guid chatId)
+    {
+        var chat = await chatsRepository.GetByIdAsync(chatId);
+        return chat == null
+            ? Result.NotFound<ChatOutDTO>("Чат с таким Id не найден")
+            : Result.Ok(mapper.Map<ChatOutDTO>(chat, opt => opt.Items["userId"] = userId));
+    }
+
     public Result<SearchResponseBaseDTO<MessageInChatDTO>> SearchMessages(Guid chatId, MessagesSearchRequest messagesSearchReq)
     {
         var result = messagesRepository.SearchAsync(chatId, messagesSearchReq);
@@ -66,13 +76,32 @@ public class ChatsService : IChatsService
     }
 
     private static long chatsCounter = 0;
-    private async Task<ChatEntity?> CreateChatWithUsers(Guid[] userIds)
+    public async Task<ChatEntity?> CreateChatWithUsers(Guid[] userIds)
     {
         var users = await profilesRepository.GetByIdsAsync(userIds);
         if (users.Count() != userIds.Length)
             return null;
 
         var chat = new ChatEntity
+        {
+            Name = $"№{chatsCounter++}",
+            Profiles = users.ToHashSet(),
+        };
+        await chatsRepository.CreateAsync(chat);
+        return chat;
+    }
+    
+    public async Task<ChatEntity?> GetOrCreateChatWithUsers(Guid[] userIds)
+    {
+        var chat = await chatsRepository.GetByUsers(userIds.ToHashSet());
+        if (chat != null)
+            return chat;
+        
+        var users = await profilesRepository.GetByIdsAsync(userIds);
+        if (users.Count() != userIds.Length)
+            return null;
+
+        chat = new ChatEntity
         {
             Name = $"№{chatsCounter++}",
             Profiles = users.ToHashSet(),

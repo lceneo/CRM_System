@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.SignalR;
 namespace API.Modules.ChatsModule;
 
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-[EnableCors(Config.HubsPolicyName)]
 public class ChatsHub : Hub, IHub
 {
     public static string Route => "/Hubs/Chats";
@@ -43,7 +42,7 @@ public class ChatsHub : Hub, IHub
         var chat = response.Value.chat;
         var othersInGroup = chat.Profiles.Where(p => p.Id != senderId);
         foreach (var user in othersInGroup)
-            await Clients.Group(user.Id.ToString()).SendAsync("Recieve", mapper.Map<MessageInChatDTO>(response.Value.message));
+            await Clients.Group(user.Id.ToString()).SendAsync("Recieve", mapper.Map<MessageOutDTO>(response.Value.message));
 
         await Clients.Caller.SendAsync("Success", new SendMessageResponse
         {
@@ -55,6 +54,6 @@ public class ChatsHub : Hub, IHub
     public override Task OnConnectedAsync()
     {
         Groups.AddToGroupAsync(Context.ConnectionId, Context.User.GetId().ToString());
-        return base.OnConnectedAsync();
+         return base.OnConnectedAsync();
     }
 }

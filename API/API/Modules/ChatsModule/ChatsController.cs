@@ -31,6 +31,13 @@ public class ChatsController : ControllerBase
         return  response.ActionResult;
     }
 
+    [HttpGet("{chatId:Guid}")]
+    public async Task<ActionResult<ChatOutDTO>> GetChatByIdAsync([FromRoute] Guid chatId)
+    {
+        var response = await chatsService.GetChatByIdAsync(User.GetId(), chatId);
+        return response.ActionResult;
+    }
+
     [HttpPost("Messages")]
     public async Task<ActionResult<MessageInChatDTO>> SendMessageAsync(SendMessageRequest request)
     {
@@ -44,10 +51,10 @@ public class ChatsController : ControllerBase
             return BadRequest(response.Error);
         
         var message = response.Value.message;
-        return Ok(mapper.Map<MessageInChatDTO>(message));
+        return Ok(mapper.Map<MessageOutDTO>(message));
     }
 
-    [HttpPost("{chatId:Guid}/Messages")]
+    [HttpGet("{chatId:Guid}/Messages")]
     public async Task<ActionResult<IEnumerable<MessageInChatDTO>>> SearchMessagesAsync(
         [FromRoute] Guid chatId,
         [FromQuery]MessagesSearchRequest messagesSearchReq)

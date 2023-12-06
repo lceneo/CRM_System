@@ -53,6 +53,13 @@ export class ProfileService {
       );
   }
 
+  public getProfiles$() {
+    return this.httpS.get<{items: IProfileResponseDTO[]}>(`/Profiles`)
+      .pipe(
+        catchError(err => of(null))
+      );
+  }
+
   public signOut() {
     this.state.set({profile: null, loaded: false, error: null});
   }
