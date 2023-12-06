@@ -36,3 +36,10 @@ spec:
             name: api-service
             port:
               number: 80
+      - pathType: Prefix
+        path: /Hubs
+        backend:
+          service:
+            name: api-service
+            port:
+              number: 80
