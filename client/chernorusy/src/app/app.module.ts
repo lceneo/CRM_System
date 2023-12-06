@@ -11,6 +11,7 @@ import {checkResponseInterceptor} from "./interceptors/check-response-status.int
 import {BsDropdownModule} from "ngx-bootstrap/dropdown";
 import {AnimationBuilder} from "@angular/animations";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { TextareaResizeDirective } from './shared/directives/textarea-resize.directive';
 
 @NgModule({
   declarations: [
