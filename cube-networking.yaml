@@ -10,6 +10,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
     nginx.ingress.kubernetes.io/affinity-canary-behavior: "sticky"
+    nginx.org/websocket-services: api-service
 spec:
   ingressClassName: nginx
   rules:
