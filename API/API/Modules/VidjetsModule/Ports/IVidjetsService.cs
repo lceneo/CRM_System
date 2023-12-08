@@ -16,5 +16,5 @@ public interface IVidjetsService
 
     Task<ActionResult> DeleteVidjetAsync([FromRoute] Guid vidjetId);
 
-    Task<Result<VidjetResponse>> ResolveVidjetForUserAsync(VidjetRequest vidjetReq, long ip);
+    Task<Result<VidjetResponse>> ResolveVidjetForBuyerAsync(VidjetRequest vidjetReq, long ip);
 }

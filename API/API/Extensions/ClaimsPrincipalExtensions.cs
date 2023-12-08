@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using API.Modules.AccountsModule.Entities;
 
 namespace API.Extensions;
 
@@ -11,5 +12,14 @@ public static class ClaimsPrincipalExtensions
             .Value;
 
         return Guid.Parse(id);
+    }
+    
+    public static AccountRole GetRole(this ClaimsPrincipal user)
+    {
+        var role = user.Claims
+            .First(claim => claim.Type.EndsWith(ClaimTypes.Role))
+            .Value;
+
+        return (AccountRole) Enum.Parse(typeof(AccountRole), role);
     }
 }
