@@ -2,6 +2,7 @@
 using API.DAL;
 using API.Infrastructure;
 using API.Infrastructure.BaseApiDTOs;
+using API.Modules.AccountsModule.Entities;
 using API.Modules.AccountsModule.Ports;
 using API.Modules.ChatsModule.Ports;
 using API.Modules.VidjetsModule.DTO;
@@ -46,23 +47,24 @@ public class VidjetsService : IVidjetsService
         throw new NotImplementedException();
     }
 
-    public async Task<Result<VidjetResponse>> ResolveVidjetForUserAsync(VidjetRequest vidjetReq, long ip)
+    public async Task<Result<VidjetResponse>> ResolveVidjetForBuyerAsync(VidjetRequest vidjetReq, long ip)
     {
-        if (vidjetReq.Domen == "localhost")
+        var clientProfile = dataContext.Profiles.First(e => e.Account.Id != e.Id);
+        var claims = new List<Claim>
         {
-            var clientProfile = dataContext.Profiles.First(e => e.Account.Id != e.Id);
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, clientProfile.Id.ToString())
-            };
+            new Claim(ClaimTypes.NameIdentifier, clientProfile.Id.ToString()),
+            new Claim(ClaimTypes.Role, AccountRole.Buyer.ToString())
+        };
 
-            var chat = await chatsService.GetOrCreateChatWithUsers(new[] {clientProfile.Id});
-            return Result.Ok(new VidjetResponse
-            {
-                Token = accountsService.CreateToken(claims),
-                ChatId = chat.Id,
-            });
-        }
+        var response = await chatsService.GetOrCreateChatWithUsers(new[] {clientProfile.Id});
+        if (!response.IsSuccess)
+            return Result.BadRequest<VidjetResponse>(response.Error);
+
+        return Result.Ok(new VidjetResponse
+        {
+            Token = accountsService.CreateToken(claims),
+            ChatId = response.Value.Id,
+        });
 
         return Result.NotFound<VidjetResponse>("Такого домена не существует");
     }
