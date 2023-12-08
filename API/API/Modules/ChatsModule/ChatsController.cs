@@ -23,6 +23,13 @@ public class ChatsController : ControllerBase
         this.chatsService = chatsService;
         this.mapper = mapper;
     }
+
+    [HttpGet("Free")]
+    public async Task<ActionResult<IEnumerable<ChatOutDTO>>> GetFreeChats()
+    {
+        var response = await chatsService.GetFreeChats();
+        return response.ActionResult;
+    } 
     
     [HttpGet("My")]
     public async Task<ActionResult<IEnumerable<ChatOutDTO>>> GetMyChats()
@@ -35,6 +42,13 @@ public class ChatsController : ControllerBase
     public async Task<ActionResult<ChatOutDTO>> GetChatByIdAsync([FromRoute] Guid chatId)
     {
         var response = await chatsService.GetChatByIdAsync(User.GetId(), chatId);
+        return response.ActionResult;
+    }
+
+    [HttpPost("{chatId:Guid}/Join")]
+    public async Task<ActionResult> JoinChatAsync([FromRoute] Guid chatId)
+    {
+        var response = await chatsService.JoinChatAsync(chatId, User.GetId());
         return response.ActionResult;
     }
 
