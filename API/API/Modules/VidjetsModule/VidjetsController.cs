@@ -12,7 +12,8 @@ public class VidjetsController : ControllerBase
 {
     private readonly IVidjetsService vidjetsService;
 
-    public VidjetsController(IVidjetsService vidjetsService)
+    public VidjetsController(
+        IVidjetsService vidjetsService)
     {
         this.vidjetsService = vidjetsService;
     }
@@ -49,8 +50,23 @@ public class VidjetsController : ControllerBase
         if (ip == null)
             return BadRequest("IP is required");
 
-        var response = await vidjetsService.ResolveVidjetForUserAsync(request, ip.MapToIPv4().GetHashCode());
+        var response = await vidjetsService.ResolveVidjetForBuyerAsync(request, ip.MapToIPv4().GetHashCode());
 
         return response.ActionResult;
+    }
+
+    [HttpPost("TestIP")]
+    public async Task<ActionResult<VidjetResponse>> TestIP()
+    {
+        var ip = HttpContext.Connection.RemoteIpAddress.MapToIPv4();
+        
+        return Ok(new
+        {
+            IP = ip.ToString(), 
+            Hash = ip.MapToIPv4().GetHashCode(),
+            Origin = HttpContext.Request.Headers.Origin,
+            Domein = HttpContext.Request.Headers.From,
+            D = HttpContext.Request.Headers.Via,
+        });
     }
 }
