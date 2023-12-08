@@ -7,6 +7,7 @@
 
   &__list{
     list-style: none;
+    padding: 0;
   }
 
   &__item{
@@ -17,6 +18,10 @@
       background-color: #1c6ae1;
       color: #FFF;
     }
+  }
+
+  &__dialog {
+    height: 67vh;
   }
 
   &__hidden{

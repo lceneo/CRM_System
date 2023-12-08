@@ -1,5 +1,5 @@
 import {Injectable, isDevMode} from '@angular/core';
-import {HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionState} from "@microsoft/signalr";
+import {HubConnection, HubConnectionBuilder, HubConnectionState} from "@microsoft/signalr";
 import {config} from "../../../main";
 import {ISendMessageRequest} from "../models/DTO/request/SendMessageRequest";
 import {Subject, take} from "rxjs";
@@ -12,9 +12,11 @@ export class SocketService {
   private hubConnection!: HubConnection;
   private hubUrl = isDevMode() ? 'https://localhost:7156/Hubs/Chats' : `${config.protocol}://${config.apiUrl}/${config.hubUrl}`;
   private connected$ = new Subject<void>();
+  public disconnected$ = new Subject<void>();
   constructor() {}
 
   public init() {
+    if (this.isConnected() || this.hubConnection?.state === HubConnectionState.Connecting) { return; }
     this.establishConnection();
   }
 
@@ -37,9 +39,10 @@ export class SocketService {
   }
   public stopConnection() {
     this.hubConnection?.stop();
+    this.disconnected$.next();
   }
   public isConnected() {
-    return this.hubConnection && (this.hubConnection.state === HubConnectionState.Connected || this.hubConnection.state === HubConnectionState.Connecting);
+    return this.hubConnection && this.hubConnection.state === HubConnectionState.Connected;
   }
   public sendMessage(methodName: string, message: ISendMessageRequest) {
     if (this.hubConnection.state === HubConnectionState.Connected) { return this.hubConnection.send(methodName, message); }
