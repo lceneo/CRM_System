@@ -2,6 +2,7 @@ import {ChangeDetectionStrategy, Component, Input, OnInit, ViewChild, ViewChildr
 import {ChatService} from "../../services/chat.service";
 import {IChatResponseDTO} from "../../../../shared/models/DTO/response/ChatResponseDTO";
 import {MessageDialogComponent} from "../message-dialog/message-dialog.component";
+import {MessageService} from "../../services/message.service";
 
 @Component({
   selector: 'app-messages-list',
@@ -9,7 +10,7 @@ import {MessageDialogComponent} from "../message-dialog/message-dialog.component
   styleUrls: ['./messages-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MessagesListComponent implements OnInit {
+export class MessagesListComponent {
   @Input({required: true}) tabType!: TabType;
   @ViewChild(MessageDialogComponent, {static: true}) dialog!: MessageDialogComponent;
 
@@ -20,9 +21,6 @@ export class MessagesListComponent implements OnInit {
     private chatService: ChatService
   ) {}
 
-  ngOnInit(): void {
-        this.chatService.initialise();
-    }
 
   protected openDialogMessage(chat: IChatResponseDTO, dialog: HTMLElement) {
     if (this.selectedChat === chat) {

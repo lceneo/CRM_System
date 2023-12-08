@@ -16,18 +16,17 @@ export class MessageMapperService {
   ) { }
 
    msgReceiveToMsgInChat(messReceive: IMessageReceive): IMessageInChat {
-    const msgInChat: IMessageInChat & {chatId?: string}  = {
+   return  {
       ...messReceive,
       mine: this.authorizationS.userID === messReceive.sender.id
     };
-    delete msgInChat.chatId;
-    return msgInChat;
   }
 
-  msgSuccessToMsgInChat(messSuccess: IMessageSuccess): IMessageInChat {
+  msgSuccessToMsgInChat(messSuccess: IMessageSuccess, msgText: string): IMessageInChat {
     return {
       id: messSuccess.messageId,
-      message: messSuccess.text,
+      chatId: messSuccess.chatId,
+      message: msgText,
       dateTime: messSuccess.timeStamp,
       mine: true,
       sender: {
@@ -35,5 +34,9 @@ export class MessageMapperService {
         name: this.profileS.profile()?.name as string
       }
     };
+  }
+
+  detectMineMsgOrNot(msg: IMessageInChat) {
+    return msg.sender.id === this.authorizationS.userID || this.profileS.profile()?.id === msg.sender.id;
   }
 }
