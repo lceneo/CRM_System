@@ -1,5 +1,6 @@
 ﻿using API.Extensions;
 using API.Infrastructure;
+using API.Modules.AccountsModule.Entities;
 using API.Modules.ChatsModule.ApiDTO;
 using API.Modules.ChatsModule.DTO;
 using API.Modules.ChatsModule.Ports;
@@ -46,6 +47,7 @@ public class ChatsController : ControllerBase
     }
 
     [HttpPost("{chatId:Guid}/Join")]
+    [Authorize(Roles = $"{nameof(AccountRole.Manager)},{nameof(AccountRole.Admin)}")]
     public async Task<ActionResult> JoinChatAsync([FromRoute] Guid chatId)
     {
         var response = await chatsService.JoinChatAsync(chatId, User.GetId());
