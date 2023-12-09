@@ -7,10 +7,8 @@
         <ul
           class="chats__list"
           [ngSwitch]="tabType"
-          *ngLet = "chats() as chats">
-          <ng-container
-            *ngSwitchCase="tabType === 'Inbox' || tabType === 'Mine' ? tabType : ''"
-          >
+          *ngLet = "chats ? chats() : [] as chats">
+          <ng-container>
             <li
               class="chats__item"
               [ngClass]="{

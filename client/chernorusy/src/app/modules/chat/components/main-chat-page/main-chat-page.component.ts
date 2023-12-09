@@ -10,7 +10,7 @@ import {MessageService} from "../../services/message.service";
   styleUrls: ['./main-chat-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MainChatPageComponent implements OnInit {
+export class MainChatPageComponent  {
 
   constructor(
     private profileS: ProfileService,
@@ -30,8 +30,5 @@ export class MainChatPageComponent implements OnInit {
       ).subscribe(id => this.messageS.sendMessage(id, 'msgToClient'));
   }
 
-  ngOnInit(): void {
-    this.messageS.init();
-  }
 
 }

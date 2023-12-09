@@ -2,13 +2,13 @@ import {
   ChangeDetectionStrategy,
   Component, ElementRef,
   Input, OnChanges, OnDestroy,
-  signal, SimpleChanges,
+  signal,
   ViewChild
 } from '@angular/core';
 import {IChatResponseDTO} from "../../../../shared/models/DTO/response/ChatResponseDTO";
 import {MessageService} from "../../services/message.service";
 import {IMessageInChat} from "../../../../shared/models/entities/MessageInChat";
-import {filter, merge, Subject, takeUntil} from "rxjs";
+import {filter, merge, Subject, switchMap, takeUntil, tap} from "rxjs";
 
 @Component({
   selector: 'app-message-dialog',
@@ -29,7 +29,7 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
     private messageS: MessageService
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     if ('chat in changes') { this.initNewChat() }
   }
 
@@ -37,25 +37,34 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
     if (!this.chat) { return; }
 
     this.destroy$.next(); // уничтожаем предыдущую подписку
-    this.getExistingMessagesInChat();
 
-    merge(this.messageS.receivedMessages$, this.messageS.successMessages$)
+    this.getExistingMessagesInChat()
       .pipe(
+        switchMap(() => merge(this.messageS.receivedMessages$, this.messageS.successMessages$)),
         filter(msg => msg.chatId === this.chat?.id),
         takeUntil(this.destroy$),
       ).subscribe(msg => {
+
       this.messages.update(messages =>
         [...messages, msg].sort((f, s) => new Date(f.dateTime).getTime() - new Date(s.dateTime).getTime()));
-      setTimeout(() => this.msgListElementRef.nativeElement.scrollTo({top: this.msgListElementRef.nativeElement.scrollHeight, behavior: 'instant'}));
+
+      if (msg.mine) {
+        setTimeout(() => this.msgListElementRef.nativeElement.scrollTo({
+          top: this.msgListElementRef.nativeElement.scrollHeight,
+          behavior: 'instant'
+        }));
+      }
     });
   }
 
   private getExistingMessagesInChat() {
-    this.messageS.getMessages$(this.chat!.id)
-      .subscribe(messages => {
-        this.messages.set(
-          messages.items.sort((f, s) => new Date(f.dateTime).getTime() - new Date(s.dateTime).getTime()))
-      });
+    return this.messageS.getMessages$(this.chat!.id)
+      .pipe(
+        tap(messages => {
+          this.messages.set(
+            messages.items.sort((f, s) => new Date(f.dateTime).getTime() - new Date(s.dateTime).getTime()))
+        })
+      );
   }
 
 

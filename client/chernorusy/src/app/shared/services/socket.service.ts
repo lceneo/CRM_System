@@ -11,7 +11,7 @@ export class SocketService {
 
   private hubConnection!: HubConnection;
   private hubUrl = isDevMode() ? 'https://localhost:7156/Hubs/Chats' : `${config.protocol}://${config.apiUrl}/${config.hubUrl}`;
-  private connected$ = new Subject<void>();
+  public connected$ = new Subject<void>();
   public disconnected$ = new Subject<void>();
   constructor() {}
 
