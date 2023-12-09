@@ -44,7 +44,7 @@ public class ChatsHub : Hub, IHub
 
         var chat = response.Value.chat;
         var othersInGroup = chat.Profiles.Where(p => p.Id != senderId);
-        if (othersInGroup.Count() > 1)
+        if (othersInGroup.Count() > 0)
         {
             foreach (var user in othersInGroup)
                 await Clients.Group(user.Id.ToString()).SendAsync("Recieve", mapper.Map<MessageOutDTO>(response.Value.message));
@@ -58,13 +58,11 @@ public class ChatsHub : Hub, IHub
         {
             ChatId = chat.Id,
             MessageId = response.Value.message.Id,
-            Text = response.Value.message.Message,
-            TimeStamp = DateTime.Now,
+            TimeStamp = response.Value.message.DateTime,
             RequestNumber = request.RequestNumber
         });
     }
 
-    [Authorize(Roles = $"{nameof(AccountRole.Manager)},{nameof(AccountRole.Admin)}")]
     public async Task Join(JoinChatRequest joinChatRequest)
     {
         var senderId = Context.User.GetId();
@@ -82,7 +80,6 @@ public class ChatsHub : Hub, IHub
         
         await Clients.Caller.SendAsync("SuccessJoin");
     }
-
 
     public override Task OnConnectedAsync()
     {
