@@ -1,22 +1,14 @@
 import {
   ChangeDetectionStrategy,
   Component, ElementRef,
-  Input,
-  OnChanges,
-  signal,
-  SimpleChanges, ViewChild
+  Input, OnChanges, OnDestroy,
+  signal, SimpleChanges,
+  ViewChild
 } from '@angular/core';
 import {IChatResponseDTO} from "../../../../shared/models/DTO/response/ChatResponseDTO";
 import {MessageService} from "../../services/message.service";
 import {IMessageInChat} from "../../../../shared/models/entities/MessageInChat";
-import {map, tap} from "rxjs";
-import {SocketService} from "../../../../shared/services/socket.service";
-import {IMessageReceive} from "../../../../shared/models/entities/MessageReceive";
-import {msgReceiveToMsgInChat} from "../../../../shared/helpers/mappers/message.mapper";
-import {IMessageSuccess} from "../../../../shared/models/entities/MessageSuccess";
-import {ProfileService} from "../../../../shared/services/profile.service";
-import {AuthorizationService} from "../../../../shared/services/authorization.service";
-import {MessageMapperService} from "../../../../shared/helpers/mappers/message.mapper.service";
+import {filter, merge, Subject, takeUntil} from "rxjs";
 
 @Component({
   selector: 'app-message-dialog',
@@ -24,80 +16,53 @@ import {MessageMapperService} from "../../../../shared/helpers/mappers/message.m
   styleUrls: ['./message-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MessageDialogComponent implements OnChanges{
+export class MessageDialogComponent implements OnChanges, OnDestroy {
   @Input({required: true}) chat: IChatResponseDTO | null = null;
-  @Input({required: true}) isVisible = false;
 
   @ViewChild('msgList', {static: true}) msgListElementRef!: ElementRef<HTMLUListElement>;
 
   protected msgValue = '';
   protected messages = signal<IMessageInChat[]>([]);
-  protected existingReceiveFn?: (...args: any[]) => void;
-  protected existingSuccessFn?: (...args: any[]) => void;
-  private dialogInitted = false;
+  private destroy$ = new Subject<void>();
 
   constructor(
-    private messageS: MessageService,
-    private socketS: SocketService,
-    private authorizationS: AuthorizationService,
-    private messageMapper: MessageMapperService
+    private messageS: MessageService
   ) {}
+
   ngOnChanges(changes: SimpleChanges): void {
-    //@ts-ignore
-    if (this.isVisible &&
-      ('chat in changes' || !this.dialogInitted)) {
-      this.initAndListenNewChat(changes['chat'].currentValue.id)
-    }
+    if ('chat in changes') { this.initNewChat() }
   }
 
-  private initAndListenNewChat(chatID: string) {
-    this.existingReceiveFn && this.socketS.unsubscribeFromMethod('Recieve', this.existingReceiveFn);
-    this.existingSuccessFn && this.socketS.unsubscribeFromMethod('Success', this.existingSuccessFn);
+  private initNewChat() {
+    if (!this.chat) { return; }
 
-    this.messageS.getMessages$(chatID)
+    this.destroy$.next(); // уничтожаем предыдущую подписку
+    this.getExistingMessagesInChat();
+
+    merge(this.messageS.receivedMessages$, this.messageS.successMessages$)
       .pipe(
-        tap(() => {
-
-          this.existingReceiveFn = (msg: IMessageReceive) => {
-            if (msg.chatId !== this.chat?.id) { return; }
-            this.addMsgInChat(this.messageMapper.msgReceiveToMsgInChat(msg));
-          };
-
-          this.existingSuccessFn = (msg: IMessageSuccess) => {
-            if (msg.chatId !== this.chat?.id) { return; }
-            this.addMsgInChat(this.messageMapper.msgSuccessToMsgInChat(msg), true);
-            };
-
-          this.socketS.listenMethod('Recieve', this.existingReceiveFn);
-          this.socketS.listenMethod('Success', this.existingSuccessFn);
-        }),
-        map(
-          messages => {
-            return messages.items
-              .sort((f, s) => new Date(f.dateTime).getTime() - new Date(s.dateTime).getTime())
-              .map(msg => ({...msg, mine: msg.sender.id === this.authorizationS.userID}));
-          }
-        )
-      )
-      .subscribe(messages => this.messages.set(messages)
-      );
-    this.dialogInitted = true;
+        filter(msg => msg.chatId === this.chat?.id),
+        takeUntil(this.destroy$),
+      ).subscribe(msg => {
+      this.messages.update(messages =>
+        [...messages, msg].sort((f, s) => new Date(f.dateTime).getTime() - new Date(s.dateTime).getTime()));
+      setTimeout(() => this.msgListElementRef.nativeElement.scrollTo({top: this.msgListElementRef.nativeElement.scrollHeight, behavior: 'instant'}));
+    });
   }
+
+  private getExistingMessagesInChat() {
+    this.messageS.getMessages$(this.chat!.id)
+      .subscribe(messages => {
+        this.messages.set(
+          messages.items.sort((f, s) => new Date(f.dateTime).getTime() - new Date(s.dateTime).getTime()))
+      });
+  }
+
 
   protected sendMsg() {
     if (!this.msgValue.trim().length) { return; }
-    this.messageS.sendMessage(this.chat?.id as string, this.msgValue, 0)
+    this.messageS.sendMessage(this.chat?.id as string, this.msgValue)
       .then(() => this.msgValue = '');
-  }
-
-  private addMsgInChat(msg: IMessageInChat, scrollToBottom = false) {
-    this.messages.update(msgs => [...msgs, msg]
-      .sort((f, s) => new Date(f.dateTime).getTime() - new Date(s.dateTime).getTime()));
-    if (scrollToBottom) {
-      setTimeout(() => {
-        this.msgListElementRef.nativeElement.scrollTo({top: this.msgListElementRef.nativeElement.scrollHeight, behavior: 'instant'}) }
-      , 0);
-    }
   }
 
   pressKey(ev: KeyboardEvent) {
@@ -107,4 +72,10 @@ export class MessageDialogComponent implements OnChanges{
   public resetMsgValue() {
     this.msgValue = '';
   }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
 }
