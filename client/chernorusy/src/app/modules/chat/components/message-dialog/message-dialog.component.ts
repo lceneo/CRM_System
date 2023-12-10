@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
-  Component, ElementRef,
-  Input, OnChanges, OnDestroy,
+  Component, ElementRef, EventEmitter,
+  Input, OnChanges, OnDestroy, Output,
   signal,
   ViewChild
 } from '@angular/core';
@@ -9,6 +9,7 @@ import {IChatResponseDTO} from "../../../../shared/models/DTO/response/ChatRespo
 import {MessageService} from "../../services/message.service";
 import {IMessageInChat} from "../../../../shared/models/entities/MessageInChat";
 import {filter, merge, Subject, switchMap, takeUntil, tap} from "rxjs";
+import {FreeChatService} from "../../services/free-chat.service";
 
 @Component({
   selector: 'app-message-dialog',
@@ -26,7 +27,8 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   private destroy$ = new Subject<void>();
 
   constructor(
-    private messageS: MessageService
+    private messageS: MessageService,
+    private freeChatS: FreeChatService
   ) {}
 
   ngOnChanges(): void {
@@ -80,6 +82,10 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
 
   public resetMsgValue() {
     this.msgValue = '';
+  }
+
+  protected joinChat() {
+    this.freeChatS.joinChat(this.chat!.id).subscribe();
   }
 
   ngOnDestroy(): void {

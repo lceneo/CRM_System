@@ -1,6 +1,7 @@
 {
   "/api/": {
-    "target": "https://localhost:7156",
+    "target": "https://request.stk8s.66bit.ru/",
+    "changeOrigin": true,
     "secure": false
   }
 }

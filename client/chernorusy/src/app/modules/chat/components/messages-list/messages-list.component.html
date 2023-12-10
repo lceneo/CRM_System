@@ -15,7 +15,7 @@
                'chats__item-selected': selectedChat && selectedChat.id === chat.id
               }"
               *ngFor="let chat of chats"
-              (click) = "openDialogMessage(chat, dialog)">
+              (click) = "openDialogMessage(chat)">
               <section>
                 <h3>{{chat.name}}</h3>
                 <p>{{chat.lastMessage.message}}</p>

@@ -10,7 +10,7 @@ import {Subject, take} from "rxjs";
 export class SocketService {
 
   private hubConnection!: HubConnection;
-  private hubUrl = isDevMode() ? 'https://localhost:7156/Hubs/Chats' : `${config.protocol}://${config.apiUrl}/${config.hubUrl}`;
+  private hubUrl = isDevMode() ? 'https://request.stk8s.66bit.ru/Hubs/Chats' : `${config.protocol}://${config.apiUrl}/${config.hubUrl}`;
   public connected$ = new Subject<void>();
   public disconnected$ = new Subject<void>();
   constructor() {}
