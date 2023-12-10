@@ -55,4 +55,13 @@
       color: #b2b2bd;
     }
   }
+
+  &__btnContainer {
+    width: 100%;
+    display: flex;
+    column-gap: 3px;
+      button {
+        flex: 1;
+      }
+  }
 }

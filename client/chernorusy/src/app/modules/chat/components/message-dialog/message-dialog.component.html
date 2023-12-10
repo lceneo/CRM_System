@@ -13,13 +13,33 @@
       </div>
     </li>
   </ul>
-  <div class="form-group">
+
+  <ng-container
+    [ngSwitch]="chat | getChatType">
+
+    <div class="form-group"
+         *ngSwitchCase="'My'"
+    >
       <textarea appTextareaResize
-        class="chat__sendMsg form-control"
-        [(ngModel)] = "msgValue"
-        [placeholder]="'Введите сообщение...'"
-        (keydown)="pressKey($event)"
+                class="chat__sendMsg form-control"
+                [(ngModel)] = "msgValue"
+                [placeholder]="'Введите сообщение...'"
+                (keydown)="pressKey($event)"
       ></textarea>
-  </div>
+    </div>
+
+    <div class="chat__btnContainer"
+         *ngSwitchCase="'Free'"
+    >
+      <button
+        class="btn btn-success"
+        (click)="joinChat()"
+      >Принять</button>
+      <button
+        class="btn btn-danger"
+      >Отклонить</button>
+    </div>
+  </ng-container>
+
 
 </section>

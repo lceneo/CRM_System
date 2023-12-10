@@ -2,6 +2,8 @@ import {computed, inject, Injectable, signal, WritableSignal} from "@angular/cor
 import {IEntityState} from "../models/states/EntityState";
 import {HttpService} from "../services/http.service";
 import {catchError, tap, throwError} from "rxjs";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {SocketService} from "../services/socket.service";
 
 @Injectable({providedIn: "any"})
 export class EntityStateManager<T> {
@@ -15,7 +17,22 @@ export class EntityStateManager<T> {
   });
 
   protected httpS = inject(HttpService);
-  constructor() {}
+  protected socketS = inject(SocketService);
+  constructor() {
+    if (this.socketS.isConnected()) { this.initial(); }
+
+    this.socketS.connected$
+      .pipe(
+        takeUntilDestroyed()
+      )
+      .subscribe(() => this.initial());
+  }
+
+  protected initial() {
+    //@ts-ignore
+    throw Error(`initial fn for ${this.__proto__.constructor.name} is not implemented`);
+  }
+
 
   protected initStore() {
     this.httpS.get<T[]>(this.initMethod)
