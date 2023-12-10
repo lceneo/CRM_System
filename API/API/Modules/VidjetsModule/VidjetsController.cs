@@ -1,4 +1,5 @@
-﻿using API.Extensions;
+﻿using System.Text;
+using API.Extensions;
 using API.Modules.VidjetsModule.Models;
 using API.Modules.VidjetsModule.Ports;
 using Microsoft.AspNetCore.Authorization;
@@ -46,6 +47,15 @@ public class VidjetsController : ControllerBase
     {
         await vidjetsService.DeleteVidjetAsync(vidjetId);
         return NoContent();
+    }
+
+    [AllowAnonymous]
+    [HttpGet("Script")]
+    public async Task<ActionResult> GetScript()
+    {
+        var sb = new StringBuilder();
+        sb.Append(@"console.log(`Виджет работает`)");
+        return Content(sb.ToString(), "text/html");
     }
 
     [AllowAnonymous]
