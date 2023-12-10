@@ -1,6 +1,5 @@
 ﻿using API.Infrastructure;
 using API.Infrastructure.BaseApiDTOs;
-using API.Modules.ChatsModule.ApiDTO;
 using API.Modules.ChatsModule.DTO;
 using API.Modules.ChatsModule.Entities;
 using API.Modules.ChatsModule.Ports;
@@ -62,7 +61,7 @@ public class ChatsService : IChatsService
         var chat = await chatsRepository.GetByIdAsync(chatId);
         if (chat == null)
             return Result.NotFound<IEnumerable<ProfileOutDTO>>("Такого чата не существует");
-        
+
         var profile = await profilesRepository.GetByIdAsync(userId);
         if (profile == null)
             return Result.NotFound<IEnumerable<ProfileOutDTO>>("Такого пользователя не существует");
@@ -70,8 +69,29 @@ public class ChatsService : IChatsService
         var otherProfiles = mapper.Map<IEnumerable<ProfileOutDTO>>(chat.Profiles);
         chat.Profiles.Add(profile);
         await chatsRepository.UpdateAsync(chat);
+        await chatHub.Clients.Group("Managers").SendAsync("UpdateFreeChats");
 
         return Result.Ok(otherProfiles);
+    }
+
+    public async Task<Result<bool>> LeaveChatAsync(Guid chatId, Guid userId)
+    {
+        var chat = await chatsRepository.GetByIdAsync(chatId);
+        if (chat == null)
+            return Result.NotFound<bool>("Такого чата не существует");
+
+        var profile = await profilesRepository.GetByIdAsync(userId);
+        if (profile == null)
+            return Result.NotFound<bool>("Такого пользователя не существует");
+
+        if (!chat.Profiles.Contains(profile))
+            return Result.BadRequest<bool>("В чате нет такого пользователя");
+
+        chat.Profiles.Remove(profile);
+        await chatsRepository.UpdateAsync(chat);
+        await chatHub.Clients.Group("Managers").SendAsync("UpdateFreeChats");
+
+        return Result.NoContent<bool>();
     }
 
     public async Task<Result<IEnumerable<ChatOutDTO>>> GetFreeChats()
@@ -84,7 +104,7 @@ public class ChatsService : IChatsService
     public async Task<Result<IEnumerable<ChatOutDTO>>> GetChatsByUser(Guid userId)
     {
         var chats = await chatsRepository.GetAllByUser(userId);
-        
+
         return Result.Ok(mapper.Map<IEnumerable<ChatOutDTO>>(chats, opt => opt.Items["userId"] = userId));
     }
 
@@ -96,7 +116,8 @@ public class ChatsService : IChatsService
             : Result.Ok(mapper.Map<ChatOutDTO>(chat, opt => opt.Items["userId"] = userId));
     }
 
-    public Result<SearchResponseBaseDTO<MessageInChatDTO>> SearchMessages(Guid chatId, MessagesSearchRequest messagesSearchReq)
+    public Result<SearchResponseBaseDTO<MessageInChatDTO>> SearchMessages(Guid chatId,
+        MessagesSearchRequest messagesSearchReq)
     {
         var result = messagesRepository.SearchAsync(chatId, messagesSearchReq);
         return Result.Ok(new SearchResponseBaseDTO<MessageInChatDTO>
@@ -121,13 +142,13 @@ public class ChatsService : IChatsService
         await chatsRepository.CreateAsync(chat);
         return chat;
     }
-    
+
     public async Task<Result<ChatEntity>> GetOrCreateChatWithUsers(Guid[] userIds)
     {
         var chat = await chatsRepository.GetByUsers(userIds.ToHashSet());
         if (chat != null)
             return Result.Ok(chat);
-        
+
         var users = await profilesRepository.GetByIdsAsync(userIds);
         if (users.Count != userIds.Length)
             return Result.BadRequest<ChatEntity>("Нельзя создать чат с несуществующими пользователями");
@@ -138,8 +159,8 @@ public class ChatsService : IChatsService
             Profiles = users.ToHashSet(),
         };
         await chatsRepository.CreateAsync(chat);
-        await chatHub.Clients.Group("Managers").SendAsync("ChatNew", mapper.Map<ChatOutDTO>(chat));
-        
+        await chatHub.Clients.Group("Managers").SendAsync("UpdateFreeChats");
+
         return Result.Ok(chat);
     }
 }

@@ -1,14 +1,15 @@
 ﻿using System.Security.Claims;
-using API.DAL;
 using API.Infrastructure;
 using API.Infrastructure.BaseApiDTOs;
 using API.Modules.AccountsModule.Entities;
 using API.Modules.AccountsModule.Ports;
 using API.Modules.ChatsModule.Ports;
+using API.Modules.ProfilesModule.Ports;
 using API.Modules.VidjetsModule.DTO;
+using API.Modules.VidjetsModule.Entities;
 using API.Modules.VidjetsModule.Models;
 using API.Modules.VidjetsModule.Ports;
-using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 
 namespace API.Modules.VidjetsModule.Adapters;
 
@@ -16,40 +17,80 @@ public class VidjetsService : IVidjetsService
 {
     private readonly IChatsService chatsService;
     private readonly IAccountsService accountsService;
-    private readonly DataContext dataContext;
+    private readonly IVidjetsRepository vidjetsRepository;
+    private readonly IMapper mapper;
+    private readonly IAccountsRepository accountsRepository;
+    private readonly IProfilesRepository profilesRepository;
 
     public VidjetsService(IChatsService chatsService,
         IAccountsService accountsService,
-        DataContext dataContext)
+        IVidjetsRepository vidjetsRepository,
+        IMapper mapper,
+        IAccountsRepository accountsRepository,
+        IProfilesRepository profilesRepository)
     {
         this.chatsService = chatsService;
         this.accountsService = accountsService;
-        this.dataContext = dataContext;
+        this.vidjetsRepository = vidjetsRepository;
+        this.mapper = mapper;
+        this.accountsRepository = accountsRepository;
+        this.profilesRepository = profilesRepository;
     }
 
-    public Task<Result<IEnumerable<VidjetOutDTO>>> GetVidjetsAsync()
+    public async Task<Result<SearchResponseBaseDTO<VidjetOutDTO>>> GetVidjetsAsync(VidjetsSearchRequest searchReq)
     {
-        throw new NotImplementedException();
+        var searchResp = await vidjetsRepository.SearchVidjetsAsync(searchReq);
+
+        return Result.Ok(new SearchResponseBaseDTO<VidjetOutDTO>
+        {
+            TotalCount = searchResp.TotalCount,
+            Items = mapper.Map<List<VidjetOutDTO>>(searchResp.Items),
+        });
     }
 
-    public Task<Result<VidjetOutDTO>> GetVidjetByIdAsync(Guid vidjetId)
+    public async Task<Result<VidjetOutDTO>> GetVidjetByIdAsync(Guid vidjetId)
     {
-        throw new NotImplementedException();
+        var vidjetEntity = await vidjetsRepository.GetByIdAsync(vidjetId);
+        if (vidjetEntity == null)
+            return Result.NotFound<VidjetOutDTO>("Такого виджета не существует");
+
+        return Result.Ok(mapper.Map<VidjetOutDTO>(vidjetEntity));
     }
 
-    public Task<Result<CreateResponse>> CreateOrUpdateVidjet(VidjetCreateRequest vidjetCreateRequest)
+    public async Task<Result<CreateResponse>> CreateOrUpdateVidjet(Guid userId, VidjetCreateRequest vidjetCreateRequest)
     {
-        throw new NotImplementedException();
+        var account = await accountsRepository.GetByIdAsync(userId);
+        if (account == null)
+            return Result.NotFound<CreateResponse>("Такого пользователя не существует");
+        var vidjet = await vidjetsRepository.SearchVidjetsAsync(new VidjetsSearchRequest
+        {
+            Domen = vidjetCreateRequest.Domen,
+        });
+        if (vidjet.Items.Count > 0)
+            return Result.BadRequest<CreateResponse>("Такой домен уже зарегистрирован в системе");
+
+        var res = mapper.Map<VidjetEntity>(vidjetCreateRequest);
+        res.Account = account;
+        return Result.Ok(await vidjetsRepository.CreateOrUpdateAsync(res));
     }
 
-    public Task<ActionResult> DeleteVidjetAsync(Guid vidjetId)
+    public async Task DeleteVidjetAsync(Guid vidjetId)
     {
-        throw new NotImplementedException();
+        await vidjetsRepository.DeleteAsync(vidjetId);
     }
 
-    public async Task<Result<VidjetResponse>> ResolveVidjetForBuyerAsync(VidjetRequest vidjetReq, long ip)
+    public async Task<Result<VidjetResponse>> ResolveVidjetForBuyerAsync(VidjetRequest vidjetReq)
     {
-        var clientProfile = dataContext.Profiles.First(e => e.Account.Id != e.Id);
+        var vidjet = await vidjetsRepository.SearchVidjetsAsync(new VidjetsSearchRequest
+            {
+                Domen = vidjetReq.Domen,
+            },
+            true);
+        if (vidjet.Items.Count == 0)
+            return Result.NotFound<VidjetResponse>("Такой домен не найден");
+
+        var clientProfile =
+            await profilesRepository.CreateBuyerProfileForVidjetAsync(vidjetReq.Domen, vidjet.Items.First().Account);
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, clientProfile.Id.ToString()),
@@ -65,7 +106,5 @@ public class VidjetsService : IVidjetsService
             Token = accountsService.CreateToken(claims),
             ChatId = response.Value.Id,
         });
-
-        return Result.NotFound<VidjetResponse>("Такого домена не существует");
     }
 }

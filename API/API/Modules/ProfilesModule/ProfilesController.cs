@@ -23,7 +23,7 @@ public class ProfilesController : ControllerBase
     [HttpGet("My")]
     public async Task<ActionResult<ProfileOutDTO>> GetOwnProfileAsync()
         => await GetProfileAsync(User.GetId());
-    
+
     [HttpGet("{id:Guid}")]
     public async Task<ActionResult<ProfileOutDTO>> GetProfileAsync([FromRoute] Guid id)
     {

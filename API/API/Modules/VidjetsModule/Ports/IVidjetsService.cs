@@ -8,13 +8,13 @@ namespace API.Modules.VidjetsModule.Ports;
 
 public interface IVidjetsService
 {
-    Task<Result<IEnumerable<VidjetOutDTO>>> GetVidjetsAsync();
-    
+    Task<Result<SearchResponseBaseDTO<VidjetOutDTO>>> GetVidjetsAsync(VidjetsSearchRequest searchReq);
+
     Task<Result<VidjetOutDTO>> GetVidjetByIdAsync([FromRoute] Guid vidjetId);
-    
-    Task<Result<CreateResponse>> CreateOrUpdateVidjet(VidjetCreateRequest vidjetCreateRequest);
 
-    Task<ActionResult> DeleteVidjetAsync([FromRoute] Guid vidjetId);
+    Task<Result<CreateResponse>> CreateOrUpdateVidjet(Guid userId, VidjetCreateRequest vidjetCreateRequest);
 
-    Task<Result<VidjetResponse>> ResolveVidjetForBuyerAsync(VidjetRequest vidjetReq, long ip);
+    Task DeleteVidjetAsync([FromRoute] Guid vidjetId);
+
+    Task<Result<VidjetResponse>> ResolveVidjetForBuyerAsync(VidjetRequest vidjetReq);
 }
