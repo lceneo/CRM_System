@@ -9,10 +9,12 @@ public static class StartupBuilder
 {
     public static void ConfigureAuthorization(IServiceCollection services, ConfigurationManager configurationManager)
     {
-        services.AddAuthentication(options => {
+        services.AddAuthentication(options =>
+            {
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;})
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
             .AddCookie(opt =>
             {
                 opt.Events = new CookieAuthenticationEvents
@@ -45,7 +47,7 @@ public static class StartupBuilder
                     OnMessageReceived = context =>
                     {
                         var accessToken = context.Request.Query["access_token"];
- 
+
                         // если запрос направлен хабу
                         var path = context.HttpContext.Request.Path;
                         if (!string.IsNullOrEmpty(accessToken)
@@ -54,12 +56,14 @@ public static class StartupBuilder
                             // получаем токен из строки запроса
                             context.Token = accessToken;
                         }
+
                         return Task.CompletedTask;
                     }
                 };
-            });;
-        
-        services.AddAuthorization(/*opt =>
+            });
+        ;
+
+        services.AddAuthorization( /*opt =>
         {
             opt.DefaultPolicy = new AuthorizationPolicyBuilder()
                 .AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme)

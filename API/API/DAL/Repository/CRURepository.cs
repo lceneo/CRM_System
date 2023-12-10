@@ -30,7 +30,7 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntit
             .ToListAsync();
     }
 
-    public async Task<TEntity?> GetByIdAsync(Guid id) 
+    public async Task<TEntity?> GetByIdAsync(Guid id)
         => await Set.FindAsync(id);
 
     public Task<List<TEntity>> GetByIdsAsync(IEnumerable<Guid> ids)
@@ -69,7 +69,7 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntit
 
         return new CreateResponse
         {
-            Id = entity.Id, 
+            Id = entity.Id,
             IsCreated = isCreated
         };
     }

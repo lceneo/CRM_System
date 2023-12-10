@@ -14,7 +14,7 @@ public static class DbCreator
         var parameters = new[] {dataContext};
         foreach (var filler in fillers)
             filler.GetMethod("Fill").Invoke(null, parameters);
-        
+
         dataContext.SaveChanges();
     }
 }

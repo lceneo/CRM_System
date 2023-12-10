@@ -6,8 +6,7 @@ namespace API.Modules.VidjetsModule.Entities;
 
 public class VidjetEntity : IEntity
 {
-    [Key]
-    public Guid Id { get; set; }
+    [Key] public Guid Id { get; set; }
     public AccountEntity Account { get; set; }
     public string Domen { get; set; }
 }

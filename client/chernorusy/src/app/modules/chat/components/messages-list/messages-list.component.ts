@@ -1,8 +1,17 @@
-import {ChangeDetectionStrategy, Component, Input, OnInit, ViewChild, ViewChildren} from '@angular/core';
-import {ChatService} from "../../services/chat.service";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed, effect,
+  ElementRef, Injector,
+  Input,
+  OnInit, signal,
+  Signal,
+  ViewChild
+} from '@angular/core';
 import {IChatResponseDTO} from "../../../../shared/models/DTO/response/ChatResponseDTO";
 import {MessageDialogComponent} from "../message-dialog/message-dialog.component";
-import {MessageService} from "../../services/message.service";
+import {MyChatService} from "../../services/my-chat.service";
+import {FreeChatService} from "../../services/free-chat.service";
 
 @Component({
   selector: 'app-messages-list',
@@ -10,27 +19,58 @@ import {MessageService} from "../../services/message.service";
   styleUrls: ['./messages-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MessagesListComponent {
+export class MessagesListComponent implements OnInit {
   @Input({required: true}) tabType!: TabType;
   @ViewChild(MessageDialogComponent, {static: true}) dialog!: MessageDialogComponent;
+  @ViewChild('dialog', {static: true}) dialogWrapper!: ElementRef<HTMLElement>;
 
-  protected chats = this.chatService.getEntitiesAsync();
+  protected chats?: Signal<IChatResponseDTO[]>;
   protected selectedChat: IChatResponseDTO | null = null;
+  private freeChatsEffect = null
 
   constructor(
-    private chatService: ChatService
+    private myChatS: MyChatService,
+    private freeChatS: FreeChatService,
+    private injector: Injector
   ) {}
 
+  ngOnInit(): void {
+    const myChats = this.myChatS.getEntitiesAsync();
+    const freeChats = this.freeChatS.getEntitiesAsync();
 
-  protected openDialogMessage(chat: IChatResponseDTO, dialog: HTMLElement) {
-    if (this.selectedChat === chat) {
-      this.selectedChat = null;
-      dialog.classList.add('chats__hidden');
+        switch (this.tabType) {
+          case 'Mine' :
+            this.chats = myChats;
+            break;
+          case 'Inbox':
+            this.chats = freeChats;
+            effect(() => {
+              if (!this.selectedChat) { return; }
+              else if (!freeChats().find(freeChat => freeChat.id === this.selectedChat?.id)) { this.closeChat(); }
+            }, {injector: this.injector})
+            break;
+          case 'All':
+            this.chats = computed(() => [...myChats(), ...freeChats()]);
+            break;
+        }
+
+    }
+
+
+  protected openDialogMessage(chat: IChatResponseDTO) {
+    if (this.selectedChat?.id === chat.id) {
+      this.closeChat();
       return;
     }
     this.dialog.resetMsgValue();
     this.selectedChat = chat;
-    dialog.classList.remove('chats__hidden');
+    this.dialogWrapper.nativeElement.classList.remove('chats__hidden');
+  }
+
+  protected closeChat() {
+    this.selectedChat = null;
+    this.dialogWrapper.nativeElement.classList.add('chats__hidden');
+    this.dialog.resetMsgValue();
   }
 }
 

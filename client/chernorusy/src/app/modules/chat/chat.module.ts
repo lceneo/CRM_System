@@ -8,6 +8,7 @@ import {NgLetDirective} from "../../shared/directives/ng-let.directive";
 import { MessageDialogComponent } from './components/message-dialog/message-dialog.component';
 import {FormsModule} from "@angular/forms";
 import {TextareaResizeDirective} from "../../shared/directives/textarea-resize.directive";
+import {GetChatTypePipe} from "./pipes/get-chat-type.pipe";
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: MainChatPageComponent }
@@ -25,7 +26,8 @@ const routes: Routes = [
         TabsModule,
         NgLetDirective,
         FormsModule,
-        TextareaResizeDirective
+        TextareaResizeDirective,
+        GetChatTypePipe
     ]
 })
 export class ChatModule { }

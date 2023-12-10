@@ -22,7 +22,7 @@ public class ChatsRepository : CRURepository<ChatEntity>, IChatsRepository
             .Where(c => c.Profiles.Count == 1)
             .ToListAsync();
     }
-    
+
     public async Task<ChatEntity?> GetByIdAsync(Guid id)
     {
         return await Set
@@ -44,9 +44,9 @@ public class ChatsRepository : CRURepository<ChatEntity>, IChatsRepository
     {
         return await Set
             .Include(c => c.Profiles)
-                .ThenInclude(p => p.Account)
+            .ThenInclude(p => p.Account)
             .Include(c => c.Messages)
-            .FirstOrDefaultAsync(c => c.Profiles.Count == userIds.Count 
+            .FirstOrDefaultAsync(c => c.Profiles.Count == userIds.Count
                                       && c.Profiles.All(p => userIds.Contains(p.Id)));
     }
 }

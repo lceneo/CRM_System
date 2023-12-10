@@ -10,7 +10,7 @@ public class LoggedSmtpClient : ILoggedSmtpClient
 {
     private readonly SmtpClient smtpClient;
     private readonly IMailMessagesRepository mailMessagesRepository;
-    
+
     public LoggedSmtpClient(IMailMessagesRepository mailMessagesRepository)
     {
         this.mailMessagesRepository = mailMessagesRepository;
@@ -20,7 +20,7 @@ public class LoggedSmtpClient : ILoggedSmtpClient
     public void SendAsync(MailMessage mailMessage)
     {
         mailMessage.From = new MailAddress(Config.MailBoxLogin);
-        
+
         smtpClient.SendAsync(mailMessage, null);
     }
 
@@ -35,7 +35,7 @@ public class LoggedSmtpClient : ILoggedSmtpClient
             Credentials = new NetworkCredential(Config.MailBoxLogin, Config.MailBoxPassword),
             EnableSsl = true,
         };
-        
+
         client.SendCompleted += (e, a) =>
         {
             mailMessagesRepository.CreateAsync(new MailMessageEntity

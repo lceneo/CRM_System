@@ -7,33 +7,32 @@ import {map, Subject, takeUntil} from "rxjs";
 import {IMessageReceive} from "../../../shared/models/entities/MessageReceive";
 import {IMessageSuccess} from "../../../shared/models/entities/MessageSuccess";
 import {MessageMapperService} from "../../../shared/helpers/mappers/message.mapper.service";
-import {ChatService} from "./chat.service";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Injectable({
   providedIn: 'root'
 })
-export class MessageService implements OnDestroy {
+export class MessageService {
 
   public receivedMessages$ = new Subject<IMessageInChat>();
   public successMessages$ = new Subject<IMessageInChat>();
-  private needToListenForSocket = true;
 
   private requestNumber = 1;
   private pendingMessages: {[requestNumber: number]: string} = {};
-  private destroy$ = new Subject<void>();
   constructor(
     private socketS: SocketService,
     private httpS: HttpService,
-    private chatS: ChatService,
     private messageMapper: MessageMapperService
-  ) {}
+  ) {
+    if (this.socketS.isConnected()) { this.listenSocket(); }
 
-  public init() {
-    if (this.needToListenForSocket) {
-      console.log('init')
-      this.listenSocket();
-    }
+    this.socketS.connected$
+      .pipe(
+        takeUntilDestroyed()
+      )
+      .subscribe(() => this.listenSocket());
   }
+
   public getMessages$(chatID: string) {
     return this.httpS.get<IMessageInChatResponseDTO>(`/Chats/${chatID}/Messages`)
       .pipe(
@@ -55,44 +54,20 @@ export class MessageService implements OnDestroy {
   }
 
   private listenSocket() {
+    console.log('messageS init')
     const receiveFn = (msgReceive: IMessageReceive) => {
-      const existingChat = this.chatS.getEntitiesSync().find(chat => chat.id === msgReceive.chatId);
-
-      if (!existingChat) { this.chatS.getChatByID(msgReceive.chatId).subscribe(chat => this.chatS.upsertEntities([chat])); }
-      else {
-        this.chatS.updateByID(msgReceive.chatId,
-          {lastMessage: {...existingChat.lastMessage, message: msgReceive.message, dateTime: msgReceive.dateTime, sender: {...msgReceive.sender} }
-          });
-      }
-
       this.receivedMessages$.next(this.messageMapper.msgReceiveToMsgInChat(msgReceive));
     }
 
     const successFn = (msgSuccess: IMessageSuccess) => {
-      const msgInChat = this.messageMapper.msgSuccessToMsgInChat(msgSuccess, this.pendingMessages[msgSuccess.requestNumber]);
-      const existingChat = this.chatS.getEntitiesSync().find(chat => chat.id === msgSuccess.chatId);
-
-      if (!existingChat) { this.chatS.getChatByID(msgSuccess.chatId).subscribe(chat => this.chatS.upsertEntities([chat])); }
-      else {
-        this.chatS.updateByID(msgSuccess.chatId,
-          {lastMessage: {...existingChat.lastMessage, message: msgInChat.message, dateTime: msgInChat.dateTime, sender: {...msgInChat.sender} }
-          });
-      }
-
-      this.successMessages$.next(msgInChat);
+      this.successMessages$.next(this.messageMapper.msgSuccessToMsgInChat(msgSuccess, this.pendingMessages[msgSuccess.requestNumber]));
     }
 
-    this.needToListenForSocket = false;
     this.socketS.listenMethod('Recieve', receiveFn);
     this.socketS.listenMethod('Success', successFn);
-    this.socketS.disconnected$
-      .pipe(
-        takeUntil(this.destroy$)
-      ).subscribe(() => this.needToListenForSocket = true);
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  public getMessageTextByRequestNumber(requestNumber: number) {
+    return this.pendingMessages[requestNumber];
   }
 }
