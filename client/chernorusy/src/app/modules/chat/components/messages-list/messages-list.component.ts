@@ -26,7 +26,6 @@ export class MessagesListComponent implements OnInit {
 
   protected chats?: Signal<IChatResponseDTO[]>;
   protected selectedChat: IChatResponseDTO | null = null;
-  private freeChatsEffect = null
 
   constructor(
     private myChatS: MyChatService,
