@@ -26,6 +26,8 @@ public class VidjetsRepository : CRUDRepository<VidjetEntity>, IVidjetsRepositor
 
         if (!asTracking)
             query = query.AsNoTracking();
+        if (searchReq.UserIds != null)
+            query = query.Where(v => searchReq.UserIds.Contains(v.Account.Id));
         if (searchReq.Ids != null)
             query = query.Where(v => searchReq.Ids.Contains(v.Id));
         if (searchReq.Domen != null)
