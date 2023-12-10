@@ -10,6 +10,7 @@ import {MessageService} from "../../services/message.service";
 import {IMessageInChat} from "../../../../shared/models/entities/MessageInChat";
 import {filter, merge, Subject, switchMap, takeUntil, tap} from "rxjs";
 import {FreeChatService} from "../../services/free-chat.service";
+import {MyChatService} from "../../services/my-chat.service";
 
 @Component({
   selector: 'app-message-dialog',
@@ -28,6 +29,7 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
 
   constructor(
     private messageS: MessageService,
+    private myChatS: MyChatService,
     private freeChatS: FreeChatService
   ) {}
 
@@ -85,7 +87,11 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   }
 
   protected joinChat() {
-    this.freeChatS.joinChat(this.chat!.id).subscribe();
+    this.freeChatS.joinChat(this.chat!.id)
+      .pipe(
+        tap(() => this.myChatS.upsertEntities([this.chat as IChatResponseDTO]))
+      )
+      .subscribe();
   }
 
   ngOnDestroy(): void {
