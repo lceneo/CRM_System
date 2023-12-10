@@ -9,7 +9,7 @@ public interface IModule
 public static class ModuleExtensions
 {
     private static List<IModule> modules;
-    private static List<IModule> Modules => modules ??= DiscoverModules().ToList(); 
+    private static List<IModule> Modules => modules ??= DiscoverModules().ToList();
 
     public static IServiceCollection RegisterModules(this IServiceCollection services)
     {

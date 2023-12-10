@@ -12,9 +12,8 @@ public class AccountsServiceMapping : Profile
         CreateMap<RegisterByAdminRequest, AccountEntity>();
 
         CreateMap<RegisterByAdminRequest, LoginRequest>();
-
     }
-    
+
     private class PasswordConverter : IValueConverter<string, string>
     {
         private readonly IPasswordHasher passwordHasher;
@@ -23,7 +22,7 @@ public class AccountsServiceMapping : Profile
         {
             this.passwordHasher = passwordHasher;
         }
-        
+
         public string Convert(string sourceMember, ResolutionContext context)
         {
             return passwordHasher.CalculateHash(sourceMember);

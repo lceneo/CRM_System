@@ -12,7 +12,7 @@ public class ProfilesModule : IModule
         services.AddAutoMapper(typeof(ProfilesMapping));
         services.AddScoped<IProfilesRepository, ProfilesRepository>();
         services.AddScoped<IProfilesService, ProfilesService>();
-        
+
         return services;
     }
 

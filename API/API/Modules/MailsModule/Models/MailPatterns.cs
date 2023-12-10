@@ -4,7 +4,7 @@ public class MailPatterns
 {
     public static string PasswordRecoveryPattern => _passwordRecoveryPattern;
     public static string VerificationPattern => verifictionPattern;
-    
+
     private static string _passwordRecoveryPattern = @"<h1>Восстановление пароля</h1>
 <p>Здравствуйте, {login}. Для смены пароля, нажмите на <a href={url}>кнопку</a>.</p>";
 

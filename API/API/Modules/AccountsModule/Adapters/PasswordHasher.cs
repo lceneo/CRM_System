@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using System.Text;
 using API.Modules.AccountsModule.Ports;
 
 namespace API.Modules.AccountsModule.Adapters;
@@ -12,7 +13,7 @@ public class PasswordHasher : IPasswordHasher
         using (var hmac = new HMACSHA512())
         {
             passwordSalt = hmac.Key;
-            passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
         }
 
         var hashBytes = new byte[128 + 64];
@@ -32,11 +33,11 @@ public class PasswordHasher : IPasswordHasher
 
         using (var hmac = new HMACSHA512(salt))
         {
-            var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(inputPassword));
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(inputPassword));
             return computedHash.SequenceEqual(passwordHash);
         }
     }
-    
+
     public static string CalculateHashStatic(string password)
     {
         byte[] passwordSalt;
@@ -44,7 +45,7 @@ public class PasswordHasher : IPasswordHasher
         using (var hmac = new HMACSHA512())
         {
             passwordSalt = hmac.Key;
-            passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
+            passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
         }
 
         var hashBytes = new byte[128 + 64];

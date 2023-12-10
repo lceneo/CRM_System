@@ -1,6 +1,5 @@
 ﻿using API.Infrastructure;
 using API.Modules.ChatsModule.Adapters;
-using API.Modules.ChatsModule.Entities;
 using API.Modules.ChatsModule.Mapping;
 using API.Modules.ChatsModule.Ports;
 

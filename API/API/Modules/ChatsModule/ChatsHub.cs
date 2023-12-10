@@ -18,7 +18,7 @@ public class ChatsHub : Hub, IHub
     private IClientProxy Managers => Clients.Group("Managers");
 
     public static string Route => "/Hubs/Chats";
-    
+
     private readonly IChatsService chatsService;
     private readonly IMapper mapper;
 
@@ -33,8 +33,8 @@ public class ChatsHub : Hub, IHub
     {
         var senderId = Context.User.GetId();
         var response = await chatsService.SendMessageAsync(
-            request.RecipientId, 
-            senderId, 
+            request.RecipientId,
+            senderId,
             request.Message);
         if (!response.IsSuccess)
         {
@@ -47,7 +47,8 @@ public class ChatsHub : Hub, IHub
         if (othersInGroup.Count() > 0)
         {
             foreach (var user in othersInGroup)
-                await Clients.Group(user.Id.ToString()).SendAsync("Recieve", mapper.Map<MessageOutDTO>(response.Value.message));
+                await Clients.Group(user.Id.ToString())
+                    .SendAsync("Recieve", mapper.Map<MessageOutDTO>(response.Value.message));
         }
         else
         {
@@ -77,7 +78,7 @@ public class ChatsHub : Hub, IHub
             await Clients.Group(user.Id.ToString()).SendAsync("ChatEventJoin", mapper.Map<ProfileOutDTO>(user));
 
         await Managers.SendAsync("UpdateFreeChats");
-        
+
         await Clients.Caller.SendAsync("SuccessJoin");
     }
 
@@ -86,7 +87,7 @@ public class ChatsHub : Hub, IHub
         Groups.AddToGroupAsync(Context.ConnectionId, Context.User.GetId().ToString());
         if (Context.User.GetRole() is AccountRole.Manager)
             Groups.AddToGroupAsync(Context.ConnectionId, "Managers");
-        
+
         return base.OnConnectedAsync();
     }
 
@@ -94,7 +95,7 @@ public class ChatsHub : Hub, IHub
     {
         Groups.RemoveFromGroupAsync(Context.ConnectionId, Context.User.GetId().ToString());
         Groups.RemoveFromGroupAsync(Context.ConnectionId, "Managers");
-        
+
         return base.OnDisconnectedAsync(exception);
     }
 }

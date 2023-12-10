@@ -17,7 +17,7 @@ public class DatabaseController : ControllerBase
     public ActionResult RecreateDatabase()
     {
         dataContext.RecreateDatabase();
-        
+
         return NoContent();
     }
 }

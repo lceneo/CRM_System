@@ -1,4 +1,5 @@
-﻿using API.Modules.VidjetsModule.Models;
+﻿using API.Extensions;
+using API.Modules.VidjetsModule.Models;
 using API.Modules.VidjetsModule.Ports;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,42 +20,44 @@ public class VidjetsController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetVidjetsAsync()
+    public async Task<ActionResult> GetVidjetsAsync([FromQuery] VidjetsSearchRequest searchReq)
     {
-        throw new NotImplementedException();
+        var response = await vidjetsService.GetVidjetsAsync(searchReq);
+        return response.ActionResult;
     }
 
     [HttpGet("{vidjetId:Guid}")]
     public async Task<ActionResult> GetVidjetByIdAsync([FromRoute] Guid vidjetId)
     {
-        throw new NotImplementedException();
+        var response = await vidjetsService.GetVidjetByIdAsync(vidjetId);
+        return response.ActionResult;
     }
-    
+
     [HttpPost]
     public async Task<ActionResult> CreateOrUpdateVidjet(VidjetCreateRequest vidjetCreateRequest)
     {
-        throw new NotImplementedException();
+        var response = await vidjetsService.CreateOrUpdateVidjet(User.GetId(), vidjetCreateRequest);
+
+        return response.ActionResult;
     }
 
     [HttpDelete("{vidjetId:Guid}")]
     public async Task<ActionResult> DeleteVidjetAsync([FromRoute] Guid vidjetId)
     {
-        throw new NotImplementedException();
+        await vidjetsService.DeleteVidjetAsync(vidjetId);
+        return NoContent();
     }
 
     [AllowAnonymous]
     [HttpPost("Init")]
     public async Task<ActionResult<VidjetResponse>> GetTokenAsync()
     {
-        var ip = HttpContext.Connection.RemoteIpAddress;
-        if (ip == null)
-            return BadRequest("IP is required");
         var request = new VidjetRequest
         {
-            Domen = HttpContext?.Request?.Headers?.Origin ?? "",
+            Domen = GetDomenFromOrigin(HttpContext.Request.Headers.Origin),
         };
 
-        var response = await vidjetsService.ResolveVidjetForBuyerAsync(request, ip.MapToIPv4().GetHashCode());
+        var response = await vidjetsService.ResolveVidjetForBuyerAsync(request);
 
         return response.ActionResult;
     }
@@ -63,15 +66,13 @@ public class VidjetsController : ControllerBase
     [HttpPost("TestIP")]
     public async Task<ActionResult<VidjetResponse>> TestIP()
     {
-        var ip = HttpContext.Connection.RemoteIpAddress.MapToIPv4();
-        
         return Ok(new
         {
-            IP = ip.ToString(), 
-            Hash = ip.MapToIPv4().GetHashCode(),
             Origin = HttpContext.Request.Headers.Origin,
-            Domein = HttpContext.Request.Headers.From,
-            D = HttpContext.Request.Headers.Via,
+            Domein = GetDomenFromOrigin(HttpContext.Request.Headers.Origin),
         });
     }
+
+    private string GetDomenFromOrigin(string origin)
+        => origin.Substring(origin.IndexOf("://") + 2);
 }

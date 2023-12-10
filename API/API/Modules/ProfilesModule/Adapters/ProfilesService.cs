@@ -15,7 +15,7 @@ public class ProfilesService : IProfilesService
     private readonly IMapper mapper;
     private readonly IAccountsRepository accountsRepository;
 
-    public ProfilesService(IMapper mapper, 
+    public ProfilesService(IMapper mapper,
         IProfilesRepository profilesRepository,
         IAccountsRepository accountsRepository)
     {

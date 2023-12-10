@@ -1,5 +1,4 @@
 ﻿using API.Modules.AccountsModule.Entities;
-using API.Modules.AccountsModule.Models;
 
 namespace API.Modules.ProfilesModule.DTO;
 
