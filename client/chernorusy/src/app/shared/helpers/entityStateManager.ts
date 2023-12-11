@@ -1,4 +1,4 @@
-import {computed, inject, Injectable, signal, WritableSignal} from "@angular/core";
+import {computed, DestroyRef, inject, Injectable, signal, WritableSignal} from "@angular/core";
 import {IEntityState} from "../models/states/EntityState";
 import {HttpService} from "../services/http.service";
 import {catchError, map, tap, throwError} from "rxjs";
@@ -21,14 +21,20 @@ export class EntityStateManager<T extends {id: string}> {
 
   protected httpS = inject(HttpService);
   protected socketS = inject(SocketService);
+  private destroyRef = inject(DestroyRef);
   constructor() {
-    if (this.socketS.isConnected()) { this.initial(); }
+    setTimeout(() => {
+        if (this.socketS.isConnected()) {
+          this.initial();
+        }
 
-    this.socketS.connected$
-      .pipe(
-        takeUntilDestroyed()
-      )
-      .subscribe(() => this.initial());
+        this.socketS.connected$
+          .pipe(
+            takeUntilDestroyed(this.destroyRef)
+          )
+          .subscribe(() => this.initial());
+      }
+    );
   }
 
   protected initial() {
