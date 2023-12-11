@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild} from '@angular/core';
 import {FormControl, Validators} from "@angular/forms";
 import {VidjetService} from "../../services/vidjet.service";
 import {tap} from "rxjs";
@@ -16,14 +16,15 @@ export class VidjetCreateComponent {
   @ViewChild(AccordionPanelComponent, {static: true}) accordionPanel!: AccordionPanelComponent;
 
   constructor(
-    private vidjetS: VidjetService
+    private vidjetS: VidjetService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   protected createVidjet() {
     this.vidjetS.createOrUpdateVidjet({domen: this.domainFormControl.value?.trim() as string})
       .pipe(
         tap(() => {
-          if (this.accordionPanel.isOpen) { this.accordionPanel.toggleOpen(); }
+          if (this.accordionPanel.isOpen) { this.accordionPanel.toggleOpen(); this.cdr.detectChanges(); }
         })
       ).subscribe();
   }

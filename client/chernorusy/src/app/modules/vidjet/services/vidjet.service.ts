@@ -24,10 +24,10 @@ export class VidjetService extends EntityStateManager<IVidjet> {
   public createOrUpdateVidjet(vidjet: IVidjetPOSTRequestDTO) {
     return this.httpS.post<IVidjetPOSTResponseDTO>('/Vidjets', vidjet)
       .pipe(
-        tap(() => {
+        tap((res) => {
           'id' in vidjet ? this.updateByID(vidjet.id as string, {domen: vidjet.domen})
               //@ts-ignore
-            : this.upsertEntities([vidjet]);
+            : this.upsertEntities([{...vidjet, id: res.id}]);
         })
       )
   }
