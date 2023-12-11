@@ -1,0 +1,7 @@
+
+@mixin accordion() {
+  .panel-body {
+   display: flex;
+    flex-direction: column;
+  }
+}

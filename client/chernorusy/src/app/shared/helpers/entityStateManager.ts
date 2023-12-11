@@ -1,20 +1,23 @@
 import {computed, inject, Injectable, signal, WritableSignal} from "@angular/core";
 import {IEntityState} from "../models/states/EntityState";
 import {HttpService} from "../services/http.service";
-import {catchError, tap, throwError} from "rxjs";
+import {catchError, map, tap, throwError} from "rxjs";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {SocketService} from "../services/socket.service";
+import {IChatResponseDTO} from "../models/DTO/response/ChatResponseDTO";
 
 @Injectable({providedIn: "any"})
-export class EntityStateManager<T> {
+export class EntityStateManager<T extends {id: string}> {
 
   protected initMethod: string = '';
+  protected mapFn?: Function;
 
   protected entityState: WritableSignal<IEntityState<T>> = signal({
     entities: [],
     loaded: false,
     error: null
   });
+
 
   protected httpS = inject(HttpService);
   protected socketS = inject(SocketService);
@@ -37,6 +40,7 @@ export class EntityStateManager<T> {
   protected initStore() {
     this.httpS.get<T[]>(this.initMethod)
       .pipe(
+        map((entities) => this.mapFn ? this.mapFn(entities) : entities),
         tap(entities => {
           this.entityState.set({
             entities: entities,
@@ -63,6 +67,24 @@ export class EntityStateManager<T> {
 
   public updateState(state: Partial<IEntityState<T>>) {
     this.entityState.set({...this.entityState(), ...state});
+  }
+
+  public updateByID(id: string, updatedEntity: Partial<T>) {
+    const existingEntity = this.getEntitiesSync().find(chat => chat.id === id);
+    if (!existingEntity) {
+      return;
+    }
+    this.updateState({
+      entities: [
+        ...this.getEntitiesSync().filter(chat => chat.id !== existingEntity.id),
+        {...existingEntity, ...updatedEntity}]
+    });
+  }
+
+  protected removeByID(id: string) {
+    this.updateState({
+      ...this.entityState,
+      entities: this.getEntitiesSync().filter(entity => entity.id !== id) });
   }
 
   public getEntitiesSync() {

@@ -8,6 +8,7 @@ const routes: Routes = [
   { path: 'main', loadChildren: () => import('./modules/chat/chat.module').then(f => f.ChatModule),
     canActivate:  [authorizationGuard] },
   { path: 'profile', loadChildren: () => import('./modules/profile/profile.module').then(f => f.ProfileModule)},
+  { path: 'vidjets', loadChildren: () => import('./modules/vidjet/vidjet.module').then(f => f.VidjetModule)},
   { path: '**', loadComponent: () => import('./shared/components/not-found/not-found.component').then(f => f.NotFoundComponent) }
 ];
 
