@@ -50,7 +50,9 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
       ).subscribe(msg => {
 
       this.messages.update(messages =>
-        [...messages, msg].sort((f, s) => new Date(f.dateTime).getTime() - new Date(s.dateTime).getTime()));
+        [...messages, msg].sort((f, s) =>
+          new Date(f.dateTime).getTime() - new Date(s.dateTime).getTime())
+      );
 
       if (msg.mine) {
         setTimeout(() => this.msgListElementRef.nativeElement.scrollTo({
@@ -66,7 +68,9 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
       .pipe(
         tap(messages => {
           this.messages.set(
-            messages.items.sort((f, s) => new Date(f.dateTime).getTime() - new Date(s.dateTime).getTime()))
+            messages.items.sort((f, s) =>
+              new Date(f.dateTime).getTime() - new Date(s.dateTime).getTime())
+          )
         })
       );
   }

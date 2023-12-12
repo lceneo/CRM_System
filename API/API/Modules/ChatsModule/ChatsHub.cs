@@ -64,24 +64,6 @@ public class ChatsHub : Hub, IHub
         });
     }
 
-    public async Task Join(JoinChatRequest joinChatRequest)
-    {
-        var senderId = Context.User.GetId();
-        var response = await chatsService.JoinChatAsync(joinChatRequest.ChatId, senderId);
-        if (!response.IsSuccess)
-        {
-            await Clients.Caller.SendAsync("Error", response.Error);
-            return;
-        }
-
-        foreach (var user in response.Value)
-            await Clients.Group(user.Id.ToString()).SendAsync("ChatEventJoin", mapper.Map<ProfileOutDTO>(user));
-
-        await Managers.SendAsync("UpdateFreeChats");
-
-        await Clients.Caller.SendAsync("SuccessJoin");
-    }
-
     public override Task OnConnectedAsync()
     {
         Groups.AddToGroupAsync(Context.ConnectionId, Context.User.GetId().ToString());

@@ -44,8 +44,9 @@ export class MessagesListComponent implements OnInit {
           case 'Inbox':
             this.chats = freeChats;
             effect(() => {
+              const currentFreeChats = freeChats();
               if (!this.selectedChat) { return; }
-              else if (!freeChats().find(freeChat => freeChat.id === this.selectedChat?.id)) { this.closeChat(); }
+              else if (!currentFreeChats.find(freeChat => freeChat.id === this.selectedChat?.id)) { this.closeChat(); }
             }, {injector: this.injector})
             break;
           case 'All':

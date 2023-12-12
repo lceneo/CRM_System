@@ -1,0 +1,19 @@
+.wrapper {
+  width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.vidjets {
+  &__list {
+    list-style: none;
+    margin-top: 50px;
+  }
+
+  &__item {
+    margin-bottom: 15px;
+  }
+}
