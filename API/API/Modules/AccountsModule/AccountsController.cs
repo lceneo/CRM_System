@@ -26,6 +26,17 @@ public class AccountsController : ControllerBase
         this.mapper = mapper;
     }
 
+    [Authorize]
+    [HttpGet("My")]
+    public ActionResult GetMyAcc()
+    {
+        return Ok(new
+        {
+            Id = User.GetId(),
+            Role = User.GetRole(),
+        });
+    }
+
     [HttpPost("Register")]
     public async Task<ActionResult<AccountsResponse>> RegisterClientAsync(
         [FromBody] RegisterClientRequest regClientRequest)
