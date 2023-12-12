@@ -79,10 +79,10 @@ public class VidjetsController : ControllerBase
         return Ok(new
         {
             Origin = HttpContext.Request.Headers.Origin,
-            Domein = GetDomenFromOrigin(HttpContext.Request.Headers.Origin),
+            Domen = GetDomenFromOrigin(HttpContext.Request.Headers.Origin),
         });
     }
 
     private string GetDomenFromOrigin(string origin)
-        => origin.Substring(origin.IndexOf("://") + 2);
+        => origin.Substring(origin.IndexOf("://") + 3);
 }
