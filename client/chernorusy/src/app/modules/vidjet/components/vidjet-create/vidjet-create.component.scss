@@ -1,0 +1,27 @@
+:host ::ng-deep {
+  .card-header {
+    padding: 0;
+    margin-right: 0;
+  }
+  .btn-link {
+    text-decoration: none !important;
+  }
+
+  .accordion-toggle {
+    display: flex;
+    justify-content: center;
+    background-color: #0d6efd;
+  }
+}
+
+
+.addBtn {
+  padding: 0;
+  span {
+    display: block;
+    color: black;
+    font-size: 30px;
+    line-height: 30px;
+    width: 30px;
+  }
+}

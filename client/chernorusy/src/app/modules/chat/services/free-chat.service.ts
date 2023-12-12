@@ -14,18 +14,6 @@ export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
     this.registrateSocketHandlers();
   }
 
-  public updateByID(chatID: string, updatedChat: Partial<IChatResponseDTO>) {
-    const existingChat = this.getEntitiesSync().find(chat => chat.id === chatID);
-    if (!existingChat) {
-      return;
-    }
-    this.updateState({
-      entities: [
-        ...this.getEntitiesSync().filter(chat => chat.id !== existingChat.id),
-        {...existingChat, ...updatedChat}]
-    });
-  }
-
   private registrateSocketHandlers() {
     const updateFreeChatsFn = () => {
       this.initStore();

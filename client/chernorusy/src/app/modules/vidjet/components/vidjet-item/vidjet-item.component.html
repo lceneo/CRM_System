@@ -1,0 +1,63 @@
+  <div class="vidjet">
+    <p>{{vidjet.domen}}</p>
+      <div>
+        <button
+          style="margin-right: 5px"
+          class="btn btn-primary" (click)="openModal(editModal)"
+        >
+          <i class="bi bi-pencil"></i>
+        </button>
+
+        <button
+          class="btn btn-danger" (click)="openModal(deleteModal)"
+        >
+          <i class="bi bi-trash-fill"></i>
+        </button>
+      </div>
+  </div>
+
+<ng-template #editModal>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Modal</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="mb-3">
+      <label for="loginFormControl" class="form-label">Пароль</label>
+      <input
+        [formControl]="domainFormControl"
+        class="form-control"
+        id="loginFormControl"
+      >
+    </div>
+    <button
+      class="btn btn-primary enterBtn"
+      [disabled]="domainFormControl.value === vidjet.domen"
+      (click) = "submitChanges()"
+    >Сохранить</button>
+  </div>
+</ng-template>
+
+
+  <ng-template #deleteModal>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">Удалить виджет?</h4>
+      <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+        <span aria-hidden="true" class="visually-hidden">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="btnContainer">
+        <button
+          class="btn btn-danger"
+          (click) = "deleteVidjet()"
+        >Да</button>
+        <button
+          class="btn btn-success"
+          (click) = "modalRef?.hide()"
+        >Нет</button>
+      </div>
+    </div>
+  </ng-template>

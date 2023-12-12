@@ -23,10 +23,12 @@ export class AuthorizationService {
     this._token = localStorage.getItem('jwtToken') ?? undefined;
   }
 
+  private _role = new BehaviorSubject<AccountRole | null>(null);
   private _isAdmin$= new BehaviorSubject<boolean | null>(null);
   private _authorizationStatus = new BehaviorSubject<boolean | null>(null);
 
   public isAdmin$ = this._isAdmin$.asObservable();
+  public role$ = this._role.asObservable();
   public authorizationStatus = this._authorizationStatus.asObservable();
   private _userID?: string;
   private _token?: string;
@@ -54,6 +56,7 @@ export class AuthorizationService {
     if (success) {
       this._authorizationStatus.next(true);
       this._isAdmin$.next(userData ? userData.role === AccountRole.Admin : false);
+      if (userData) { this._role.next(userData.role as number); }
       if (!this.socketS.isConnected()) { this.socketS.init(); }
     } else {
       this._authorizationStatus.next(false);
@@ -67,6 +70,7 @@ export class AuthorizationService {
         tap(loginResponse => {
           this._authorizationStatus.next(true);
           this._isAdmin$.next(loginResponse.role === AccountRole.Admin);
+          this._role.next(loginResponse.role);
           this.userID = loginResponse.id;
           this.token = loginResponse.jwtToken;
           if (!this.socketS.isConnected()) { this.socketS.init(); }

@@ -1,0 +1,14 @@
+
+@mixin modal() {
+  .modal-body {
+    display: flex;
+    flex-direction: column;
+    .btnContainer {
+      display: flex;
+      gap: 5px;
+      button {
+        flex-grow: 1;
+      }
+    }
+  }
+}
