@@ -47,11 +47,37 @@ public class ChatsService : IChatsService
         var messageEntity = new MessageEntity
         {
             Message = message,
+            Type = MessageType.Text,
             Chat = chat,
             Sender = chat.Profiles.First(p => p.Id == senderId),
             DateTime = DateTime.Now,
         };
         await messagesRepository.CreateAsync(messageEntity);
+
+        return Result.Ok((chat, messageEntity));
+    }
+
+    public async Task<Result<(ChatEntity chat, MessageEntity message)>> SendSystemMessage(
+        Guid chatId,
+        string message)
+    {
+        var chat = await chatsRepository.GetByIdAsync(chatId);
+        if (chat == null)
+            return Result.NotFound<(ChatEntity chat, MessageEntity message)>(
+                "Неправильный идентификатор чата");
+        var messageEntity = new MessageEntity
+        {
+            Message = message,
+            Type = MessageType.System,
+            Chat = chat,
+            Sender = null,
+            DateTime = DateTime.Now,
+        };
+        await messagesRepository.CreateAsync(messageEntity);
+
+        var receivers = chat.Profiles;
+        foreach (var receiver in receivers)
+            await chatHub.Clients.Group(receiver.Id.ToString()).SendAsync("Recieve", mapper.Map<MessageOutDTO>(messageEntity));
 
         return Result.Ok((chat, messageEntity));
     }
@@ -66,12 +92,16 @@ public class ChatsService : IChatsService
         if (profile == null)
             return Result.NotFound<IEnumerable<ProfileOutDTO>>("Такого пользователя не существует");
 
-        var otherProfiles = mapper.Map<IEnumerable<ProfileOutDTO>>(chat.Profiles);
+        var participants = mapper.Map<IEnumerable<ProfileOutDTO>>(chat.Profiles);
         chat.Profiles.Add(profile);
         await chatsRepository.UpdateAsync(chat);
+
+        foreach (var participant in participants)
+            await chatHub.Clients.Group(participant.Id.ToString()).SendAsync("");
+        await SendSystemMessage(chat.Id, $"{profile.Name} вошел в чат");
         await chatHub.Clients.Group("Managers").SendAsync("UpdateFreeChats");
 
-        return Result.Ok(otherProfiles);
+        return Result.Ok(participants);
     }
 
     public async Task<Result<bool>> LeaveChatAsync(Guid chatId, Guid userId)
@@ -90,6 +120,7 @@ public class ChatsService : IChatsService
         chat.Profiles.Remove(profile);
         await chatsRepository.UpdateAsync(chat);
         await chatHub.Clients.Group("Managers").SendAsync("UpdateFreeChats");
+        await SendSystemMessage(chat.Id, $"{profile.Name} вышел из чата");
 
         return Result.NoContent<bool>();
     }
