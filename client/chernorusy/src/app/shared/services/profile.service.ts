@@ -13,8 +13,7 @@ import {IProfileResponseDTO} from "../models/DTO/response/ProfileResponseDTO";
 export class ProfileService {
 
   constructor(
-    private httpS: HttpService,
-    private authS: AuthorizationService
+    private httpS: HttpService
   ) { }
 
   private state = signal<IProfileState>({
@@ -28,12 +27,9 @@ export class ProfileService {
   public determineInitialState() {
     this.httpS.get<IProfileResponseDTO>('/Profiles/My')
       .pipe(
-        tap((profile) => this.authS.initialAuthentication(true, {role: profile.role, id: profile.id})),
         catchError(err => {
             this.state.set({profile: null, loaded: true, error: err});
-          if (err.status === 401) { this.authS.initialAuthentication(false); }
-          else if (err.status === 404) { this.authS.initialAuthentication(true); }
-          return of(null);
+            return of(null);
         })
       ).subscribe(profile => this.state.set({profile: profile, loaded: true, error: null}));
   }
