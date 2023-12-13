@@ -41,7 +41,10 @@
     }
   }
   &__sendMsg {
-    resize: none;
+    resize:none;
+    max-height:145px;
+    width: 100%;
+    padding:0;
   }
   &__myMsg {
     align-self: flex-end;
@@ -65,3 +68,4 @@
       }
   }
 }
+

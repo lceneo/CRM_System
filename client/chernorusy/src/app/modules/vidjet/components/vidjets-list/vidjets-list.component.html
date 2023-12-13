@@ -1,7 +1,6 @@
 
 <section class="wrapper">
   <h2 class="header">Мои виджеты: </h2>
-  <app-vidjet-create class="header"></app-vidjet-create>
   <ul
     *ngLet="vidjets() as vidjets"
     class="vidjets__list"
@@ -14,5 +13,6 @@
       [vidjet]="vidjet"></app-vidjet-item>
     </li>
   </ul>
+  <app-vidjet-create class="header"></app-vidjet-create>
 </section>
 
