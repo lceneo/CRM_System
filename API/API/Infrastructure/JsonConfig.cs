@@ -30,7 +30,7 @@ public class JsonConfig
 
         public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
         {
-            writer.WriteStringValue(value.ToString("yyyy-MM-ddThh:mm:ss.fffzzzz"));
+            writer.WriteStringValue(value.ToUniversalTime());
         }
     }
 }
