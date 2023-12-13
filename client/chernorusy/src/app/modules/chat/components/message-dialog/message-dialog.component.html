@@ -20,7 +20,7 @@
     <div class="form-group"
          *ngSwitchCase="'My'"
     >
-      <textarea appTextareaResize
+      <textarea #message appTextareaResize
                 class="chat__sendMsg form-control"
                 [(ngModel)] = "msgValue"
                 [placeholder]="'Введите сообщение...'"

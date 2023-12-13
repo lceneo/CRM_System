@@ -16,7 +16,6 @@ export class TextareaResizeDirective implements OnInit {
   checkTextAreaSize(ev: InputEvent) {
     this.renderer2.setStyle(this.textAreaRef, 'height', `45px`);
     this.renderer2.setStyle(this.textAreaRef, 'height', `${this.textAreaRef?.scrollHeight}px`);
-    console.log(this.textAreaRef?.scrollHeight)
   }
 
   ngOnInit(): void {

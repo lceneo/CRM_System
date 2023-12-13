@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component, ElementRef, EventEmitter,
-  Input, OnChanges, OnDestroy, Output,
+  Input, OnChanges, OnDestroy, Output, Renderer2,
   signal,
   ViewChild
 } from '@angular/core';
@@ -22,6 +22,7 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   @Input({required: true}) chat: IChatResponseDTO | null = null;
 
   @ViewChild('msgList', {static: true}) msgListElementRef!: ElementRef<HTMLUListElement>;
+  @ViewChild('message') messageElementRef!: ElementRef<HTMLTextAreaElement>;
 
   protected msgValue = '';
   protected messages = signal<IMessageInChat[]>([]);
@@ -30,7 +31,8 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   constructor(
     private messageS: MessageService,
     private myChatS: MyChatService,
-    private freeChatS: FreeChatService
+    private freeChatS: FreeChatService,
+    private renderer2: Renderer2
   ) {}
 
   ngOnChanges(): void {
@@ -44,6 +46,7 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
 
     this.getExistingMessagesInChat()
       .pipe(
+        tap(() => this.scrollToTheBottom()),
         switchMap(() => merge(this.messageS.receivedMessages$, this.messageS.successMessages$)),
         filter(msg => msg.chatId === this.chat?.id),
         takeUntil(this.destroy$),
@@ -54,12 +57,7 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
           new Date(f.dateTime).getTime() - new Date(s.dateTime).getTime())
       );
 
-      if (msg.mine) {
-        setTimeout(() => this.msgListElementRef.nativeElement.scrollTo({
-          top: this.msgListElementRef.nativeElement.scrollHeight,
-          behavior: 'instant'
-        }));
-      }
+      if (msg.mine) { this.scrollToTheBottom(); }
     });
   }
 
@@ -75,11 +73,21 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
       );
   }
 
+  private scrollToTheBottom() {
+    setTimeout(() => this.msgListElementRef.nativeElement.scrollTo({
+      top: this.msgListElementRef.nativeElement.scrollHeight,
+      behavior: 'instant'
+    }));
+  }
+
 
   protected sendMsg() {
     if (!this.msgValue.trim().length) { return; }
     this.messageS.sendMessage(this.chat?.id as string, this.msgValue)
-      .then(() => this.msgValue = '');
+      .then(() => {
+        this.msgValue = '';
+        this.renderer2.setStyle(this.messageElementRef.nativeElement, 'height', `45px`);
+      });
   }
 
   pressKey(ev: KeyboardEvent) {
