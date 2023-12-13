@@ -24,8 +24,8 @@ export class MessageMapperService {
 
   msgSuccessToMsgInChat(messSuccess: IMessageSuccess, msgText: string): IMessageInChat {
     return {
+      ...messSuccess,
       id: messSuccess.messageId,
-      chatId: messSuccess.chatId,
       message: msgText,
       dateTime: messSuccess.timeStamp,
       mine: true,
