@@ -8,6 +8,7 @@
   &__list{
     list-style: none;
     padding: 0;
+    overflow: hidden;
   }
 
   &__item{
@@ -17,6 +18,10 @@
     &-selected{
       background-color: #1c6ae1;
       color: #FFF;
+    }
+    &-text {
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 
