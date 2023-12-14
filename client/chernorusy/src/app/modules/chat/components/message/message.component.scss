@@ -1,6 +1,27 @@
-.message{
-  &__data {
-    display: flex;
-    justify-content: space-between;
+
+.textMsgWrapper {
+  display: grid;
+  align-items: end;
+  column-gap: 5px;
+  grid-template-areas:
+        "message message datе";
+
+  &__text {
+    margin: 0;
+    display: inline-block;
+    grid-area: message;
+  }
+
+  &__date {
+    grid-area: datе;
+    font-size: 12px;
+  }
+}
+
+.systemMsgWrapper {
+  text-align: center;
+  &__text {
+    text-align: center;
+    color: gray;
   }
 }

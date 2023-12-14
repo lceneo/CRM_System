@@ -100,4 +100,11 @@ export class EntityStateManager<T extends {id: string}> {
   public getEntitiesAsync() {
     return computed(() => this.entityState().entities);
   }
+
+  protected sortByPredicate(sortFn: (f: T, s: T) => number) {
+    this.updateState({
+      ...this.entityState,
+      entities: this.entityState().entities.sort(sortFn)
+    });
+  }
 }

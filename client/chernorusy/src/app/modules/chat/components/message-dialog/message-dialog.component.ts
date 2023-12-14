@@ -11,6 +11,7 @@ import {IMessageInChat} from "../../../../shared/models/entities/MessageInChat";
 import {filter, merge, Subject, switchMap, takeUntil, tap} from "rxjs";
 import {FreeChatService} from "../../services/free-chat.service";
 import {MyChatService} from "../../services/my-chat.service";
+import {MessageType} from "../../../../shared/models/enums/MessageType";
 
 @Component({
   selector: 'app-message-dialog',
@@ -81,6 +82,7 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   }
 
 
+
   protected sendMsg() {
     if (!this.msgValue.trim().length) { return; }
     this.messageS.sendMessage(this.chat?.id as string, this.msgValue)
@@ -88,6 +90,7 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
         this.msgValue = '';
         this.renderer2.setStyle(this.messageElementRef.nativeElement, 'height', `45px`);
       });
+
   }
 
   pressKey(ev: KeyboardEvent) {
@@ -99,10 +102,8 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   }
 
   protected joinChat() {
+    // не обновляем стор, т.к там рисив будет
     this.freeChatS.joinChat(this.chat!.id)
-      .pipe(
-        tap(() => this.myChatS.upsertEntities([this.chat as IChatResponseDTO]))
-      )
       .subscribe();
   }
 
@@ -111,4 +112,5 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
     this.destroy$.complete();
   }
 
+  protected readonly MessageType = MessageType;
 }

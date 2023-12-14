@@ -3,14 +3,12 @@
     <li *ngFor="let message of messages()"
         class="chat__message"
         [ngClass]="{
-          'chat__myMsg': message.mine,
-          'chat__companionMsg': !message.mine
+          'chat__myMsg': message.sender && message.mine,
+          'chat__companionMsg':  message.sender && !message.mine,
+          'chat__systemMsg': !message.sender && message.type === MessageType.System
         }"
     >
-      <div class="chat__message-wrapper">
-        <span class="chat__message-wrapper__text">{{message.message}}</span>
-        <span class="chat__message-wrapper__date">{{message.dateTime | date: 'HH:mm'}}</span>
-      </div>
+      <app-message [message]="message"></app-message>
     </li>
   </ul>
 

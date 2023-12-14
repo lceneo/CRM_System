@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
-import {IMessage} from "../../services/message.service";
-import {TabType} from "../messages-list/messages-list.component";
+import {IMessageInChat} from "../../../../shared/models/entities/MessageInChat";
+import {MessageType} from "../../../../shared/models/enums/MessageType";
 
 @Component({
   selector: 'app-message',
@@ -9,6 +9,9 @@ import {TabType} from "../messages-list/messages-list.component";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MessageComponent {
-  @Input({required: true}) message!: IMessage;
-  @Input({required: true}) messageType!: TabType;
+
+  @Input({required: true}) message?: IMessageInChat;
+
+
+  protected readonly MessageType = MessageType;
 }

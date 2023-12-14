@@ -9,6 +9,7 @@ import { MessageDialogComponent } from './components/message-dialog/message-dial
 import {FormsModule} from "@angular/forms";
 import {TextareaResizeDirective} from "../../shared/directives/textarea-resize.directive";
 import {GetChatTypePipe} from "./pipes/get-chat-type.pipe";
+import { MessageComponent } from './components/message/message.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: MainChatPageComponent }
@@ -18,7 +19,8 @@ const routes: Routes = [
   declarations: [
     MainChatPageComponent,
     MessagesListComponent,
-    MessageDialogComponent
+    MessageDialogComponent,
+    MessageComponent
   ],
     imports: [
         CommonModule,
