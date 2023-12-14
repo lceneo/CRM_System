@@ -29,7 +29,6 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
     return this.httpS.get<IChatResponseDTO>(`/Chats/${chatID}`);
   }
 
-
   private registrateSocketHandlers() {
     const receiveFn = (msgReceive: IMessageReceive) => {
       const existingChat = this.getEntitiesSync().find(chat => chat.id === msgReceive.chatId);
@@ -46,6 +45,9 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
               sender: {...msgReceive.sender}
             }
           });
+
+        this.sortByPredicate((fChat, sChat) =>
+          new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
       }
     }
 
@@ -65,6 +67,9 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
               sender: {...msgInChat.sender}
             }
           });
+
+        this.sortByPredicate((fChat, sChat) =>
+          new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
       }
     }
 

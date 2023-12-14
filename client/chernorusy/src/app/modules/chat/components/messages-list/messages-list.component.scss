@@ -27,6 +27,8 @@
 
   &__dialog {
     height: 67vh;
+    position: sticky;
+    top: 25vh;
   }
 
   &__hidden{

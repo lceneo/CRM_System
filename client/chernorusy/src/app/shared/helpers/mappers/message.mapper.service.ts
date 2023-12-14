@@ -37,6 +37,6 @@ export class MessageMapperService {
   }
 
   detectMineMsgOrNot(msg: IMessageInChat) {
-    return msg.sender.id === this.authorizationS.userID || this.profileS.profile()?.id === msg.sender.id;
+    return msg.sender && (msg.sender.id === this.authorizationS.userID || this.profileS.profile()?.id === msg.sender.id);
   }
 }
