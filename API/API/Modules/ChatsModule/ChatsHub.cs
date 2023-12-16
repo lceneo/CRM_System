@@ -59,6 +59,7 @@ public class ChatsHub : Hub, IHub
         {
             ChatId = chat.Id,
             MessageId = response.Value.message.Id,
+            Type = response.Value.message.Type,
             TimeStamp = response.Value.message.DateTime,
             RequestNumber = request.RequestNumber
         });
