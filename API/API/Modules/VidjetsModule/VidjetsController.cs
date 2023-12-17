@@ -1,9 +1,11 @@
 ﻿using System.Text;
 using API.Extensions;
+using API.Infrastructure;
 using API.Modules.VidjetsModule.Models;
 using API.Modules.VidjetsModule.Ports;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 
 namespace API.Modules.VidjetsModule;
 
@@ -53,9 +55,8 @@ public class VidjetsController : ControllerBase
     [HttpGet("Script")]
     public async Task<ActionResult> GetScript()
     {
-        var sb = new StringBuilder();
-        sb.Append(@"console.log(`Виджет работает`)");
-        return Content(sb.ToString(), "text/html");
+        using var provider = new PhysicalFileProvider(Config.PathToStatic);
+        return Content(provider.GetFileInfo("Script.js").ReadAll(), "text/html");
     }
 
     [AllowAnonymous]

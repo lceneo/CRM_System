@@ -33,7 +33,7 @@ public class ProfilesController : ControllerBase
 
     [Authorize]
     [HttpPost]
-    public async Task<ActionResult<CreateResponse>> CreateOrUpdateProfileAsync(ProfileDTO profileDto)
+    public async Task<ActionResult<CreateResponse<Guid>>> CreateOrUpdateProfileAsync(ProfileDTO profileDto)
     {
         var response = await profilesService.CreateOrUpdateProfile(User.GetId(), profileDto);
         return response.ActionResult;
