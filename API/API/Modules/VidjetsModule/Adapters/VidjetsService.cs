@@ -57,17 +57,17 @@ public class VidjetsService : IVidjetsService
         return Result.Ok(mapper.Map<VidjetOutDTO>(vidjetEntity));
     }
 
-    public async Task<Result<CreateResponse>> CreateOrUpdateVidjet(Guid userId, VidjetCreateRequest vidjetCreateRequest)
+    public async Task<Result<CreateResponse<Guid>>> CreateOrUpdateVidjet(Guid userId, VidjetCreateRequest vidjetCreateRequest)
     {
         var account = await accountsRepository.GetByIdAsync(userId);
         if (account == null)
-            return Result.NotFound<CreateResponse>("Такого пользователя не существует");
+            return Result.NotFound<CreateResponse<Guid>>("Такого пользователя не существует");
         var vidjet = await vidjetsRepository.SearchVidjetsAsync(new VidjetsSearchRequest
         {
             Domen = vidjetCreateRequest.Domen,
         });
         if (vidjet.Items.Count > 0)
-            return Result.BadRequest<CreateResponse>("Такой домен уже зарегистрирован в системе");
+            return Result.BadRequest<CreateResponse<Guid>>("Такой домен уже зарегистрирован в системе");
 
         var res = mapper.Map<VidjetEntity>(vidjetCreateRequest);
         res.Account = account;

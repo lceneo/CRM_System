@@ -33,7 +33,7 @@ public class ProfilesService : IProfilesService
         return Result.Ok(mapper.Map<ProfileOutDTO>(profile));
     }
 
-    public async Task<Result<CreateResponse>> CreateOrUpdateProfile(Guid accountId, ProfileDTO profileDto)
+    public async Task<Result<CreateResponse<Guid>>> CreateOrUpdateProfile(Guid accountId, ProfileDTO profileDto)
     {
         var profile = mapper.Map<ProfileEntity>(profileDto);
         profile.Id = accountId;

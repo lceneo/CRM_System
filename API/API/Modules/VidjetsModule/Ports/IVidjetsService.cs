@@ -12,7 +12,7 @@ public interface IVidjetsService
 
     Task<Result<VidjetOutDTO>> GetVidjetByIdAsync([FromRoute] Guid vidjetId);
 
-    Task<Result<CreateResponse>> CreateOrUpdateVidjet(Guid userId, VidjetCreateRequest vidjetCreateRequest);
+    Task<Result<CreateResponse<Guid>>> CreateOrUpdateVidjet(Guid userId, VidjetCreateRequest vidjetCreateRequest);
 
     Task DeleteVidjetAsync([FromRoute] Guid vidjetId);
 

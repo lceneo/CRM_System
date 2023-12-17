@@ -1,7 +1,7 @@
 ﻿namespace API.Infrastructure.BaseApiDTOs;
 
-public class CreateResponse
+public class CreateResponse<TKey>
 {
-    public Guid Id { get; set; }
+    public TKey Id { get; set; }
     public bool IsCreated { get; set; }
 }

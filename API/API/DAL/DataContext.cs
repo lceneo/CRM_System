@@ -1,6 +1,7 @@
 using API.Modules.AccountsModule.Models;
 using API.Modules.ChatsModule.Entities;
 using API.Modules.ProfilesModule.Entities;
+using API.Modules.StaticModule.Entities;
 using API.Modules.VidjetsModule.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,4 +37,5 @@ public class DataContext : DbContext
     public DbSet<ChatEntity> Chats => Set<ChatEntity>();
     public DbSet<MessageEntity> Messages => Set<MessageEntity>();
     public DbSet<VidjetEntity> Vidjets => Set<VidjetEntity>();
+    public DbSet<FileEntity> Files => Set<FileEntity>();
 }
