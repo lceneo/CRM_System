@@ -59,6 +59,12 @@
     }
   }
 
+  &__systemMsg {
+    width: 100%;
+    max-width: 100%;
+    border: none;
+  }
+
   &__btnContainer {
     width: 100%;
     display: flex;
