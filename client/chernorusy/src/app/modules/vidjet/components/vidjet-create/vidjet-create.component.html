@@ -1,0 +1,19 @@
+<accordion>
+  <accordion-group>
+    <button class="btn btn-link shadow-none  addBtn" accordion-heading type="button">
+      <span>+</span>
+    </button>
+    <div class="mb-3">
+      <label for="loginFormControl" class="form-label">Домен</label>
+      <input
+        [formControl]="domainFormControl"
+        class="form-control"
+        id="loginFormControl"
+      >
+    </div>
+    <button class="btn btn-primary"
+            (click)="createVidjet();"
+            [disabled]="domainFormControl.invalid"
+    >Создать виджет</button>
+  </accordion-group>
+</accordion>

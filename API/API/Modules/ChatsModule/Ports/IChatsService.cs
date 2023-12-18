@@ -2,6 +2,7 @@
 using API.Infrastructure.BaseApiDTOs;
 using API.Modules.ChatsModule.DTO;
 using API.Modules.ChatsModule.Entities;
+using API.Modules.ProfilesModule.DTO;
 
 namespace API.Modules.ChatsModule.Ports;
 
@@ -12,13 +13,19 @@ public interface IChatsService
         Guid senderId,
         string message);
 
+    Task<Result<IEnumerable<ProfileOutDTO>>> JoinChatAsync(Guid chatId, Guid userId);
+    Task<Result<bool>> LeaveChatAsync(Guid chatId, Guid userId);
+
+    Task<Result<IEnumerable<ChatOutDTO>>> GetFreeChats();
+
     Task<Result<IEnumerable<ChatOutDTO>>> GetChatsByUser(Guid userId);
 
     Task<Result<ChatOutDTO>> GetChatByIdAsync(Guid userId, Guid chatId);
 
-    Result<SearchResponseBaseDTO<MessageInChatDTO>> SearchMessages(Guid chatId, MessagesSearchRequest messagesSearchReq);
-    
+    Result<SearchResponseBaseDTO<MessageInChatDTO>>
+        SearchMessages(Guid chatId, MessagesSearchRequest messagesSearchReq);
+
     Task<ChatEntity?> CreateChatWithUsers(Guid[] userIds);
 
-    Task<ChatEntity?> GetOrCreateChatWithUsers(Guid[] userIds);
+    Task<Result<ChatEntity>> GetOrCreateChatWithUsers(Guid[] userIds);
 }

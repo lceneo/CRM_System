@@ -1,7 +1,24 @@
-<section class="message">
-  <p>{{message.author}}</p>
-  <div class="message__data">
-    <p>{{message.text}}</p>
-    <p>{{message.timestamp | date}}</p>
+
+
+<ng-container *ngTemplateOutlet="(message?.type === MessageType.Text) ? textMessage :
+                                (message?.type === MessageType.System ? systemMessage : fileMessage)">
+
+</ng-container>
+
+
+<ng-template #textMessage>
+  <div class="textMsgWrapper">
+    <span class="textMsgWrapper__text">{{message?.message}}</span>
+    <span class="textMsgWrapper__date">{{message?.dateTime | date: 'HH:mm'}}</span>
   </div>
-</section>
+</ng-template>
+
+<ng-template #systemMessage>
+  <div class="systemMsgWrapper">
+    <span class="systemMsgWrapper__text">{{message?.message}}</span>
+  </div>
+</ng-template>
+
+<ng-template #fileMessage>
+
+</ng-template>

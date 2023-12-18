@@ -1,11 +1,9 @@
 ﻿using System.Security.Claims;
 using API.Extensions;
-using API.Infrastructure;
 using API.Modules.AccountsModule.DTO;
 using API.Modules.AccountsModule.Entities;
 using API.Modules.AccountsModule.Models;
 using API.Modules.AccountsModule.Ports;
-using API.Modules.MailsModule.Adapters;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -21,15 +19,27 @@ public class AccountsController : ControllerBase
     private readonly IAccountsService accountsService;
     private readonly IMapper mapper;
 
-    public AccountsController(IAccountsService accountsService, 
+    public AccountsController(IAccountsService accountsService,
         IMapper mapper)
     {
         this.accountsService = accountsService;
         this.mapper = mapper;
     }
 
+    [Authorize]
+    [HttpGet("My")]
+    public ActionResult GetMyAcc()
+    {
+        return Ok(new
+        {
+            Id = User.GetId(),
+            Role = User.GetRole(),
+        });
+    }
+
     [HttpPost("Register")]
-    public async Task<ActionResult<AccountsResponse>> RegisterClientAsync([FromBody] RegisterClientRequest regClientRequest)
+    public async Task<ActionResult<AccountsResponse>> RegisterClientAsync(
+        [FromBody] RegisterClientRequest regClientRequest)
     {
         var requestByAdmin = mapper.Map<RegisterByAdminRequest>(regClientRequest);
         var response = await accountsService.RegisterAsync(requestByAdmin);
@@ -37,7 +47,7 @@ public class AccountsController : ControllerBase
         response.Specificate(resp => new {Id = resp});
         return response.ActionResult;
     }
-    
+
     [Authorize(Roles = nameof(AccountRole.Admin))]
     [HttpPost("Register/Admin")]
     public async Task<ActionResult<AccountsResponse>> RegisterAsync([FromBody] RegisterByAdminRequest regByAdminRequest)
@@ -54,7 +64,7 @@ public class AccountsController : ControllerBase
         var response = await accountsService.LoginAsync(loginRequest);
         if (!response.IsSuccess)
             return response.ActionResult;
-        
+
         var principal = new ClaimsPrincipal(response.Value.Credentials);
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
@@ -95,7 +105,7 @@ public class AccountsController : ControllerBase
         var response = await accountsService.ChangePasswordUnauthorizedAsync(userId, changePasswordUnauthorizedReq);
         if (!response.IsSuccess)
             return response.ActionResult;
-        
+
         var principal = new ClaimsPrincipal(response.Value.Credentials);
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 

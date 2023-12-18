@@ -1,0 +1,18 @@
+
+<section class="wrapper">
+  <h2 class="header">Мои виджеты: </h2>
+  <ul
+    *ngLet="vidjets() as vidjets"
+    class="vidjets__list"
+  >
+    <li
+      *ngFor="let vidjet of vidjets"
+      class="vidjets__item"
+    >
+      <app-vidjet-item
+      [vidjet]="vidjet"></app-vidjet-item>
+    </li>
+  </ul>
+  <app-vidjet-create class="header"></app-vidjet-create>
+</section>
+

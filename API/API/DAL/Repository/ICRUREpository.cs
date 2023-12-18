@@ -10,5 +10,5 @@ public interface ICRURepository<TEntity>
     public Task<TEntity?> GetByIdAsync(Guid id);
     public Task<List<TEntity>> GetByIdsAsync(IEnumerable<Guid> ids);
     public Task UpdateAsync(TEntity updated);
-    public Task<CreateResponse> CreateOrUpdateAsync(TEntity entity);
+    public Task<CreateResponse<Guid>> CreateOrUpdateAsync(TEntity entity);
 }

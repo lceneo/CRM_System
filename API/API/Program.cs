@@ -19,6 +19,7 @@ builder.Services.AddDbContext<DataContext>();
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new JsonConfig.DateOnlyJsonConverter());
+    options.JsonSerializerOptions.Converters.Add(new JsonConfig.DateTimeConverter());
 });
 
 builder.Services.AddAutoMapper(typeof(BaseMappingProfile));

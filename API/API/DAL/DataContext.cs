@@ -1,6 +1,7 @@
 using API.Modules.AccountsModule.Models;
 using API.Modules.ChatsModule.Entities;
 using API.Modules.ProfilesModule.Entities;
+using API.Modules.StaticModule.Entities;
 using API.Modules.VidjetsModule.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,10 +19,8 @@ public class DataContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-        options.UseNpgsql(Environment.GetEnvironmentVariable("DATABASE_CONNECTION"), builder =>
-        {
-            builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
-        });
+        options.UseNpgsql(Environment.GetEnvironmentVariable("DATABASE_CONNECTION"),
+            builder => { builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null); });
     }
 
     public void RecreateDatabase()
@@ -38,4 +37,5 @@ public class DataContext : DbContext
     public DbSet<ChatEntity> Chats => Set<ChatEntity>();
     public DbSet<MessageEntity> Messages => Set<MessageEntity>();
     public DbSet<VidjetEntity> Vidjets => Set<VidjetEntity>();
+    public DbSet<FileEntity> Files => Set<FileEntity>();
 }

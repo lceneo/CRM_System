@@ -11,7 +11,9 @@ public interface IAccountsService
     Task<Result<ClaimsResponse>> LoginAsync(LoginRequest loginRequest);
     Task RecoverPasswordAsync(string login);
     Task<Result<bool>> ChangePasswordAsync(Guid userId, ChangePasswordRequest changePasswordRequest);
+
     Task<Result<ClaimsResponse>> ChangePasswordUnauthorizedAsync(Guid userId,
         ChangePasswordUnauthorizedRequest changePasswordUnauthorizedRequest);
+
     string CreateToken(List<Claim> claims);
 }

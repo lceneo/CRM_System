@@ -1,10 +1,43 @@
 <section class="chat">
-  <ul class="chat__messages">
-    <li *ngFor="let message of messages()">
-      <p>{{message.message}}</p>
+  <ul class="chat__messages" #msgList>
+    <li *ngFor="let message of messages()"
+        class="chat__message"
+        [ngClass]="{
+          'chat__myMsg': message.sender && message.mine,
+          'chat__companionMsg':  message.sender && !message.mine,
+          'chat__systemMsg': !message.sender && message.type === MessageType.System
+        }"
+    >
+      <app-message [message]="message"></app-message>
     </li>
   </ul>
-  <textarea [(ngModel)] = "msgValue"
-            (keydown)="pressKey($event)"
-            class="chat__sendMsg"></textarea>
+
+  <ng-container
+    [ngSwitch]="chat | getChatType">
+
+    <div class="form-group"
+         *ngSwitchCase="'My'"
+    >
+      <textarea #message appTextareaResize
+                class="chat__sendMsg form-control"
+                [(ngModel)] = "msgValue"
+                [placeholder]="'Введите сообщение...'"
+                (keydown)="pressKey($event)"
+      ></textarea>
+    </div>
+
+    <div class="chat__btnContainer"
+         *ngSwitchCase="'Free'"
+    >
+      <button
+        class="btn btn-success"
+        (click)="joinChat()"
+      >Принять</button>
+      <button
+        class="btn btn-danger"
+      >Отклонить</button>
+    </div>
+  </ng-container>
+
+
 </section>

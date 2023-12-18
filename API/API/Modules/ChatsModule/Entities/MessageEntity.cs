@@ -6,10 +6,17 @@ namespace API.Modules.ChatsModule.Entities;
 
 public class MessageEntity : IEntity
 {
-    [Key]
-    public Guid Id { get; set; }
+    [Key] public Guid Id { get; set; }
     public ChatEntity Chat { get; set; }
-    public ProfileEntity Sender { get; set; }
+    public ProfileEntity? Sender { get; set; }
     public string Message { get; set; }
+    public MessageType Type { get; set; }
     public DateTime DateTime { get; set; }
+}
+
+public enum MessageType
+{
+    System,
+    Text,
+    File,
 }

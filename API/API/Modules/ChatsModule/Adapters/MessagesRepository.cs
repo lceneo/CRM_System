@@ -25,7 +25,9 @@ public class MessagesRepository : CRUDRepository<MessageEntity>, IMessagesReposi
         if (request.MessageIds != null)
             query = query.Where(m => request.MessageIds.Contains(m.Id));
         if (request.Sender != null)
-            query = query.Where(m => m.Sender.Id == request.Sender);
+            query = query.Where(m => m.Sender != null && m.Sender.Id == request.Sender);
+        if (request.Type != null)
+            query = query.Where(m => m.Type == request.Type);
 
         return new SearchResponseBaseDTO<MessageEntity>
         {

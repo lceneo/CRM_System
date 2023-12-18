@@ -7,28 +7,25 @@
         <ul
           class="chats__list"
           [ngSwitch]="tabType"
-          *ngLet = "chats() as chats">
-          <ng-container
-            *ngSwitchCase="tabType === 'Inbox' || tabType === 'Mine' ? tabType : ''"
-          >
+          *ngLet = "chats ? chats() : [] as chats">
+          <ng-container>
             <li
               class="chats__item"
               [ngClass]="{
                'chats__item-selected': selectedChat && selectedChat.id === chat.id
               }"
               *ngFor="let chat of chats"
-              (click) = "openDialogMessage(chat, dialog)">
+              (click) = "openDialogMessage(chat)">
               <section>
                 <h3>{{chat.name}}</h3>
-                <p>{{chat.lastMessage.message}}</p>
+                <p class="chats__item-text">{{chat?.lastMessage?.message}}</p>
               </section>
             </li>
           </ng-container>
         </ul>
-    <section #dialog class="chats__hidden">
+    <section #dialog class="chats__hidden chats__dialog">
       <app-message-dialog
         [chat] = selectedChat
-        [isVisible] = !!selectedChat
       ></app-message-dialog>
     </section>
   </section>

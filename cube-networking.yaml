@@ -9,6 +9,8 @@ metadata:
     nginx.org/client-max-body-size: "50m"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/affinity-canary-behavior: "sticky"
+    nginx.org/websocket-services: api-service
 spec:
   ingressClassName: nginx
   rules:
@@ -31,6 +33,13 @@ spec:
               number: 80
       - pathType: Prefix
         path: /api
+        backend:
+          service:
+            name: api-service
+            port:
+              number: 80
+      - pathType: Prefix
+        path: /Hubs
         backend:
           service:
             name: api-service

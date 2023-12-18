@@ -5,4 +5,5 @@ public enum AccountRole
     Admin,
     Manager,
     Client,
+    Buyer,
 }

@@ -1,6 +1,7 @@
 ﻿using API.DAL;
 using API.DAL.Repository;
 using API.Infrastructure.BaseApiDTOs;
+using API.Modules.AccountsModule.Models;
 using API.Modules.ProfilesModule.ApiDTO;
 using API.Modules.ProfilesModule.Entities;
 using API.Modules.ProfilesModule.Ports;
@@ -21,6 +22,22 @@ public class ProfilesRepository : CRURepository<ProfileEntity>,
         return Set
             .Include(p => p.Account)
             .FirstOrDefaultAsync(p => p.Id == id);
+    }
+
+    public async Task<ProfileEntity> CreateBuyerProfileForVidjetAsync(string domen, AccountEntity account)
+    {
+        var surname = domen;
+        var count = Set.Count(e => e.Surname == surname);
+        var profile = new ProfileEntity
+        {
+            Account = account,
+            Surname = surname,
+            Name = count.ToString(),
+        };
+        await Set.AddAsync(profile);
+        await SaveChangesAsync();
+
+        return profile;
     }
 
     public SearchResponseBaseDTO<ProfileEntity> Search(ProfilesSearchRequest searchReq)

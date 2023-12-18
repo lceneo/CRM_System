@@ -7,12 +7,13 @@ import {RegistrationComponent} from "./components/registration/registration.comp
 import {authorizationGuard} from "../../guards/authorizationGuard";
 import {ReactiveFormsModule} from "@angular/forms";
 import {unauthorizationGuard} from "../../guards/unauthorizationGuard";
+import {adminGuard} from "../../guards/adminGuard";
 
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
   { path: 'login', pathMatch: 'full', component: LoginComponent, canActivate: [unauthorizationGuard] },
-  { path: 'registration', pathMatch: 'full', component: RegistrationComponent, canActivate:  [authorizationGuard]},
+  { path: 'registration', pathMatch: 'full', component: RegistrationComponent, canActivate:  [authorizationGuard, adminGuard]},
   { path: 'passwordChange', component: ChangePasswordComponent, canActivate: [unauthorizationGuard]}
 ]
 

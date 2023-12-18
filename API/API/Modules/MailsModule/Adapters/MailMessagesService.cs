@@ -1,5 +1,4 @@
 ﻿using System.Net.Mail;
-using System.Text;
 using API.Extensions;
 using API.Infrastructure;
 using API.Modules.AccountsModule.Ports;
@@ -14,7 +13,7 @@ public class MailMessagesService : IMailMessagesService
     private readonly IAccountsRepository accountsRepository;
 
     public MailMessagesService(
-        ILoggedSmtpClient smtpClient, 
+        ILoggedSmtpClient smtpClient,
         IAccountsRepository accountsRepository)
     {
         this.smtpClient = smtpClient;
@@ -31,7 +30,8 @@ public class MailMessagesService : IMailMessagesService
         await accountsRepository.UpdateAsync(account);
         
         var pattern = MailPatterns.PasswordRecoveryPattern;
-        var messageBody = pattern.FormatWith(new(){
+        var messageBody = pattern.FormatWith(new()
+        {
             {"login", login},
             {"url", Config.Host + @"/Accounts/Password/" + account.Id}});
         
@@ -43,16 +43,17 @@ public class MailMessagesService : IMailMessagesService
         var account = await accountsRepository.GetByLoginAsync(login);
         if (account == null)
             return;
-        
+
         var pattern = MailPatterns.VerificationPattern;
-        var messageBody = pattern.FormatWith(new(){
+        var messageBody = pattern.FormatWith(new()
+        {
             {"login", login},
             {"host", Config.Host},
             {"url", Config.Host + @"/Accounts/Password/" + account.Id}});
         
         SendMailsAsync("Подтверждение аккаунта", messageBody, account.Email);
     }
-    
+
     public void SendMailsAsync(string title, string message, params string[] recipients)
     {
         var mailMessage = new MailMessage

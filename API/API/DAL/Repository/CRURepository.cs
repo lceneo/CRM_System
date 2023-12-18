@@ -30,7 +30,7 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntit
             .ToListAsync();
     }
 
-    public async Task<TEntity?> GetByIdAsync(Guid id) 
+    public async Task<TEntity?> GetByIdAsync(Guid id)
         => await Set.FindAsync(id);
 
     public Task<List<TEntity>> GetByIdsAsync(IEnumerable<Guid> ids)
@@ -51,7 +51,7 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntit
         await SaveChangesAsync();
     }
 
-    public async Task<CreateResponse> CreateOrUpdateAsync(TEntity entity)
+    public async Task<CreateResponse<Guid>> CreateOrUpdateAsync(TEntity entity)
     {
         var isCreated = false;
         var cur = await Set.FindAsync(entity.Id);
@@ -67,9 +67,9 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntit
 
         await SaveChangesAsync();
 
-        return new CreateResponse
+        return new CreateResponse<Guid>
         {
-            Id = entity.Id, 
+            Id = entity.Id,
             IsCreated = isCreated
         };
     }

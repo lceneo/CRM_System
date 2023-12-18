@@ -1,5 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 using API.Infrastructure;
 using API.Modules.AccountsModule.DTO;
 using API.Modules.AccountsModule.Models;
@@ -29,7 +30,7 @@ public class AccountsService : IAccountsService
         this.passwordHasher = passwordHasher;
         this.mailMessagesService = mailMessagesService;
     }
-    
+
     public async Task<Result<Guid>> RegisterAsync(RegisterByAdminRequest registerByAdminRequest)
     {
         var cur = await accountRepository.GetByLoginAsync(registerByAdminRequest.Login);
@@ -50,11 +51,11 @@ public class AccountsService : IAccountsService
 
         if (cur.PasswordHash == null)
             return Result.BadRequest<ClaimsResponse>("Пользователь не установил себе пароль.");
-        
+
         var isPasswordValid = passwordHasher.IsPasswordEqualHashed(cur.PasswordHash, loginRequest.Password);
         if (!isPasswordValid)
             return Result.BadRequest<ClaimsResponse>("Неправильный пароль.");
-        
+
         return Result.Ok(GetClaims(cur));
     }
 
@@ -63,7 +64,7 @@ public class AccountsService : IAccountsService
         var cur = await accountRepository.GetByIdAsync(userId);
         if (cur == null)
             return Result.NotFound<bool>("Такого пользователя нет.");
-        
+
         var isPasswordValid = passwordHasher.IsPasswordEqualHashed(cur.PasswordHash, changePasswordRequest.OldPassword);
         if (!isPasswordValid)
             return Result.BadRequest<bool>("Неправильный пароль.");
@@ -78,7 +79,7 @@ public class AccountsService : IAccountsService
         await mailMessagesService.SendPasswordRecovery(login);
     }
 
-    public async Task<Result<ClaimsResponse>> ChangePasswordUnauthorizedAsync(Guid userId, 
+    public async Task<Result<ClaimsResponse>> ChangePasswordUnauthorizedAsync(Guid userId,
         ChangePasswordUnauthorizedRequest changePasswordUnauthorizedRequest)
     {
         var cur = await accountRepository.GetByIdAsync(userId);
@@ -90,7 +91,7 @@ public class AccountsService : IAccountsService
 
         cur.PasswordHash = passwordHasher.CalculateHash(changePasswordUnauthorizedRequest.Password);
         await accountRepository.UpdateAsync(cur);
-        
+
         return Result.Ok(GetClaims(cur));
     }
 
@@ -105,10 +106,10 @@ public class AccountsService : IAccountsService
 
         return new ClaimsResponse(claimsIdentity, account.Id, account.Role, CreateToken(claims));
     }
-    
+
     public string CreateToken(List<Claim> claims)
     {
-        var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
             Config.JwtSecurityKey));
 
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);

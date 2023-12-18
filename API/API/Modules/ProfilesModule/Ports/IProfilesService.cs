@@ -8,6 +8,6 @@ namespace API.Modules.ProfilesModule.Ports;
 public interface IProfilesService
 {
     Task<Result<ProfileOutDTO>> GetProfileAsync(Guid id);
-    Task<Result<CreateResponse>> CreateOrUpdateProfile(Guid accountId, ProfileDTO profileDto);
+    Task<Result<CreateResponse<Guid>>> CreateOrUpdateProfile(Guid accountId, ProfileDTO profileDto);
     Result<ProfilesSearchResponse> Search(ProfilesSearchRequest searchReq);
 }

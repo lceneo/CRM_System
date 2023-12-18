@@ -1,5 +1,3 @@
-<button (click) = "sendToAdmin()">Отправить админу</button>
-<button (click) = "sendToClient()">Отправить клиенту</button>
 
 <nav class="navigation"
      *ngLet="isAuthorized$ | async as isAuthorized"
@@ -28,6 +26,10 @@
         role="menu" aria-labelledby="button-split">
       <li role="menuitem"><a [routerLink]="['profile']" class="dropdown-item" href="#">Профиль</a></li>
       <li class="divider dropdown-divider"></li>
+      <li
+        *ngIf="(role$ | async) === AccountRole.Client"
+        role="menuitem"
+      ><a [routerLink]="['vidjets']" class="dropdown-item" href="#">Мои виджеты</a>
       <li role="menuitem"><a [routerLink]="['profile', 'changePassword']" class="dropdown-item" href="#">Сменить пароль</a>
       <li role="menuitem"><a class="dropdown-item" (click) = "signOut()"><i class="bi bi-arrow-left-square-fill"></i> Выйти</a>
       </li>

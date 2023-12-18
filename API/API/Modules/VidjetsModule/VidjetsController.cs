@@ -1,7 +1,11 @@
-﻿using API.Modules.VidjetsModule.Models;
+﻿using System.Text;
+using API.Extensions;
+using API.Infrastructure;
+using API.Modules.VidjetsModule.Models;
 using API.Modules.VidjetsModule.Ports;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.FileProviders;
 
 namespace API.Modules.VidjetsModule;
 
@@ -12,45 +16,74 @@ public class VidjetsController : ControllerBase
 {
     private readonly IVidjetsService vidjetsService;
 
-    public VidjetsController(IVidjetsService vidjetsService)
+    public VidjetsController(
+        IVidjetsService vidjetsService)
     {
         this.vidjetsService = vidjetsService;
     }
 
     [HttpGet]
-    public async Task<ActionResult> GetVidjetsAsync()
+    public async Task<ActionResult> GetVidjetsAsync([FromQuery] VidjetsSearchRequest searchReq)
     {
-        throw new NotImplementedException();
+        var response = await vidjetsService.GetVidjetsAsync(searchReq);
+        return response.ActionResult;
     }
 
     [HttpGet("{vidjetId:Guid}")]
     public async Task<ActionResult> GetVidjetByIdAsync([FromRoute] Guid vidjetId)
     {
-        throw new NotImplementedException();
+        var response = await vidjetsService.GetVidjetByIdAsync(vidjetId);
+        return response.ActionResult;
     }
-    
+
     [HttpPost]
     public async Task<ActionResult> CreateOrUpdateVidjet(VidjetCreateRequest vidjetCreateRequest)
     {
-        throw new NotImplementedException();
+        var response = await vidjetsService.CreateOrUpdateVidjet(User.GetId(), vidjetCreateRequest);
+
+        return response.ActionResult;
     }
 
     [HttpDelete("{vidjetId:Guid}")]
     public async Task<ActionResult> DeleteVidjetAsync([FromRoute] Guid vidjetId)
     {
-        throw new NotImplementedException();
+        await vidjetsService.DeleteVidjetAsync(vidjetId);
+        return NoContent();
+    }
+
+    [AllowAnonymous]
+    [HttpGet("Script")]
+    public async Task<ActionResult> GetScript()
+    {
+        using var provider = new PhysicalFileProvider(Config.PathToStatic);
+        return Content(provider.GetFileInfo("Script.js").ReadAll(), "text/html");
     }
 
     [AllowAnonymous]
     [HttpPost("Init")]
-    public async Task<ActionResult<VidjetResponse>> GetTokenAsync(VidjetRequest request)
+    public async Task<ActionResult<VidjetResponse>> GetTokenAsync()
     {
-        var ip = HttpContext.Connection.RemoteIpAddress;
-        if (ip == null)
-            return BadRequest("IP is required");
+        var request = new VidjetRequest
+        {
+            Domen = GetDomenFromOrigin(HttpContext.Request.Headers.Origin),
+        };
 
-        var response = await vidjetsService.ResolveVidjetForUserAsync(request, ip.MapToIPv4().GetHashCode());
+        var response = await vidjetsService.ResolveVidjetForBuyerAsync(request);
 
         return response.ActionResult;
     }
+
+    [AllowAnonymous]
+    [HttpPost("TestIP")]
+    public async Task<ActionResult<VidjetResponse>> TestIP()
+    {
+        return Ok(new
+        {
+            Origin = HttpContext.Request.Headers.Origin,
+            Domen = GetDomenFromOrigin(HttpContext.Request.Headers.Origin),
+        });
+    }
+
+    private string GetDomenFromOrigin(string origin)
+        => origin.Substring(origin.IndexOf("://") + 3);
 }
