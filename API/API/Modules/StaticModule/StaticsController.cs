@@ -10,30 +10,34 @@ namespace API.Modules.StaticModule;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class StaticsController : ControllerBase
 {
-    private readonly IStaticsService staticsesService;
+    private readonly IStaticsService staticsService;
 
-    public StaticsController(IStaticsService staticsesService)
+    public StaticsController(IStaticsService staticsService)
     {
-        this.staticsesService = staticsesService;
+        this.staticsService = staticsService;
     }
 
     [HttpPost("Upload")]
-    [Authorize]
     public async Task<ActionResult<UploadResponse>> UploadAsync(IFormFile file)
     {
-        return await staticsesService.UploadFile(User.GetId(), file);
+        var response = await staticsService.UploadFile(User.GetId(), file);
+        return response.ActionResult;
     }
 
     [HttpPost("Download")]
-    public async Task<ActionResult> DownloadAsync([FromBody] DownloadRequest request)
+    public async Task<ActionResult<DownloadResponse>> DownloadAsync([FromBody] DownloadRequest request)
     {
-        var fileResponse = await staticsesService.GetFile(User.GetId(), request.FileName);
-        if (fileResponse.Value == null)
-            return fileResponse.Result!;
+        var response = await staticsService.GetFile(User.GetId(), request.FileKey);
+        if (!response.IsSuccess)
+            return response.ActionResult;
 
-        await HttpContext.Response.SendFileAsync(fileResponse.Value);
-        return Ok();
+        await HttpContext.Response.SendFileAsync(response.Value.FileInfo);
+        return new DownloadResponse
+        {
+            FileName = response.Value.FileName,
+        };
     }
 }

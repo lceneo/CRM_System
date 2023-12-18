@@ -1,11 +1,10 @@
-﻿using API.Modules.StaticModule.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.FileProviders;
+﻿using API.Infrastructure;
+using API.Modules.StaticModule.Models;
 
 namespace API.Modules.StaticModule.Ports;
 
 public interface IStaticsService
 {
-    Task<ActionResult<UploadResponse>> UploadFile(Guid userId, IFormFile file);
-    Task<ActionResult<IFileInfo>> GetFile(Guid userId, string fileName);
+    Task<Result<UploadResponse>> UploadFile(Guid userId, IFormFile file);
+    Task<Result<DownloadServiceResponse>> GetFile(Guid userId, string fileKey);
 }
