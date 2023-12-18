@@ -7,6 +7,6 @@ public class Config
     public const string Host = "localhost:3000";
     public const string JwtSecurityKey = "Token with 16 ch";
     public static string PathToStatic = Directory.GetCurrentDirectory() 
-                                        + @"\Static";
+                                        + @"/Static";
     public const string HubsPolicyName = "HubsPolicy";
 }
