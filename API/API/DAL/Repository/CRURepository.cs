@@ -51,7 +51,7 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntit
         await SaveChangesAsync();
     }
 
-    public async Task<CreateResponse> CreateOrUpdateAsync(TEntity entity)
+    public async Task<CreateResponse<Guid>> CreateOrUpdateAsync(TEntity entity)
     {
         var isCreated = false;
         var cur = await Set.FindAsync(entity.Id);
@@ -67,7 +67,7 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntit
 
         await SaveChangesAsync();
 
-        return new CreateResponse
+        return new CreateResponse<Guid>
         {
             Id = entity.Id,
             IsCreated = isCreated
