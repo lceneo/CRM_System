@@ -5,6 +5,11 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
+# Add Static files
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS static
+WORKDIR /app
+COPY ["API/Static", "Static"]
+
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["API/API.csproj", "API/"]
@@ -19,4 +24,5 @@ RUN dotnet publish "API.csproj" -c Release -o /app/publish /p:UseAppHost=false
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=static /app/Static /app/Static
 ENTRYPOINT ["dotnet", "API.dll"]
