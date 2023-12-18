@@ -1,88 +1,83 @@
 import { notNull } from "../helpers/notNull";
-import { useOnClickOutside } from "../helpers/useOnClickOutside";
+import { createButton } from "./button";
+import { cls } from "../helpers/cls";
 
-export function createHeader({ text, id, className, styles }: {
+export function createHeader({ text, id, className, styles, onCloseClick }: {
 	text?: string,
 	id?: string,
-	positionX?: PositionX,
-	positionY?: PositionY,
 	className?: string,
+	onCloseClick?: (ev: MouseEvent) => void,
 	styles?: Partial<CSSStyleDeclaration>
 }): [HTMLDivElement, () => void, (show: boolean) => void] {
-	const dialog = document.createElement('div')
+	const header = document.createElement('div')
+	header.classList.add(cls('border-radius-top'));
+	const [closeButton, _, showButton] = createButton({
+		text: 'X',
+		keepCircle: true,
+		className: 'send-button',
+		styles: {
+			justifySelf: 'flex-end',
+			position: 'absolute',
+			right: '1%',
+			padding: '.8rem',
+			visibility: 'hidden',
+			color: '#d6d6d6',
+		}
+	});
+	if (onCloseClick) {
+		closeButton.addEventListener('click', onCloseClick);
+	}
+	header.appendChild(closeButton);
 	const listeners: (() => void)[] = [];
 
 	if (notNull(text)) {
-		dialog.textContent = text;
+		header.textContent = text;
 	}
 	if (notNull(id)) {
-		dialog.id = id;
+		header.id = id;
 	}
 	if (notNull(className)) {
-		dialog.classList.add(className);
+		header.classList.add(cls(className));
 	}
 
-	const style = dialog.style;
+	const style = header.style;
 	dropDivStyles(style);
-	applyDialogStyles(style);
+	applyHeaderStyles(style);
 	Object.assign(style, styles);
 
-	setPositionX(positionX, style);
-	setPositionY(positionY, style);
 
-
-	const closeDialog = () => {
-		document.body.removeChild(dialog)
+	const closeHeader = () => {
+		document.body.removeChild(header)
 		if (listeners) {
 			listeners.forEach(l => l());
 		}
 	}
 
-	const showDialog = (show: boolean) => {
+	const showHeader = (show: boolean) => {
 		if (show) {
-			dialog.style.visibility = 'visible';
+			header.style.visibility = 'visible';
+			showButton(true);
 		} else {
-			dialog.style.visibility = 'hidden';
+			header.style.visibility = 'hidden';
+			showButton(false);
 		}
 	}
 
-	return [dialog, closeDialog, showDialog];
+	return [header, closeHeader, showHeader];
 }
 
-function setPositionX(position: PositionX, styles: CSSStyleDeclaration) {
-	switch(position) {
-		case PositionX.BOTTOM:
-			styles.top = '';
-			styles.bottom = '0%';
-			break;
-		case PositionX.TOP:
-			styles.top = '0%';
-			styles.bottom = '';
-			break;
-	}
+
+function applyHeaderStyles(style: CSSStyleDeclaration) {
+	Object.assign(style, initHeaderStyles);
 }
 
-function setPositionY(position: PositionY, styles: CSSStyleDeclaration) {
-	switch(position) {
-		case PositionY.LEFT:
-			styles.right = '';
-			styles.left = '0%';
-			break;
-		case PositionY.RIGHT:
-			styles.right = '0%';
-			styles.left = '';
-			break;
-	}
-}
-
-function applyDialogStyles(style: CSSStyleDeclaration) {
-	style.position = 'fixed';
-	/*style.left = '50%';
-	style.top = '50%';*/
-	/*style.transform = 'translate(-50%,-50%)'*/
-	style.width = '50%';
-	style.height = '50%';
-	style.backgroundColor = 'grey';
+const initHeaderStyles: Partial<CSSStyleDeclaration> = {
+	width: '100%',
+	height: '60px',
+	display: 'flex',
+	alignItems: 'center',
+	position: 'relative',
+	backgroundColor: '#262626'
 }
 
 function dropDivStyles(style: CSSStyleDeclaration) {

@@ -5,20 +5,18 @@ import { createDialog, PositionY } from "./html/dialog";
 import { useOnClickOutside } from "./helpers/useOnClickOutside";
 
 export function execute(connection: HubConnection, ip: string) {
-    let buttonStyles: Partial<CSSStyleDeclaration> = {
-        fontSize: '24px',
-        padding: '10px',
-        width: '2em',
-        height: '2em'
-    }
-
-
     const [button, removeButton, showButton] = createButton({
         text: '+',
-        styles: buttonStyles
+        keepCircle: true,
+        className: 'open-widget-button',
     });
     const [dialog, removeDialog, showDialog] = createDialog({
-        positionY: PositionY.LEFT
+        positionY: PositionY.LEFT,
+        onClose: () => {
+            button.disabled = false;
+            showButton(true)
+        },
+        className: 'chat-dialog-wrapper'
     });
     document.body.appendChild(button);
     showDialog(false);
@@ -27,7 +25,7 @@ export function execute(connection: HubConnection, ip: string) {
         button.disabled = true;
         showButton(false);
         showDialog(true);
-        setTimeout(() => {
+        /*setTimeout(() => {
             const removeOutsideListener = useOnClickOutside(dialog, () => closeDialog())
             const closeDialog = () => {
                 removeOutsideListener();
@@ -36,7 +34,7 @@ export function execute(connection: HubConnection, ip: string) {
                 showButton( true);
             }
             document.body.appendChild(dialog);
-        });
+        });*/
     });
 }
 

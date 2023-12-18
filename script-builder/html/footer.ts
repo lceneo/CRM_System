@@ -1,65 +1,113 @@
 import { notNull } from "../helpers/notNull";
+import { createButton } from "./button";
 import { cls } from "../helpers/cls";
+import { createInput } from "./input";
+import { socket } from "../index";
 
-export function createButton({ text, id, className, keepCircle, styles }: {
+export function createFooter({ text, id, className, styles, onSend }: {
 	text?: string,
 	id?: string,
 	className?: string,
-	keepCircle?: boolean,
+	onSend?: (message: string) => any,
 	styles?: Partial<CSSStyleDeclaration>
-}): [HTMLButtonElement, () => void, (show: boolean) => void] {
-	const button = document.createElement('button');
+}): [HTMLDivElement, () => void, (show: boolean) => void] {
+	const footer = document.createElement('div')
+	footer.classList.add(cls('border-radius-bottom'));
+	const [sendButton, _, showButton] = createButton({
+		text: '=>',
+		keepCircle: true,
+		className: 'send-button',
+		styles: {
+			justifySelf: 'flex-end',
+			right: '1%',
+			top: '5%',
+			padding: '.8rem',
+			visibility: 'hidden',
+			color: '#d6d6d6',
+		}
+	});
+	const [input, closeInput, showInput] = createInput({
+		placeholder: 'Ваше сообщение',
+		className: 'send-input',
+		styles: {
+			width: '90%',
+			borderBottom: '1px solid #d6d6d6',
+			visibility: 'hidden',
+			color: '#d6d6d6',
+		},
+	})
+	if (onSend) {
+		sendButton.addEventListener('click', () => {
+			onSend(input.value);
+			input.value = '';
+		});
+		input.addEventListener('keydown', (ev) => {
+			if (ev.key === 'Enter') {
+				onSend(input.value);
+				input.value = '';
+			}
+		})
+	}
+
+	footer.appendChild(input);
+	footer.appendChild(sendButton);
+
+	const listeners: (() => void)[] = [];
 
 	if (notNull(text)) {
-		button.textContent = text;
+		footer.textContent = text;
 	}
 	if (notNull(id)) {
-		button.id = id;
+		footer.id = id;
 	}
 	if (notNull(className)) {
-		button.classList.add(cls(className));
+		footer.classList.add(cls(className));
 	}
 
-	const style = button.style;
-	//dropButtonStyles(style);
-	setButtonStyles(style);
+	const style = footer.style;
+	dropDivStyles(style);
+	applyFooterStyles(style);
 	Object.assign(style, styles);
 
-	const showButton = (show: boolean) => {
-		if (show) {
-			button.style.visibility = 'visible';
-		} else {
-			button.style.visibility = 'hidden';
+
+	const closeFooter = () => {
+		document.body.removeChild(footer)
+		if (listeners) {
+			listeners.forEach(l => l());
 		}
 	}
 
-	if (keepCircle) {
-		const [width, height] = [button.offsetWidth, button.offsetHeight];
-		const size = Math.max(width, height);
-		button.style.width = size + 'px';
-		button.style.height = size + 'px';
+	const showFooter = (show: boolean) => {
+		if (show) {
+			footer.style.visibility = 'visible';
+			showButton(true);
+			showInput(true);
+		} else {
+			footer.style.visibility = 'hidden';
+			showButton(false);
+			showInput(false);
+		}
 	}
 
-	return [button, () => document.removeChild(button), showButton];
+	return [footer, closeFooter, showFooter];
 }
 
-function setButtonStyles(style: CSSStyleDeclaration) {
-	/*style.position = 'fixed';
-	style.right = '5%';
-	style.bottom = '5%';*/
 
-
-	style.outline = 'none';
-	style.border = 'none';
-	style.borderRadius = '50%';
-
-	style.display = 'flex';
-	style.justifyContent = 'center';
-	style.alignItems = 'center';
+function applyFooterStyles(style: CSSStyleDeclaration) {
+	Object.assign(style, initFooterStyles);
 }
 
-function dropButtonStyles(style: CSSStyleDeclaration) {
-	style.cssText = `display: inline-block;
+const initFooterStyles: Partial<CSSStyleDeclaration> = {
+	width: '100%',
+	height: '60px',
+	display: 'flex',
+	alignItems: 'center',
+	position: 'relative',
+	backgroundColor: '#262626'
+}
+
+function dropDivStyles(style: CSSStyleDeclaration) {
+	style.cssText = `display: block;
 position: static;
 float: none;
 clear: none;
@@ -167,6 +215,5 @@ letter-spacing: normal;
 text-transform: none;
 direction: ltr;
 unicode-bidi: normal;
-color: black;
-`
+color: black;`
 }

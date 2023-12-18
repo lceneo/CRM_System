@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {EntityStateManager} from "../../../shared/helpers/entityStateManager";
 import {IChatResponseDTO} from "../../../shared/models/DTO/response/ChatResponseDTO";
 import {IMessageReceive} from "../../../shared/models/entities/MessageReceive";
+import {tap} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +21,10 @@ export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
     }
 
     const receiveFn = (msgReceive: IMessageReceive) => {
+      console.log('receivedMsg')
       const existingChat = this.getEntitiesSync().find(chat => chat.id === msgReceive.chatId);
+      if (!existingChat) { return; }
+      console.log('chatUpdated')
       this.updateByID(msgReceive.chatId,
           {
             lastMessage: {
@@ -37,6 +41,9 @@ export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
   }
 
   public joinChat(chatID: string) {
-    return this.httpS.post(`/Chats/${chatID}/Join`, null);
+    return this.httpS.post(`/Chats/${chatID}/Join`, null)
+      .pipe(
+        tap(() => this.removeByID(chatID))
+      );
   }
 }

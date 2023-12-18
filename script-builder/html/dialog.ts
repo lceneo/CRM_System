@@ -1,5 +1,12 @@
 import { notNull } from "../helpers/notNull";
 import { useOnClickOutside } from "../helpers/useOnClickOutside";
+import { socket, STATE } from "../index";
+import { sendMessage } from "../requests/sendMessage";
+import { createHeader } from "./header";
+import { createFooter } from "./footer";
+import { cls } from "../helpers/cls";
+import {Message, messagesStore} from "../store/messages";
+import {createChatContent} from "./chatContent";
 
 export enum PositionX {
 	BOTTOM,
@@ -11,15 +18,18 @@ export enum PositionY {
 	RIGHT,
 }
 
-export function createDialog({ text, id, className, positionX = PositionX.BOTTOM, positionY = PositionY.RIGHT, styles }: {
+export function createDialog({ text, id, className, positionX = PositionX.BOTTOM, positionY = PositionY.RIGHT, styles, onClose }: {
 	text?: string,
 	id?: string,
 	positionX?: PositionX,
 	positionY?: PositionY,
 	className?: string,
+	onClose?: () => void;
 	styles?: Partial<CSSStyleDeclaration>
 }): [HTMLDivElement, () => void, (show: boolean) => void] {
 	const dialog = document.createElement('div')
+	dialog.classList.add(cls('border-radius-top'), cls('border-radius-bottom'))
+
 	const listeners: (() => void)[] = [];
 
 	if (notNull(text)) {
@@ -29,7 +39,7 @@ export function createDialog({ text, id, className, positionX = PositionX.BOTTOM
 		dialog.id = id;
 	}
 	if (notNull(className)) {
-		dialog.classList.add(className);
+		dialog.classList.add(cls(className));
 	}
 
 	const style = dialog.style;
@@ -40,7 +50,6 @@ export function createDialog({ text, id, className, positionX = PositionX.BOTTOM
 	setPositionX(positionX, style);
 	setPositionY(positionY, style);
 
-
 	const closeDialog = () => {
 		document.body.removeChild(dialog)
 		if (listeners) {
@@ -48,13 +57,45 @@ export function createDialog({ text, id, className, positionX = PositionX.BOTTOM
 		}
 	}
 
+	const messages = [];
+	let pending: any[] = [];
+
+	async function sendMessage(msg: string) {
+		const message = new Message(msg, new Date(), 'client');
+		messagesStore.setPending(message);
+		const msgTimestamp = await socket.sendMessage(msg);
+		messagesStore.movePending(message, {timeStamp: msgTimestamp})
+	}
+
+	const [header, closeHeader, showHeader] = createHeader({onCloseClick: () => onCloseDialog() });
+	const [footer, closeFooter, showFooter] = createFooter({
+		className: 'chat-footer',
+		onSend: sendMessage,
+	});
+
+	const [chatContent, closeChatContent, showChatContent] = createChatContent({className: 'chat-content'})
 	const showDialog = (show: boolean) => {
 		if (show) {
-			dialog.style.visibility = 'visible';
+			dialog.style.display = 'flex';
+			showHeader(true);
+			showFooter(true);
+			showChatContent(true);
 		} else {
-			dialog.style.visibility = 'hidden';
+			dialog.style.display = 'none';
+			showHeader(false);
+			showFooter(false);
+			showChatContent(false);
 		}
 	}
+
+	function onCloseDialog() {
+		onClose && onClose();
+		showDialog(false);
+	}
+
+	dialog.appendChild(header);
+	dialog.appendChild(chatContent);
+	dialog.appendChild(footer);
 
 	return [dialog, closeDialog, showDialog];
 }
@@ -87,12 +128,12 @@ function setPositionY(position: PositionY, styles: CSSStyleDeclaration) {
 
 function applyDialogStyles(style: CSSStyleDeclaration) {
     style.position = 'fixed';
-    /*style.left = '50%';
-    style.top = '50%';*/
-    /*style.transform = 'translate(-50%,-50%)'*/
-    style.width = '50%';
+    style.width = '30%';
     style.height = '50%';
     style.backgroundColor = 'grey';
+	style.display = 'flex';
+	style.flexFlow = 'column';
+	style.margin = '10px';
 }
 
 function dropDivStyles(style: CSSStyleDeclaration) {
