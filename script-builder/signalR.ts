@@ -1,15 +1,21 @@
-import {HubConnection, HubConnectionBuilder, LogLevel} from "@microsoft/signalr";
+/*
+import { HttpClient, HttpRequest, HttpResponse, HttpTransportType, HubConnection, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import { STATE } from "./index";
 
-export function getHub(url: string): HubConnection {
-   const hub = new HubConnectionBuilder()
-        .withUrl(url)
-        .withAutomaticReconnect()
-        .configureLogging(LogLevel.Debug)
-        .build();
-
-   hub.onreconnecting(() => console.info('Trying to reconnect to SignalR server'));
-   hub.onreconnected(() => console.info('Successfully reconnected to SignalR server'));
-   hub.onclose(() => console.info('SignalR connection closed'));
-
-   return hub;
+export
 }
+
+class MyClient extends HttpClient {
+    send(request: HttpRequest): Promise<HttpResponse> {
+        return (fetch as (a: any, b: any) => Promise<{ json(): any }>)(request.url, {
+            ...request,
+            mode: 'cors',
+            headers: request.headers,
+            credentials: 'include'
+        })
+            .then(r => r.json())
+            .then(res => new HttpResponse(res.status, res.statusText, res.body))
+    }
+
+}
+*/

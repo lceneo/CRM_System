@@ -6,6 +6,16 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist')
   },
+  mode: 'development',
+  devServer: {
+    allowedHosts: 'all',
+    https: true,
+    historyApiFallback: true,
+    static: {
+      directory: path.join(__dirname, 'dist'),
+    },
+    port: 4200,
+  },
   module: {
     rules: [
       {
