@@ -4,6 +4,7 @@
 
 .chats{
   display: grid;
+  column-gap: 15px;
 
   &__list{
     list-style: none;

@@ -33,10 +33,9 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
     const receiveFn = (msgReceive: IMessageReceive) => {
       const existingChat = this.getEntitiesSync().find(chat => chat.id === msgReceive.chatId);
 
-      if (!existingChat) {
-        this.getChatByID(msgReceive.chatId).subscribe(chat => this.upsertEntities([chat]));
-      } else {
-        this.updateByID(msgReceive.chatId,
+      if (!existingChat) { return; }
+
+      this.updateByID(msgReceive.chatId,
           {
             lastMessage: {
               ...existingChat.lastMessage,
@@ -45,10 +44,8 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
               sender: {...msgReceive.sender}
             }
           });
-
-        this.sortByPredicate((fChat, sChat) =>
-          new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
-      }
+      this.sortByPredicate((fChat, sChat) =>
+        new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
     }
 
     const successFn = (msgSuccess: IMessageSuccess) => {
@@ -56,7 +53,12 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
       const existingChat = this.getEntitiesSync().find(chat => chat.id === msgInChat.chatId);
 
       if (!existingChat) {
-        this.getChatByID(msgSuccess.chatId).subscribe(chat => this.upsertEntities([chat]));
+        this.getChatByID(msgSuccess.chatId)
+          .subscribe(chat => {
+            this.upsertEntities([chat]);
+            this.sortByPredicate((fChat, sChat) =>
+              new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
+          });
       } else {
         this.updateByID(msgInChat.chatId,
           {
@@ -67,7 +69,6 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
               sender: {...msgInChat.sender}
             }
           });
-
         this.sortByPredicate((fChat, sChat) =>
           new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
       }
