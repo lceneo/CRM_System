@@ -31,7 +31,7 @@ public class ExceptionHandlerMiddleware
         context.Response.ContentType = "application/json";  
         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-        log.Error(exception.Message);
+        log.Error($"Route: {context.Request.Path} Exception: {exception.Message}");
         return context.Response.WriteAsync(JsonSerializer.Serialize(exception.Message));  
     } 
     
