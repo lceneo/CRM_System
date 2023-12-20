@@ -26,12 +26,6 @@ public class AccountsController : ControllerBase
         this.mapper = mapper;
     }
 
-    [HttpGet]
-    public ActionResult asd()
-    {
-        throw new NotImplementedException();
-    }
-
     [Authorize]
     [HttpGet("My")]
     public ActionResult GetMyAcc()
