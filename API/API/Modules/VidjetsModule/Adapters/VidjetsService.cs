@@ -4,6 +4,7 @@ using API.Infrastructure.BaseApiDTOs;
 using API.Modules.AccountsModule.Entities;
 using API.Modules.AccountsModule.Ports;
 using API.Modules.ChatsModule.Ports;
+using API.Modules.LogsModule;
 using API.Modules.ProfilesModule.Ports;
 using API.Modules.VidjetsModule.DTO;
 using API.Modules.VidjetsModule.Entities;
@@ -21,13 +22,15 @@ public class VidjetsService : IVidjetsService
     private readonly IMapper mapper;
     private readonly IAccountsRepository accountsRepository;
     private readonly IProfilesRepository profilesRepository;
+    private readonly ILog log;
 
     public VidjetsService(IChatsService chatsService,
         IAccountsService accountsService,
         IVidjetsRepository vidjetsRepository,
         IMapper mapper,
         IAccountsRepository accountsRepository,
-        IProfilesRepository profilesRepository)
+        IProfilesRepository profilesRepository,
+        ILog log)
     {
         this.chatsService = chatsService;
         this.accountsService = accountsService;
@@ -35,6 +38,7 @@ public class VidjetsService : IVidjetsService
         this.mapper = mapper;
         this.accountsRepository = accountsRepository;
         this.profilesRepository = profilesRepository;
+        this.log = log;
     }
 
     public async Task<Result<SearchResponseBaseDTO<VidjetOutDTO>>> GetVidjetsAsync(VidjetsSearchRequest searchReq)
@@ -48,7 +52,7 @@ public class VidjetsService : IVidjetsService
         });
     }
 
-    public async Task<Result<VidjetOutDTO>> GetVidjetByIdAsync(Guid vidjetId)
+    public async Task<Result<VidjetOutDTO>> GetVidjetByIdAsync(Guid vidjetId, Guid userId)
     {
         var vidjetEntity = await vidjetsRepository.GetByIdAsync(vidjetId);
         if (vidjetEntity == null)
@@ -74,23 +78,25 @@ public class VidjetsService : IVidjetsService
         return Result.Ok(await vidjetsRepository.CreateOrUpdateAsync(res));
     }
 
-    public async Task DeleteVidjetAsync(Guid vidjetId)
+    public async Task DeleteVidjetAsync(Guid vidjetId, Guid userId)
     {
         await vidjetsRepository.DeleteAsync(vidjetId);
+        await log.Info($"Vidjet(Id: {vidjetId}) deleted by user(Id: {userId})");
     }
 
     public async Task<Result<VidjetResponse>> ResolveVidjetForBuyerAsync(VidjetRequest vidjetReq)
     {
-        var vidjet = await vidjetsRepository.SearchVidjetsAsync(new VidjetsSearchRequest
+        var vidjets = await vidjetsRepository.SearchVidjetsAsync(new VidjetsSearchRequest
             {
                 Domen = vidjetReq.Domen,
             },
             true);
-        if (vidjet.Items.Count == 0)
+        if (vidjets.Items.Count == 0)
             return Result.NotFound<VidjetResponse>("Такой домен не найден");
 
+        var vidjet = vidjets.Items.First();
         var clientProfile =
-            await profilesRepository.CreateBuyerProfileForVidjetAsync(vidjetReq.Domen, vidjet.Items.First().Account);
+            await profilesRepository.CreateBuyerProfileForVidjetAsync(vidjetReq.Domen, vidjet.Account);
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, clientProfile.Id.ToString()),
@@ -101,6 +107,7 @@ public class VidjetsService : IVidjetsService
         if (!response.IsSuccess)
             return Result.BadRequest<VidjetResponse>(response.Error);
 
+        await log.Info($"Vidjet(Id: {vidjet.Id}, Domen:{vidjet.Domen}) was resolved");
         return Result.Ok(new VidjetResponse
         {
             Token = accountsService.CreateToken(claims),

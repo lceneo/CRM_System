@@ -1,5 +1,6 @@
 using API.DAL;
 using API.Infrastructure;
+using API.Infrastructure.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +50,8 @@ var app = builder.Build();
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    
+    app.RegisterMiddlewares();
 }
 
 app.UseCors(opt =>

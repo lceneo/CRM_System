@@ -13,11 +13,11 @@ public class StaticsRepository : CRUDRepository<FileEntity>, IStaticsRepository
     {
     }
 
-    public async Task<FileEntity?> Get(Guid userId, string fileName)
+    public async Task<FileEntity?> Get(Guid userId, string fileKey)
     {
         var existed = await Set
             .Include(e => e.Profile)
-            .FirstOrDefaultAsync(e => e.FileName == fileName && e.Profile.Id == userId);
+            .FirstOrDefaultAsync(e => e.FileKey == fileKey && e.Profile.Id == userId);
         
         return existed;
     }

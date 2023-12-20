@@ -5,6 +5,7 @@ using API.Infrastructure;
 using API.Modules.AccountsModule.DTO;
 using API.Modules.AccountsModule.Models;
 using API.Modules.AccountsModule.Ports;
+using API.Modules.LogsModule;
 using API.Modules.MailsModule.Ports;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -18,14 +19,17 @@ public class AccountsService : IAccountsService
     private readonly IAccountsRepository accountRepository;
     private readonly IPasswordHasher passwordHasher;
     private readonly IMailMessagesService mailMessagesService;
+    private readonly ILog log;
 
     public AccountsService(
         IMapper mapper,
+        ILog log,
         IAccountsRepository accountsRepository,
         IPasswordHasher passwordHasher,
         IMailMessagesService mailMessagesService)
     {
         this.mapper = mapper;
+        this.log = log;
         this.accountRepository = accountsRepository;
         this.passwordHasher = passwordHasher;
         this.mailMessagesService = mailMessagesService;
@@ -40,6 +44,8 @@ public class AccountsService : IAccountsService
         var accountEntity = mapper.Map<AccountEntity>(registerByAdminRequest);
         await accountRepository.CreateAsync(accountEntity);
         await mailMessagesService.SendVerificationAsync(accountEntity.Login);
+        
+        await log.Info($"Зарегистрирован аккаунт с Login: {cur.Login}, Email: {cur.Email}");
         return Result.Ok(accountEntity.Id);
     }
 
@@ -56,6 +62,7 @@ public class AccountsService : IAccountsService
         if (!isPasswordValid)
             return Result.BadRequest<ClaimsResponse>("Неправильный пароль.");
 
+        await log.Info($"Выполнен вход в аккаунт Login: {cur.Login}");
         return Result.Ok(GetClaims(cur));
     }
 
@@ -71,6 +78,8 @@ public class AccountsService : IAccountsService
 
         cur.PasswordHash = passwordHasher.CalculateHash(changePasswordRequest.NewPassword);
         await accountRepository.UpdateAsync(cur);
+        
+        await log.Info($"Изменён пароль для аккаунта Login: {cur.Login}");
         return Result.NoContent<bool>();
     }
 
@@ -92,6 +101,7 @@ public class AccountsService : IAccountsService
         cur.PasswordHash = passwordHasher.CalculateHash(changePasswordUnauthorizedRequest.Password);
         await accountRepository.UpdateAsync(cur);
 
+        await log.Info($"Установлен пароль для аккаунта Login: {cur.Login}");
         return Result.Ok(GetClaims(cur));
     }
 
