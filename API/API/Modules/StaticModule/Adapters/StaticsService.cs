@@ -1,4 +1,5 @@
 ﻿using API.Infrastructure;
+using API.Modules.LogsModule;
 using API.Modules.ProfilesModule.Ports;
 using API.Modules.StaticModule.Entities;
 using API.Modules.StaticModule.Models;
@@ -12,14 +13,17 @@ public class StaticsService : IStaticsService
     private readonly string pathToStatic;
     private readonly IStaticsRepository staticsRepository;
     private readonly IProfilesRepository profilesRepository;
+    private readonly ILog log;
 
     public StaticsService(
         IStaticsRepository staticsRepository,
-        IProfilesRepository profilesRepository)
+        IProfilesRepository profilesRepository,
+        ILog log)
     {
         this.pathToStatic = Config.PathToStatic;
         this.staticsRepository = staticsRepository;
         this.profilesRepository = profilesRepository;
+        this.log = log;
     }
 
     public async Task<Result<UploadResponse>> UploadFile(Guid userId, IFormFile file)
@@ -48,6 +52,7 @@ public class StaticsService : IStaticsService
             await staticsRepository.CreateAsync(fileEntity);
         }
 
+        await log.Info($"Uploaded file(FileKey: {fileEntity.FileKey}, FileName: {fileEntity.FileName}) by user(Id: {userId})");
         return Result.Ok(new UploadResponse
         {
             FileKey = fileEntity.FileKey
@@ -60,6 +65,7 @@ public class StaticsService : IStaticsService
         if (existed == null)
             return Result.NotFound<DownloadServiceResponse>("");
         
+        await log.Info($"Downloaded file(FileKey: {existed.FileKey}, FileName: {existed.FileName}) by user(Id: {userId})");
         using var provider = new PhysicalFileProvider(pathToStatic);
         return Result.Ok(new DownloadServiceResponse
         {

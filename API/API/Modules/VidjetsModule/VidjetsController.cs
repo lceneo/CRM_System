@@ -32,7 +32,7 @@ public class VidjetsController : ControllerBase
     [HttpGet("{vidjetId:Guid}")]
     public async Task<ActionResult> GetVidjetByIdAsync([FromRoute] Guid vidjetId)
     {
-        var response = await vidjetsService.GetVidjetByIdAsync(vidjetId);
+        var response = await vidjetsService.GetVidjetByIdAsync(vidjetId, User.GetId());
         return response.ActionResult;
     }
 
@@ -47,7 +47,7 @@ public class VidjetsController : ControllerBase
     [HttpDelete("{vidjetId:Guid}")]
     public async Task<ActionResult> DeleteVidjetAsync([FromRoute] Guid vidjetId)
     {
-        await vidjetsService.DeleteVidjetAsync(vidjetId);
+        await vidjetsService.DeleteVidjetAsync(vidjetId, User.GetId());
         return NoContent();
     }
 
