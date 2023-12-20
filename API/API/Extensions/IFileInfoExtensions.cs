@@ -5,7 +5,7 @@ namespace API.Extensions;
 public static class IFileInfoExtensions
 {
     public static string ReadAll(this IFileInfo fileInfo)
-        => string.Join("", ReadEnum(fileInfo));
+        => string.Join(Environment.NewLine, ReadEnum(fileInfo));
 
     private static IEnumerable<string> ReadEnum(IFileInfo fileInfo)
     {
