@@ -25,4 +25,5 @@ FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 COPY --from=static /app/Static /app/Static
+RUN mkdir -p Logs
 ENTRYPOINT ["dotnet", "API.dll"]
