@@ -10,11 +10,11 @@ public interface IVidjetsService
 {
     Task<Result<SearchResponseBaseDTO<VidjetOutDTO>>> GetVidjetsAsync(VidjetsSearchRequest searchReq);
 
-    Task<Result<VidjetOutDTO>> GetVidjetByIdAsync([FromRoute] Guid vidjetId);
+    Task<Result<VidjetOutDTO>> GetVidjetByIdAsync(Guid vidjetId, Guid userId);
 
     Task<Result<CreateResponse<Guid>>> CreateOrUpdateVidjet(Guid userId, VidjetCreateRequest vidjetCreateRequest);
 
-    Task DeleteVidjetAsync([FromRoute] Guid vidjetId);
+    Task DeleteVidjetAsync(Guid vidjetId, Guid userId);
 
     Task<Result<VidjetResponse>> ResolveVidjetForBuyerAsync(VidjetRequest vidjetReq);
 }

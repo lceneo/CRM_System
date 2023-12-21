@@ -1,8 +1,10 @@
-﻿using API.Infrastructure;
+﻿using API.Extensions;
+using API.Infrastructure;
 using API.Infrastructure.BaseApiDTOs;
 using API.Modules.ChatsModule.DTO;
 using API.Modules.ChatsModule.Entities;
 using API.Modules.ChatsModule.Ports;
+using API.Modules.LogsModule;
 using API.Modules.ProfilesModule.DTO;
 using API.Modules.ProfilesModule.Ports;
 using AutoMapper;
@@ -15,15 +17,19 @@ public class ChatsService : IChatsService
     private readonly IChatsRepository chatsRepository;
     private readonly IMessagesRepository messagesRepository;
     private readonly IProfilesRepository profilesRepository;
+    private readonly ILog log;
     private readonly IMapper mapper;
     private readonly IHubContext<ChatsHub> chatHub;
 
-    public ChatsService(IChatsRepository chatsRepository,
+    public ChatsService(
+        ILog log,
+        IMapper mapper,
+        IChatsRepository chatsRepository,
         IProfilesRepository profilesRepository,
         IMessagesRepository messagesRepository,
-        IMapper mapper,
         IHubContext<ChatsHub> chatHub)
     {
+        this.log = log;
         this.chatsRepository = chatsRepository;
         this.profilesRepository = profilesRepository;
         this.messagesRepository = messagesRepository;
@@ -54,6 +60,7 @@ public class ChatsService : IChatsService
         };
         await messagesRepository.CreateAsync(messageEntity);
 
+        await LogMessage(messageEntity, chat.Id);
         return Result.Ok((chat, messageEntity));
     }
 
@@ -79,8 +86,12 @@ public class ChatsService : IChatsService
         foreach (var receiver in receivers)
             await chatHub.Clients.Group(receiver.Id.ToString()).SendAsync("Recieve", mapper.Map<MessageOutDTO>(messageEntity));
 
+        await LogMessage(messageEntity, chatId);
         return Result.Ok((chat, messageEntity));
     }
+
+    private async Task LogMessage(MessageEntity message, Guid chatId)
+        => await log.Info($"Message(Id: {message.Id}, Type: {message.Type}) in chat(Id: {chatId}) by user(Id: {message.Sender?.Id})");
 
     public async Task<Result<IEnumerable<ProfileOutDTO>>> JoinChatAsync(Guid chatId, Guid userId)
     {
@@ -96,11 +107,12 @@ public class ChatsService : IChatsService
         chat.Profiles.Add(profile);
         await chatsRepository.UpdateAsync(chat);
 
-        foreach (var participant in participants)
-            await chatHub.Clients.Group(participant.Id.ToString()).SendAsync("");
+        /*foreach (var participant in participants) TODO: починить, не работало тк сигнал р пытался кинуть запрос в несуществующую группу
+            await chatHub.Clients.Group(participant.Id.ToString()).SendAsync("");*/ 
         await SendSystemMessage(chat.Id, $"{profile.Name} вошел в чат");
         await chatHub.Clients.Group("Managers").SendAsync("UpdateFreeChats");
 
+        await log.Info($"User(Id: {userId}) joined in chat(Id: {chatId})");
         return Result.Ok(participants);
     }
 
@@ -122,6 +134,7 @@ public class ChatsService : IChatsService
         await chatHub.Clients.Group("Managers").SendAsync("UpdateFreeChats");
         await SendSystemMessage(chat.Id, $"{profile.Name} вышел из чата");
 
+        await log.Info($"UserId(Id: {userId}) leaved chat(Id: {chatId})");
         return Result.NoContent<bool>();
     }
 
@@ -162,7 +175,7 @@ public class ChatsService : IChatsService
     public async Task<ChatEntity?> CreateChatWithUsers(Guid[] userIds)
     {
         var users = await profilesRepository.GetByIdsAsync(userIds);
-        if (users.Count() != userIds.Length)
+        if (users.Count != userIds.Length)
             return null;
 
         var chat = new ChatEntity
@@ -171,6 +184,8 @@ public class ChatsService : IChatsService
             Profiles = users.ToHashSet(),
         };
         await chatsRepository.CreateAsync(chat);
+
+        await log.Info($"Chat(Id: {chat.Id} Name: {chat.Name}) created with users(Ids): {userIds.LogExpression()}");
         return chat;
     }
 
@@ -180,16 +195,9 @@ public class ChatsService : IChatsService
         if (chat != null)
             return Result.Ok(chat);
 
-        var users = await profilesRepository.GetByIdsAsync(userIds);
-        if (users.Count != userIds.Length)
-            return Result.BadRequest<ChatEntity>("Нельзя создать чат с несуществующими пользователями");
-
-        chat = new ChatEntity
-        {
-            Name = $"№{chatsCounter++}",
-            Profiles = users.ToHashSet(),
-        };
-        await chatsRepository.CreateAsync(chat);
+        chat = await CreateChatWithUsers(userIds);
+        if (chat == null)
+            return Result.BadRequest<ChatEntity>("Некорректные пользователи, неудалось создать чат");
         await chatHub.Clients.Group("Managers").SendAsync("UpdateFreeChats");
 
         return Result.Ok(chat);
