@@ -12,6 +12,7 @@ import {filter, merge, Subject, switchMap, takeUntil, tap} from "rxjs";
 import {FreeChatService} from "../../services/free-chat.service";
 import {MyChatService} from "../../services/my-chat.service";
 import {MessageType} from "../../../../shared/models/enums/MessageType";
+import {MessagesListComponent} from "../messages-list/messages-list.component";
 
 @Component({
   selector: 'app-message-dialog',
@@ -33,7 +34,8 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
     private messageS: MessageService,
     private myChatS: MyChatService,
     private freeChatS: FreeChatService,
-    private renderer2: Renderer2
+    private renderer2: Renderer2,
+    private messagesListComponent: MessagesListComponent
   ) {}
 
   ngOnChanges(): void {
@@ -106,6 +108,15 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
     this.freeChatS.joinChat(this.chat!.id)
       .subscribe();
   }
+
+  protected leaveChat() {
+    this.myChatS.leaveChat(this.chat?.id as string)
+      .subscribe(() => this.closeDialog());
+  }
+  protected closeDialog() {
+    this.messagesListComponent.closeChat();
+  }
+
 
   ngOnDestroy(): void {
     this.destroy$.next();

@@ -75,3 +75,36 @@
   }
 }
 
+.btn_container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+
+  .leaveBtn {
+    font-size: 24px;
+    color: gray;
+    &:hover {
+      cursor: pointer;
+      color: black;
+    }
+  }
+}
+
+.textMsgArea {
+  display: flex;
+  gap: 10px;
+  .sendMsgBtn {
+    align-self: flex-end;
+    font-size: 24px;
+    color: gray;
+  }
+}
+
+.msgNotEmpty {
+  color: black !important;
+  &:hover {
+    cursor: pointer;
+  }
+}
+
