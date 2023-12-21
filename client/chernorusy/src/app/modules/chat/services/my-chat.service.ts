@@ -42,7 +42,7 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
   private registrateSocketHandlers() {
     const receiveFn = (msgReceive: IMessageReceive) => {
       const existingChat = this.getEntitiesSync().find(chat => chat.id === msgReceive.chatId);
-      const notInFreeChats = !this.freeChatS.getByID(msgReceive.id) || this.freeChatS.isPendingJoin(msgReceive.chatId);
+      const notInFreeChats = !this.freeChatS.getByID(msgReceive.chatId) || this.freeChatS.isPendingJoin(msgReceive.chatId);
 
       if (!existingChat && notInFreeChats) {
         this.getChatByID(msgReceive.chatId)
@@ -50,8 +50,7 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
             this.upsertEntities([newChat]);
             this.sortByPredicate((fChat, sChat) =>
               new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
-          })
-        return;
+          });
       }
 
       else if (existingChat && notInFreeChats) {

@@ -22,10 +22,8 @@ export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
     }
 
     const receiveFn = (msgReceive: IMessageReceive) => {
-      console.log('receivedMsg')
       const existingChat = this.getEntitiesSync().find(chat => chat.id === msgReceive.chatId);
       if (!existingChat || this.isPendingJoin(msgReceive.chatId)) { return; }
-      console.log('chatUpdated')
       this.updateByID(msgReceive.chatId,
           {
             lastMessage: {

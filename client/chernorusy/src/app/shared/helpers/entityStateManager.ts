@@ -94,7 +94,7 @@ export class EntityStateManager<T extends {id: string}> {
   }
 
   public getByID(id: string) {
-    return this.entityState().entities.find(entity => entity.id);
+    return this.entityState().entities.find(entity => entity.id === id);
   }
 
   public getEntitiesSync() {
