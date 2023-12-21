@@ -33,34 +33,5 @@ public class ExceptionHandlerMiddleware
 
         log.Error($"Route: {context.Request.Path} Exception: {exception.Message}");
         return context.Response.WriteAsync(JsonSerializer.Serialize(exception.Message));  
-    } 
-    
-    /*public static void Register(WebApplication app)
-    {
-        app.UseExceptionHandler(exceptionHandlerApp =>
-        {
-            exceptionHandlerApp.Run(async context =>
-            {
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-
-                // using static System.Net.Mime.MediaTypeNames;
-                context.Response.ContentType = MediaTypeNames.Text.Plain;
-
-                await context.Response.WriteAsync("An exception was thrown.");
-
-                var exceptionHandlerPathFeature =
-                    context.Features.Get<>();
-
-                if (exceptionHandlerPathFeature?.Error is FileNotFoundException)
-                {
-                    await context.Response.WriteAsync(" The file was not found.");
-                }
-
-                if (exceptionHandlerPathFeature?.Path == "/")
-                {
-                    await context.Response.WriteAsync(" Page: Home.");
-                }
-            });
-        });
-    }*/
+    }
 }
