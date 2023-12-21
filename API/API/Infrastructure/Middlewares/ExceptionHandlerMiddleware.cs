@@ -31,7 +31,7 @@ public class ExceptionHandlerMiddleware
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-        log.Error($"Route: {context.Request.Path} Method: {exception.TargetSite?.Name} StackTrace: {exception.StackTrace}");
+        log.Error($"Route: {context.Request.Path} StackTrace: {exception.StackTrace} StackTrace: {exception.StackTrace}");
         return context.Response.WriteAsync(JsonSerializer.Serialize(exception.Message));  
     }
 }
