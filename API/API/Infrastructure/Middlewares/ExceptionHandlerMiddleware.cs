@@ -28,10 +28,10 @@ public class ExceptionHandlerMiddleware
     
     private Task HandleExceptionMessageAsync(HttpContext context, Exception exception, ILog log)  
     {  
-        context.Response.ContentType = "application/json";  
+        context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-        log.Error($"Route: {context.Request.Path} Exception: {exception.Message}");
+        log.Error($"Route: {context.Request.Path} Method: {exception.TargetSite?.Name} StackTrace: {exception.StackTrace}");
         return context.Response.WriteAsync(JsonSerializer.Serialize(exception.Message));  
     }
 }
