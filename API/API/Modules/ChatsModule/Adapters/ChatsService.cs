@@ -107,8 +107,8 @@ public class ChatsService : IChatsService
         chat.Profiles.Add(profile);
         await chatsRepository.UpdateAsync(chat);
 
-        foreach (var participant in participants)
-            await chatHub.Clients.Group(participant.Id.ToString()).SendAsync("");
+        /*foreach (var participant in participants) TODO: починить, не работало тк сигнал р пытался кинуть запрос в несуществующую группу
+            await chatHub.Clients.Group(participant.Id.ToString()).SendAsync("");*/ 
         await SendSystemMessage(chat.Id, $"{profile.Name} вошел в чат");
         await chatHub.Clients.Group("Managers").SendAsync("UpdateFreeChats");
 
