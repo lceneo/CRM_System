@@ -1,6 +1,14 @@
 
-<section class="wrapper">
-  <form *ngIf="authMode === 'login'; else registrationMode" class = "authorization" [formGroup]="form" (submit)="submitForm()">
+<section class="wrapper" >
+  <h2
+    *ngIf="authMode === 'login'"
+    class="header"
+    >{{passwordMode === 'login' ? 'Вход' : 'Восстановление пароля'}}</h2>
+
+  <form
+    *ngIf="authMode === 'login'; else registrationMode"
+    class = "authorization"
+    [formGroup]="form" (submit)="submitForm()">
     <div class="mb-3">
       <label for="loginFormControl" class="form-label">Логин</label>
       <input

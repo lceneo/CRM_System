@@ -1,6 +1,7 @@
 <nav class="btn_container">
 
   <i *ngIf = "(chat | getChatType) === 'My'"
+     [matTooltip]="'Покинуть'"
      class="bi bi-box-arrow-in-left leaveBtn"
      (click) = "leaveChat()"
   ></i>
@@ -8,16 +9,24 @@
   <button
     class="btn-close close pull-right"
     aria-label="Close"
+    [matTooltip]="'Закрыть'"
     (click) = "closeDialog()"
   >
     <span aria-hidden="true" class="visually-hidden">&times;</span>
   </button>
 </nav>
 
+
 <section class="chat">
+
+  <mat-spinner
+    *ngIf="loadingChat$ | async; else chatTemplate"
+    class="spinner"
+  ></mat-spinner>
+  <ng-template #chatTemplate>
     <ul class="chat__messages" #msgList>
       <li *ngFor="let message of messages()"
-          class="chat__message"
+          class="chat__message card"
           [ngClass]="{
             'chat__myMsg': message.sender && message.mine,
             'chat__companionMsg':  message.sender && !message.mine,
@@ -46,6 +55,8 @@
         [ngClass]="{
           'msgNotEmpty': !!msgValue.trim().length
         }"
+        [matTooltip]="'Отправить сообщение'"
+        [matTooltipDisabled] = "!msgValue.trim().length"
         (click) = "sendMsg()"></i>
     </div>
 
@@ -61,6 +72,6 @@
       >Отклонить</button>
     </div>
   </ng-container>
-
+</ng-template>
 
 </section>

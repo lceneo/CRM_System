@@ -2,9 +2,14 @@
   overflow-y: scroll;
 }
 
+.wrapper {
+  padding-top: 1rem;
+}
+
 .chats{
   display: grid;
   column-gap: 15px;
+  row-gap: 15px;
 
   &__list{
     list-style: none;
@@ -16,6 +21,7 @@
     cursor: pointer;
     border-radius: 6px;
     padding: 0.8em;
+    margin-bottom: 0.3rem;
     &-selected{
       background-color: #1c6ae1;
       color: #FFF;
@@ -23,6 +29,12 @@
     &-text {
       overflow: hidden;
       text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    &-date {
+      width: 100%;
+      display: block;
+      text-align: end;
     }
   }
 
@@ -30,6 +42,8 @@
     height: 67vh;
     position: sticky;
     top: 25vh;
+    border-top: 0.5px solid grey;
+    padding-top: 0.8rem;
   }
 
   &__hidden{
