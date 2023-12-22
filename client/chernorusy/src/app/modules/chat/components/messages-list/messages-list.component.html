@@ -10,7 +10,7 @@
           *ngLet = "chats ? chats() : [] as chats">
           <ng-container>
             <li
-              class="chats__item"
+              class="chats__item card"
               [ngClass]="{
                'chats__item-selected': selectedChat && selectedChat.id === chat.id
               }"
@@ -19,6 +19,10 @@
               <section>
                 <h3>{{chat.name}}</h3>
                 <p class="chats__item-text">{{chat?.lastMessage?.message}}</p>
+                <span
+                  class="chats__item-date"
+                  [style.color]="selectedChat && selectedChat.id === chat.id ? 'unset' : 'grey'"
+                >{{chat?.lastMessage?.dateTime | date: 'HH:mm'}}</span>
               </section>
             </li>
           </ng-container>

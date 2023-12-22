@@ -11,6 +11,8 @@ import {TextareaResizeDirective} from "../../shared/directives/textarea-resize.d
 import {GetChatTypePipe} from "./pipes/get-chat-type.pipe";
 import { MessageComponent } from './components/message/message.component';
 import {TooltipModule} from "ngx-bootstrap/tooltip";
+import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: MainChatPageComponent }
@@ -31,7 +33,9 @@ const routes: Routes = [
         FormsModule,
         TextareaResizeDirective,
         GetChatTypePipe,
-        TooltipModule
+        TooltipModule,
+        MatTooltipModule,
+        MatProgressSpinnerModule
     ]
 })
 export class ChatModule { }

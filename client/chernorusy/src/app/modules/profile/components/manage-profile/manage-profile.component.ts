@@ -60,7 +60,7 @@ export class ManageProfileComponent implements OnInit{
               this.mode = 'create';
               this.form.enable();
               return of(null);
-            } 
+            }
           }),
           tap(profile => {
             if (!profile) { return; }
@@ -77,6 +77,7 @@ export class ManageProfileComponent implements OnInit{
     this.profileS.createOrUpdate$(this.form.value as IProfileCreateRequestDTO)
       .subscribe(() => {
         if (this.mode === 'create') { this.router.navigate(['main']) }
+        else if (this.mode === 'change') { this.changeMode(); }
       });
   }
 

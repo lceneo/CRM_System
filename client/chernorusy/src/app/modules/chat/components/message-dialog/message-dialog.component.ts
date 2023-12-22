@@ -8,7 +8,7 @@ import {
 import {IChatResponseDTO} from "../../../../shared/models/DTO/response/ChatResponseDTO";
 import {MessageService} from "../../services/message.service";
 import {IMessageInChat} from "../../../../shared/models/entities/MessageInChat";
-import {filter, merge, Subject, switchMap, takeUntil, tap} from "rxjs";
+import {BehaviorSubject, filter, merge, Subject, switchMap, takeUntil, tap} from "rxjs";
 import {FreeChatService} from "../../services/free-chat.service";
 import {MyChatService} from "../../services/my-chat.service";
 import {MessageType} from "../../../../shared/models/enums/MessageType";
@@ -23,11 +23,12 @@ import {MessagesListComponent} from "../messages-list/messages-list.component";
 export class MessageDialogComponent implements OnChanges, OnDestroy {
   @Input({required: true}) chat: IChatResponseDTO | null = null;
 
-  @ViewChild('msgList', {static: true}) msgListElementRef!: ElementRef<HTMLUListElement>;
+  @ViewChild('msgList') msgListElementRef!: ElementRef<HTMLUListElement>;
   @ViewChild('message') messageElementRef!: ElementRef<HTMLTextAreaElement>;
 
   protected msgValue = '';
   protected messages = signal<IMessageInChat[]>([]);
+  protected loadingChat$ = new Subject<boolean>();
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -39,17 +40,18 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   ) {}
 
   ngOnChanges(): void {
-    if ('chat in changes') { this.initNewChat() }
+    if ('chat in changes') { this.initNewChat(); }
   }
 
   private initNewChat() {
     if (!this.chat) { return; }
 
     this.destroy$.next(); // уничтожаем предыдущую подписку
+    this.loadingChat$.next(true);
 
     this.getExistingMessagesInChat()
       .pipe(
-        tap(() => this.scrollToTheBottom()),
+        tap(() => { this.loadingChat$.next(false); this.scrollToTheBottom(); }),
         switchMap(() => merge(this.messageS.receivedMessages$, this.messageS.successMessages$)),
         filter(msg => msg.chatId === this.chat?.id),
         takeUntil(this.destroy$),
@@ -77,7 +79,7 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   }
 
   private scrollToTheBottom() {
-    setTimeout(() => this.msgListElementRef.nativeElement.scrollTo({
+    setTimeout(() => this.msgListElementRef?.nativeElement.scrollTo({
       top: this.msgListElementRef.nativeElement.scrollHeight,
       behavior: 'instant'
     }));

@@ -8,6 +8,9 @@ import {ModalModule} from "ngx-bootstrap/modal";
 import {ReactiveFormsModule} from "@angular/forms";
 import { VidjetCreateComponent } from './components/vidjet-create/vidjet-create.component';
 import {AccordionModule} from "ngx-bootstrap/accordion";
+import {MatCardModule} from "@angular/material/card";
+import {MatTooltipModule} from "@angular/material/tooltip";
+import {TooltipModule} from "ngx-bootstrap/tooltip";
 
 
 const routes: Routes = [
@@ -26,7 +29,10 @@ const routes: Routes = [
     ModalModule.forChild(),
     NgLetDirective,
     ReactiveFormsModule,
-    AccordionModule
+    AccordionModule,
+    MatCardModule,
+    MatTooltipModule,
+    TooltipModule
   ]
 })
 export class VidjetModule { }
