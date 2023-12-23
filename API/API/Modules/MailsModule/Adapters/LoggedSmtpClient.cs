@@ -19,6 +19,7 @@ public class LoggedSmtpClient : ILoggedSmtpClient
 
     public void SendAsync(MailMessage mailMessage)
     {
+        mailMessage.IsBodyHtml = true;
         mailMessage.From = new MailAddress(Config.MailBoxLogin);
 
         smtpClient.SendAsync(mailMessage, null);

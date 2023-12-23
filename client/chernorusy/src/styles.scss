@@ -1,14 +1,18 @@
 @import './assets/styles/form';
 @import './assets/styles/modal';
 @import './assets/styles/accordion';
+@import './assets/styles/scroll';
 @import "bootstrap-icons/font/bootstrap-icons";
 
 @include form();
 @include modal();
 @include accordion();
+@include scroll();
 
 body{
   .icon {
     font-size: 1.3rem;
   }
 }
+
+body { font-family: Roboto, "Helvetica Neue", sans-serif; }

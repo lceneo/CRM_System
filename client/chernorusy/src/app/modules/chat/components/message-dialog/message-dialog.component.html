@@ -1,21 +1,46 @@
+<nav class="btn_container">
+
+  <i *ngIf = "(chat | getChatType) === 'My'"
+     [matTooltip]="'Покинуть'"
+     class="bi bi-box-arrow-in-left leaveBtn"
+     (click) = "leaveChat()"
+  ></i>
+
+  <button
+    class="btn-close close pull-right"
+    aria-label="Close"
+    [matTooltip]="'Закрыть'"
+    (click) = "closeDialog()"
+  >
+    <span aria-hidden="true" class="visually-hidden">&times;</span>
+  </button>
+</nav>
+
+
 <section class="chat">
-  <ul class="chat__messages" #msgList>
-    <li *ngFor="let message of messages()"
-        class="chat__message"
-        [ngClass]="{
-          'chat__myMsg': message.sender && message.mine,
-          'chat__companionMsg':  message.sender && !message.mine,
-          'chat__systemMsg': !message.sender && message.type === MessageType.System
-        }"
-    >
-      <app-message [message]="message"></app-message>
-    </li>
-  </ul>
+
+  <mat-spinner
+    *ngIf="loadingChat$ | async; else chatTemplate"
+    class="spinner"
+  ></mat-spinner>
+  <ng-template #chatTemplate>
+    <ul class="chat__messages" #msgList>
+      <li *ngFor="let message of messages()"
+          class="chat__message card"
+          [ngClass]="{
+            'chat__myMsg': message.sender && message.mine,
+            'chat__companionMsg':  message.sender && !message.mine,
+            'chat__systemMsg': !message.sender && message.type === MessageType.System
+          }"
+      >
+        <app-message [message]="message"></app-message>
+      </li>
+    </ul>
 
   <ng-container
     [ngSwitch]="chat | getChatType">
 
-    <div class="form-group"
+    <div class="form-group textMsgArea"
          *ngSwitchCase="'My'"
     >
       <textarea #message appTextareaResize
@@ -24,6 +49,15 @@
                 [placeholder]="'Введите сообщение...'"
                 (keydown)="pressKey($event)"
       ></textarea>
+
+      <i
+        class="bi bi-send sendMsgBtn"
+        [ngClass]="{
+          'msgNotEmpty': !!msgValue.trim().length
+        }"
+        [matTooltip]="'Отправить сообщение'"
+        [matTooltipDisabled] = "!msgValue.trim().length"
+        (click) = "sendMsg()"></i>
     </div>
 
     <div class="chat__btnContainer"
@@ -38,6 +72,6 @@
       >Отклонить</button>
     </div>
   </ng-container>
-
+</ng-template>
 
 </section>

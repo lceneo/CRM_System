@@ -16,19 +16,5 @@ export class MainChatPageComponent  {
     private profileS: ProfileService,
     private messageS: MessageService
   ) {}
-  sendToAdmin(){
-    this.profileS.getProfiles$()
-      .pipe(
-        map(profiles => (profiles?.items.find(p => p.name === 'Name of admin') as IProfileResponseDTO).id)
-      ).subscribe(id => this.messageS.sendMessage(id, 'msgToAdmin'));
-  }
-
-  sendToClient(){
-    this.profileS.getProfiles$()
-      .pipe(
-        map(profiles => (profiles?.items.find(p => p.name === 'Name of client') as IProfileResponseDTO).id)
-      ).subscribe(id => this.messageS.sendMessage(id, 'msgToClient'));
-  }
-
 
 }
