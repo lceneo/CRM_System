@@ -10,6 +10,7 @@ import {tap} from "rxjs";
 export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
 
   protected override initMethod = '/Chats/Free';
+  private pendingJoinIDs: string[] = [];
   protected override initial() {
     this.initStore();
     this.registrateSocketHandlers();
@@ -21,10 +22,8 @@ export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
     }
 
     const receiveFn = (msgReceive: IMessageReceive) => {
-      console.log('receivedMsg')
       const existingChat = this.getEntitiesSync().find(chat => chat.id === msgReceive.chatId);
-      if (!existingChat) { return; }
-      console.log('chatUpdated')
+      if (!existingChat || this.isPendingJoin(msgReceive.chatId)) { return; }
       this.updateByID(msgReceive.chatId,
           {
             lastMessage: {
@@ -40,10 +39,17 @@ export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
 
   }
 
+  public isPendingJoin(chatID: string) {
+    return this.pendingJoinIDs.includes(chatID);
+  }
   public joinChat(chatID: string) {
+    this.pendingJoinIDs.push(chatID);
     return this.httpS.post(`/Chats/${chatID}/Join`, null)
       .pipe(
-        tap(() => this.removeByID(chatID))
+        tap(() => {
+          this.removeByID(chatID);
+          this.pendingJoinIDs = this.pendingJoinIDs.filter(id => id !== chatID);
+        })
       );
   }
 }

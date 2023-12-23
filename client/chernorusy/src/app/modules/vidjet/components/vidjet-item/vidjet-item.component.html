@@ -1,25 +1,36 @@
-  <div class="vidjet">
-    <p>{{vidjet.domen}}</p>
-      <div>
+
+  <mat-card>
+    <mat-card-header class="header">
+      {{vidjet.domen}}
+      <div class="btnContainer">
         <button
           style="margin-right: 5px"
-          class="btn btn-primary" (click)="openModal(editModal)"
+          class="btn btn-primary"
+          [matTooltip]="'Изменить'"
+          (click)="openModal(editModal)"
         >
           <i class="bi bi-pencil"></i>
         </button>
 
         <button
+          [matTooltip]="'Удалить'"
           class="btn btn-danger" (click)="openModal(deleteModal)"
         >
           <i class="bi bi-trash-fill"></i>
         </button>
       </div>
-  </div>
+    </mat-card-header>
+  </mat-card>
 
 <ng-template #editModal>
   <div class="modal-header">
-    <h4 class="modal-title pull-left">Modal</h4>
-    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+    <h4 class="modal-title pull-left">Изменение виджета</h4>
+    <button
+      type="button"
+      class="btn-close close pull-right"
+      aria-label="Close"
+      tooltip = 'Закрыть'
+      (click)="modalRef?.hide()">
       <span aria-hidden="true" class="visually-hidden">&times;</span>
     </button>
   </div>
@@ -44,7 +55,12 @@
   <ng-template #deleteModal>
     <div class="modal-header">
       <h4 class="modal-title pull-left">Удалить виджет?</h4>
-      <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="modalRef?.hide()">
+      <button
+        type="button"
+        class="btn-close close pull-right"
+        aria-label="Close"
+        tooltip = 'Закрыть'
+        (click)="modalRef?.hide()">
         <span aria-hidden="true" class="visually-hidden">&times;</span>
       </button>
     </div>

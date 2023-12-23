@@ -5,6 +5,8 @@ import {IMessageReceive} from "../../../shared/models/entities/MessageReceive";
 import {IMessageSuccess} from "../../../shared/models/entities/MessageSuccess";
 import {MessageMapperService} from "../../../shared/helpers/mappers/message.mapper.service";
 import {MessageService} from "./message.service";
+import {tap} from "rxjs";
+import {FreeChatService} from "./free-chat.service";
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +17,8 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
 
   constructor(
     private messageS: MessageService,
-    private messageMapper: MessageMapperService
+    private messageMapper: MessageMapperService,
+    private freeChatS: FreeChatService
   ) {
     super();
   }
@@ -29,13 +32,29 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
     return this.httpS.get<IChatResponseDTO>(`/Chats/${chatID}`);
   }
 
+  public leaveChat(chatID: string) {
+    return this.httpS.post(`/Chats/${chatID}/Leave`, null)
+      .pipe(
+        tap(() => this.removeByID(chatID)) //удаляем из стора
+      );
+  }
+
   private registrateSocketHandlers() {
     const receiveFn = (msgReceive: IMessageReceive) => {
       const existingChat = this.getEntitiesSync().find(chat => chat.id === msgReceive.chatId);
+      const notInFreeChats = !this.freeChatS.getByID(msgReceive.chatId) || this.freeChatS.isPendingJoin(msgReceive.chatId);
 
-      if (!existingChat) { return; }
+      if (!existingChat && notInFreeChats) {
+        this.getChatByID(msgReceive.chatId)
+          .subscribe(newChat => {
+            this.upsertEntities([newChat]);
+            this.sortByPredicate((fChat, sChat) =>
+              new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
+          });
+      }
 
-      this.updateByID(msgReceive.chatId,
+      else if (existingChat && notInFreeChats) {
+        this.updateByID(msgReceive.chatId,
           {
             lastMessage: {
               ...existingChat.lastMessage,
@@ -44,8 +63,9 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
               sender: {...msgReceive.sender}
             }
           });
-      this.sortByPredicate((fChat, sChat) =>
-        new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
+        this.sortByPredicate((fChat, sChat) =>
+          new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
+      }
     }
 
     const successFn = (msgSuccess: IMessageSuccess) => {

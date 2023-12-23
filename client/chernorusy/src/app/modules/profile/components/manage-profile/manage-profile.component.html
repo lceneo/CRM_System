@@ -2,6 +2,7 @@
 <section *ngLet="profile$ | async as profile">
   <button
     *ngIf="mode !== 'create' && profile?.id === myProfile()?.id"
+    [matTooltip]="mode === 'change' ? 'Выйти из редактирования' : 'Изменить'"
     id="button-basic" type="button" class="btn editProfile" (click) = "changeMode()">
     <i class="bi bi-pencil-square icon"></i>
   </button>

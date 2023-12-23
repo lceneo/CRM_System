@@ -10,6 +10,9 @@ import {FormsModule} from "@angular/forms";
 import {TextareaResizeDirective} from "../../shared/directives/textarea-resize.directive";
 import {GetChatTypePipe} from "./pipes/get-chat-type.pipe";
 import { MessageComponent } from './components/message/message.component';
+import {TooltipModule} from "ngx-bootstrap/tooltip";
+import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: MainChatPageComponent }
@@ -29,7 +32,10 @@ const routes: Routes = [
         NgLetDirective,
         FormsModule,
         TextareaResizeDirective,
-        GetChatTypePipe
+        GetChatTypePipe,
+        TooltipModule,
+        MatTooltipModule,
+        MatProgressSpinnerModule
     ]
 })
 export class ChatModule { }

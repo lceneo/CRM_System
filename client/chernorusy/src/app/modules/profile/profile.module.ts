@@ -12,6 +12,7 @@ import {redirectToMyProfileGuard} from "../../guards/redirectToMyProfileGuard";
 import {authorizationGuard} from "../../guards/authorizationGuard";
 import {unauthorizationGuard} from "../../guards/unauthorizationGuard";
 import {profileGuard} from "../../guards/profileGuard";
+import {MatTooltipModule} from "@angular/material/tooltip";
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', canActivate: [redirectToMyProfileGuard],
@@ -27,14 +28,15 @@ const routes: Routes = [
     SetPasswordComponent,
     CreateProfileComponent
   ],
-  imports: [
-    CommonModule,
-    RouterModule.forChild(routes),
-    ReactiveFormsModule,
-    TabsModule,
-    FormsModule,
-    NgLetDirective,
-    BsDropdownModule
-  ]
+    imports: [
+        CommonModule,
+        RouterModule.forChild(routes),
+        ReactiveFormsModule,
+        TabsModule,
+        FormsModule,
+        NgLetDirective,
+        BsDropdownModule,
+        MatTooltipModule
+    ]
 })
 export class ProfileModule { }

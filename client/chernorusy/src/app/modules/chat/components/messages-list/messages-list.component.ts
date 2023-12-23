@@ -67,7 +67,7 @@ export class MessagesListComponent implements OnInit {
     this.dialogWrapper.nativeElement.classList.remove('chats__hidden');
   }
 
-  protected closeChat() {
+  public closeChat() {
     this.selectedChat = null;
     this.dialogWrapper.nativeElement.classList.add('chats__hidden');
     this.dialog.resetMsgValue();
