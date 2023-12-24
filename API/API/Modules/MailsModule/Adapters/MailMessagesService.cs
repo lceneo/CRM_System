@@ -30,7 +30,7 @@ public class MailMessagesService : IMailMessagesService
         var messageBody = pattern.FormatWith(new()
         {
             {"login", login},
-            {"url", Config.Host + @"/Accounts/Password/Recover"}
+            {"url", @"https://" + Config.Host + @"/Accounts/Password/Recover"}
         });
 
         SendMailsAsync("Восстановление пароля", messageBody, account.Email);
@@ -47,7 +47,7 @@ public class MailMessagesService : IMailMessagesService
         {
             {"login", login},
             {"host", Config.Host},
-            {"url", Config.Host + @"/Accounts/Password/" + userId}
+            {"url", @"https://" + Config.Host + @"/Accounts/Password/" + userId}
         });
 
         SendMailsAsync("Подтверждение аккаунта", messageBody, account.Email);
