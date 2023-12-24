@@ -1,7 +1,9 @@
 ﻿using API.Extensions;
+using API.Infrastructure.BaseApiDTOs;
 using API.Modules.AccountsModule.Entities;
 using API.Modules.ChatsModule.ApiDTO;
 using API.Modules.ChatsModule.DTO;
+using API.Modules.ChatsModule.Entities;
 using API.Modules.ChatsModule.Ports;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -38,10 +40,25 @@ public class ChatsController : ControllerBase
         return response.ActionResult;
     }
 
+    [HttpPost("Search")]
+    public async Task<ActionResult<SearchResponseBaseDTO<ChatOutDTO>>> SearchChats(ChatsSearchRequest req)
+    {
+        var response = await chatsService.SearchChats(User.GetId(), req);
+        return response.ActionResult;
+    }
+
     [HttpGet("{chatId:Guid}")]
     public async Task<ActionResult<ChatOutDTO>> GetChatByIdAsync([FromRoute] Guid chatId)
     {
         var response = await chatsService.GetChatByIdAsync(User.GetId(), chatId);
+        return response.ActionResult;
+    }
+
+    [HttpPost("{chatId:Guid}/Status")]
+    [Authorize(Roles = $"{nameof(AccountRole.Manager)},{nameof(AccountRole.Admin)}")]
+    public async Task<ActionResult> ChangeChatStatus([FromRoute] Guid chatId, [FromBody] ChangeChatStatusRequest req)
+    {
+        var response = await chatsService.ChangeChatStatus(chatId, req);
         return response.ActionResult;
     }
 

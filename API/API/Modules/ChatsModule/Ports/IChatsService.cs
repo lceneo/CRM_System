@@ -1,5 +1,6 @@
 ﻿using API.Infrastructure;
 using API.Infrastructure.BaseApiDTOs;
+using API.Modules.ChatsModule.ApiDTO;
 using API.Modules.ChatsModule.DTO;
 using API.Modules.ChatsModule.Entities;
 using API.Modules.ProfilesModule.DTO;
@@ -13,6 +14,8 @@ public interface IChatsService
         Guid senderId,
         string message);
 
+    Task<Result<SearchResponseBaseDTO<ChatOutDTO>>> SearchChats(Guid userId, ChatsSearchRequest req);
+
     Task<Result<IEnumerable<ProfileOutDTO>>> JoinChatAsync(Guid chatId, Guid userId);
     Task<Result<bool>> LeaveChatAsync(Guid chatId, Guid userId);
 
@@ -21,9 +24,10 @@ public interface IChatsService
     Task<Result<IEnumerable<ChatOutDTO>>> GetChatsByUser(Guid userId);
 
     Task<Result<ChatOutDTO>> GetChatByIdAsync(Guid userId, Guid chatId);
+    
+    Task<Result<bool>> ChangeChatStatus(Guid chatId, ChangeChatStatusRequest req);
 
-    Result<SearchResponseBaseDTO<MessageInChatDTO>>
-        SearchMessages(Guid chatId, MessagesSearchRequest messagesSearchReq);
+    Result<SearchResponseBaseDTO<MessageInChatDTO>> SearchMessages(Guid chatId, MessagesSearchRequest messagesSearchReq);
 
     Task<ChatEntity?> CreateChatWithUsers(Guid[] userIds);
 
