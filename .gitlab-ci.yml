@@ -11,6 +11,18 @@ k8s_deploy_default:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
 
+k8s_deploy_default_without_delete:
+  stage: deploy
+  image: hub.66bit.ru/shared/stk8s:1.26.2
+  script:
+    - kubectl apply -f cube-database.yaml
+    - kubectl apply -f cube-deployment.yaml
+    - kubectl apply -f cube-persistent-deployment.yaml
+    - kubectl apply -f cube-networking.yaml
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+
 k8s_deploy_rebuild_services:
   stage: deploy
   image: hub.66bit.ru/shared/stk8s:1.26.2
