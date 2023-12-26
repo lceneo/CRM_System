@@ -12,6 +12,7 @@ public class ChatsModule : IModule
         services.AddScoped<IMessagesRepository, MessagesRepository>();
         services.AddScoped<IChatsRepository, ChatsRepository>();
         services.AddScoped<IChatsService, ChatsService>();
+        services.AddSingleton<HubConnectionsProvider>();
 
         services.AddAutoMapper(typeof(ChatsMapping));
         services.AddAutoMapper(typeof(MessagesMapping));
