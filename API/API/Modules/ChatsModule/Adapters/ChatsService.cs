@@ -1,6 +1,7 @@
 ﻿using API.Extensions;
 using API.Infrastructure;
 using API.Infrastructure.BaseApiDTOs;
+using API.Modules.ChatsModule.ApiDTO;
 using API.Modules.ChatsModule.DTO;
 using API.Modules.ChatsModule.Entities;
 using API.Modules.ChatsModule.Ports;
@@ -47,9 +48,16 @@ public class ChatsService : IChatsService
                    ?? await chatsRepository.GetByUsers(new HashSet<Guid>(lazyUsers.Value))
                    ?? await CreateChatWithUsers(lazyUsers.Value);
         if (chat == null)
-            return Result.NotFound<(ChatEntity chat, MessageEntity message)>(
-                "Неправильный идентификатор чата/пользователя");
-
+            return Result.NotFound<(ChatEntity chat, MessageEntity message)>("Неправильный идентификатор чата/пользователя");
+        if (chat.Status == ChatStatus.Blocked)
+            return Result.BadRequest<(ChatEntity chat, MessageEntity message)>("Чат заблокирован сервисом");
+        
+        if (chat.Status == ChatStatus.Archived)
+        {
+            chat.Status = ChatStatus.Active;
+            await chatsRepository.UpdateAsync(chat);
+            await log.Info($"Chat(Id: {chat.Id}) was Unarchived (Archived -> Active)");
+        }
         var messageEntity = new MessageEntity
         {
             Message = message,
@@ -62,6 +70,19 @@ public class ChatsService : IChatsService
 
         await LogMessage(messageEntity, chat.Id);
         return Result.Ok((chat, messageEntity));
+    }
+
+    public async Task<Result<SearchResponseBaseDTO<ChatOutDTO>>> SearchChats(Guid userId, ChatsSearchRequest req)
+    {
+        var searchResp = await chatsRepository.SearchChatsAsync(req);
+        return Result.Ok(new SearchResponseBaseDTO<ChatOutDTO>
+        {
+            TotalCount = searchResp.TotalCount,
+            Items = searchResp.Items
+                .Select(c => mapper.Map<ChatOutDTO>(c, 
+                    opt => opt.Items["userId"] = userId))
+                .ToList(),
+        });
     }
 
     public async Task<Result<(ChatEntity chat, MessageEntity message)>> SendSystemMessage(
@@ -107,8 +128,18 @@ public class ChatsService : IChatsService
         chat.Profiles.Add(profile);
         await chatsRepository.UpdateAsync(chat);
 
-        /*foreach (var participant in participants) TODO: починить, не работало тк сигнал р пытался кинуть запрос в несуществующую группу
-            await chatHub.Clients.Group(participant.Id.ToString()).SendAsync("");*/ 
+        foreach (var participant in participants)
+        {
+            try
+            {
+                await chatHub.Clients.Group(participant.Id.ToString()).SendAsync("");
+            }
+            catch (Exception e)
+            {
+                // TODO: починить, не работало тк сигнал р пытался кинуть запрос в несуществующую группу
+            }
+        }
+
         await SendSystemMessage(chat.Id, $"{profile.Name} вошел в чат");
         await chatHub.Clients.Group("Managers").SendAsync("UpdateFreeChats");
 
@@ -158,6 +189,20 @@ public class ChatsService : IChatsService
         return chat == null
             ? Result.NotFound<ChatOutDTO>("Чат с таким Id не найден")
             : Result.Ok(mapper.Map<ChatOutDTO>(chat, opt => opt.Items["userId"] = userId));
+    }
+
+    public async Task<Result<bool>> ChangeChatStatus(Guid chatId, ChangeChatStatusRequest req)
+    {
+        var chat = await chatsRepository.GetByIdAsync(chatId);
+        if (chat == null)
+            return Result.NotFound<bool>("");
+        if (chat.Status == req.Status)
+            return Result.NoContent<bool>();
+
+        chat.Status = req.Status;
+        await chatsRepository.UpdateAsync(chat);
+        await chatHub.Clients.Group("Managers").SendAsync("UpdateFreeChats");
+        return Result.NoContent<bool>();
     }
 
     public Result<SearchResponseBaseDTO<MessageInChatDTO>> SearchMessages(Guid chatId,

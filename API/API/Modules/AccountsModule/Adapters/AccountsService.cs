@@ -37,16 +37,16 @@ public class AccountsService : IAccountsService
 
     public async Task<Result<Guid>> RegisterAsync(RegisterByAdminRequest registerByAdminRequest)
     {
-        var cur = await accountRepository.GetByLoginAsync(registerByAdminRequest.Login);
-        if (cur != null)
+        var account = await accountRepository.GetByLoginAsync(registerByAdminRequest.Login);
+        if (account != null)
             return Result.BadRequest<Guid>("Такой пользователь уже существует.");
 
-        var accountEntity = mapper.Map<AccountEntity>(registerByAdminRequest);
-        await accountRepository.CreateAsync(accountEntity);
-        await mailMessagesService.SendVerificationAsync(accountEntity.Login, accountEntity.Id);
+        account = mapper.Map<AccountEntity>(registerByAdminRequest);
+        await accountRepository.CreateAsync(account);
+        await mailMessagesService.SendVerificationAsync(account.Login, account.Id);
         
-        await log.Info($"Зарегистрирован аккаунт с Login: {cur.Login}, Email: {cur.Email}");
-        return Result.Ok(accountEntity.Id);
+        await log.Info($"Зарегистрирован аккаунт с Login: {account.Login}, Email: {account.Email}");
+        return Result.Ok(account.Id);
     }
 
     public async Task<Result<ClaimsResponse>> LoginAsync(LoginRequest loginRequest)
@@ -79,7 +79,7 @@ public class AccountsService : IAccountsService
         cur.PasswordHash = passwordHasher.CalculateHash(changePasswordRequest.NewPassword);
         await accountRepository.UpdateAsync(cur);
         
-        await log.Info($"Изменён пароль для аккаунта Login: {cur.Login}");
+        await log.Info($"Изменён пароль для Account (Login: {cur.Login})");
         return Result.NoContent<bool>();
     }
 
