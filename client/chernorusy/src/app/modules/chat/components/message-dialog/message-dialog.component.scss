@@ -112,3 +112,19 @@
 .spinner {
   margin: auto auto;
 }
+
+.blockBtn {
+  &:hover {
+    mat-icon {
+      color: red;
+    }
+  }
+}
+
+.unblockBtn {
+  &:hover {
+    mat-icon {
+      color: green;
+    }
+  }
+}

@@ -87,7 +87,7 @@ export class EntityStateManager<T extends {id: string}> {
     });
   }
 
-  protected removeByID(id: string) {
+  public removeByID(id: string) {
     this.updateState({
       ...this.entityState,
       entities: this.getEntitiesSync().filter(entity => entity.id !== id) });

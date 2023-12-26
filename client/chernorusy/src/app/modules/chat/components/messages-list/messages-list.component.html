@@ -29,7 +29,8 @@
         </ul>
     <section #dialog class="chats__hidden chats__dialog">
       <app-message-dialog
-        [chat] = selectedChat
+        [chat] = "selectedChat"
+        [chatType]= "tabType"
       ></app-message-dialog>
     </section>
   </section>
