@@ -9,6 +9,8 @@ public class MessageOutDTO
     public Guid ChatId { get; set; }
     public ProfileOutShortDTO Sender { get; set; }
     public string Message { get; set; }
+    public string FileName { get; set; }
+    public string FileUrl { get; set; }
     public MessageType Type { get; set; }
     public DateTime DateTime { get; set; }
 }

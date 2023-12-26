@@ -38,9 +38,8 @@ public class ChatsHub : Hub, IHub
     {
         var senderId = Context.User.GetId();
         var response = await chatsService.SendMessageAsync(
-            request.RecipientId,
             senderId,
-            request.Message);
+            request);
         if (!response.IsSuccess)
         {
             await Clients.Caller.SendAsync("Error", response.Error);

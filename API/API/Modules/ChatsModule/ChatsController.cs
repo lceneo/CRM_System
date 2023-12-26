@@ -83,9 +83,8 @@ public class ChatsController : ControllerBase
     {
         var senderId = User.GetId();
         var response = await chatsService.SendMessageAsync(
-            request.RecipientId,
             senderId,
-            request.Message);
+            request);
 
         if (!response.IsSuccess)
             return BadRequest(response.Error);
