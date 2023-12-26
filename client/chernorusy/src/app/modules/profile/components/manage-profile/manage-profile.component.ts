@@ -83,7 +83,15 @@ export class ManageProfileComponent implements OnInit{
 
   protected changeMode() {
     this.mode = this.mode === 'change' ? 'observe' : 'change';
-    if (this.mode === 'observe') { this.form.disable(); }
+    if (this.mode === 'observe') {
+      this.form.disable();
+      this.form.setValue({
+        about: this.myProfile()?.about ?? '',
+        name: this.myProfile()?.name ?? '',
+        patronimic: this.myProfile()?.patronimic ?? '',
+        surname: this.myProfile()?.surname ?? ''
+      })
+    }
     else { this.form.enable(); }
   }
 }
