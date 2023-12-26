@@ -45,7 +45,7 @@ spec:
           privileged: true
         volumeMounts:
         - name: back-volume
-            mountPath: /back/volume
+          mountPath: /back/volume
 ---
 apiVersion: apps/v1
 kind: Deployment
