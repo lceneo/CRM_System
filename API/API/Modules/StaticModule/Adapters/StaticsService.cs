@@ -59,6 +59,17 @@ public class StaticsService : IStaticsService
         });
     }
 
+    public async Task<Result<bool>> UploadConcreteFile(IFormFile file)
+    {
+        var path = pathToStatic + "\\" + file.FileName;
+        if (File.Exists(path))
+            File.Delete(path);
+        
+        await using var fileStream = GetFileStream(file.FileName);
+        await file.CopyToAsync(fileStream);
+        return Result.Ok(true);
+    }
+
     public async Task<Result<DownloadServiceResponse>> GetFile(Guid userId, string fileKey)
     {
         var existed = await staticsRepository.Get(userId, fileKey);

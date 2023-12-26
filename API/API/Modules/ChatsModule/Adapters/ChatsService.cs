@@ -201,7 +201,6 @@ public class ChatsService : IChatsService
 
         chat.Status = req.Status;
         await chatsRepository.UpdateAsync(chat);
-        await chatHub.Clients.Group("Managers").SendAsync("UpdateFreeChats");
         return Result.NoContent<bool>();
     }
 

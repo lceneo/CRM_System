@@ -47,8 +47,14 @@ public class ChatsHub : Hub, IHub
         if (othersInGroup.Count() > 0)
         {
             foreach (var user in othersInGroup)
-                await Clients.Group(user.Id.ToString())
-                    .SendAsync("Recieve", mapper.Map<MessageOutDTO>(response.Value.message));
+            {
+                try
+                {
+                    await Clients.Group(user.Id.ToString())
+                        .SendAsync("Recieve", mapper.Map<MessageOutDTO>(response.Value.message));
+                }
+                catch{}
+            }
         }
         else
         {
