@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {computed, Injectable} from '@angular/core';
 import {IChatResponseDTO} from "../../../shared/models/DTO/response/ChatResponseDTO";
 import {EntityStateManager} from "../../../shared/helpers/entityStateManager";
 import {IMessageReceive} from "../../../shared/models/entities/MessageReceive";
@@ -7,6 +7,7 @@ import {MessageMapperService} from "../../../shared/helpers/mappers/message.mapp
 import {MessageService} from "./message.service";
 import {tap} from "rxjs";
 import {FreeChatService} from "./free-chat.service";
+import {ChatStatus} from "../../../shared/models/enums/ChatStatus";
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +15,7 @@ import {FreeChatService} from "./free-chat.service";
 export class MyChatService extends EntityStateManager<IChatResponseDTO> {
 
   protected override initMethod = '/Chats/My';
+  private allChats = this.getEntitiesAsync();
 
   constructor(
     private messageS: MessageService,
@@ -23,9 +25,31 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
     super();
   }
 
+
   protected override initial() {
     this.initStore();
     this.registrateSocketHandlers();
+  }
+
+  public getActiveChatsAsync() {
+    return computed(() => {
+      return this.allChats()
+        .filter(chat => chat.status === ChatStatus.Active)
+    });
+  }
+
+  public getBlockedChatsAsync() {
+    return computed(() => {
+      return this.allChats()
+        .filter(chat => chat.status === ChatStatus.Blocked)
+    });
+  }
+
+  public getArchiveChatsAsync() {
+    return computed(() => {
+      return this.allChats()
+        .filter(chat => chat.status === ChatStatus.Archive)
+    });
   }
 
   public getChatByID(chatID: string) {
@@ -36,6 +60,13 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
     return this.httpS.post(`/Chats/${chatID}/Leave`, null)
       .pipe(
         tap(() => this.removeByID(chatID)) //удаляем из стора
+      );
+  }
+
+  public changeChatStatus(chatID: string, chatStatus: ChatStatus) {
+    return this.httpS.post(`/Chats/${chatID}/Status`, {status: chatStatus})
+      .pipe(
+        tap(() => this.updateByID(chatID, {status: chatStatus}))
       );
   }
 

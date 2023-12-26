@@ -1,18 +1,24 @@
 import {
-  ChangeDetectionStrategy,
-  Component, ElementRef, EventEmitter,
-  Input, OnChanges, OnDestroy, Output, Renderer2,
+  ChangeDetectionStrategy, ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnDestroy,
+  Renderer2,
   signal,
   ViewChild
 } from '@angular/core';
 import {IChatResponseDTO} from "../../../../shared/models/DTO/response/ChatResponseDTO";
 import {MessageService} from "../../services/message.service";
 import {IMessageInChat} from "../../../../shared/models/entities/MessageInChat";
-import {BehaviorSubject, filter, merge, Subject, switchMap, takeUntil, tap} from "rxjs";
+import {filter, merge, Subject, switchMap, takeUntil, tap} from "rxjs";
 import {FreeChatService} from "../../services/free-chat.service";
 import {MyChatService} from "../../services/my-chat.service";
 import {MessageType} from "../../../../shared/models/enums/MessageType";
-import {MessagesListComponent} from "../messages-list/messages-list.component";
+import {MessagesListComponent, TabType} from "../messages-list/messages-list.component";
+import {ChatStatus} from "../../../../shared/models/enums/ChatStatus";
+import {MainChatPageComponent} from "../main-chat-page/main-chat-page.component";
 
 @Component({
   selector: 'app-message-dialog',
@@ -22,6 +28,7 @@ import {MessagesListComponent} from "../messages-list/messages-list.component";
 })
 export class MessageDialogComponent implements OnChanges, OnDestroy {
   @Input({required: true}) chat: IChatResponseDTO | null = null;
+  @Input({required: true}) chatType: TabType | null = null;
 
   @ViewChild('msgList') msgListElementRef!: ElementRef<HTMLUListElement>;
   @ViewChild('message') messageElementRef!: ElementRef<HTMLTextAreaElement>;
@@ -36,7 +43,8 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
     private myChatS: MyChatService,
     private freeChatS: FreeChatService,
     private renderer2: Renderer2,
-    private messagesListComponent: MessagesListComponent
+    private messagesListComponent: MessagesListComponent,
+    private mainChat: MainChatPageComponent
   ) {}
 
   ngOnChanges(): void {
@@ -108,6 +116,9 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   protected joinChat() {
     // не обновляем стор, т.к там рисив будет
     this.freeChatS.joinChat(this.chat!.id)
+      .pipe(
+        tap(() => this.mainChat.changeTab('Мои', this.chat!))
+      )
       .subscribe();
   }
 
@@ -119,6 +130,24 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
     this.messagesListComponent.closeChat();
   }
 
+  protected toggleBlockStatus() {
+    const newStatus = this.chat?.status === ChatStatus.Active ? ChatStatus.Blocked : ChatStatus.Active;
+    this.myChatS.changeChatStatus(this.chat!.id, newStatus)
+      .pipe(
+        tap(() => this.closeDialog())
+      )
+      .subscribe();
+  }
+
+  protected toggleArchiveStatus() {
+    const newStatus = this.chat?.status === ChatStatus.Archive ? ChatStatus.Active : ChatStatus.Archive;
+    this.myChatS.changeChatStatus(this.chat!.id, newStatus)
+      .pipe(
+        tap(() => this.closeDialog())
+      )
+      .subscribe();
+  }
+
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -126,4 +155,5 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   }
 
   protected readonly MessageType = MessageType;
+  protected readonly ChatStatus = ChatStatus;
 }

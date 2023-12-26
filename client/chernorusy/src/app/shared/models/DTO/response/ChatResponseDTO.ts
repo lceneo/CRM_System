@@ -1,4 +1,5 @@
 import {IProfileOutShort} from "../../entities/ProfileOutShort";
+import {ChatStatus} from "../../enums/ChatStatus";
 
 export interface IChatResponseDTO {
   id: string;
@@ -8,5 +9,6 @@ export interface IChatResponseDTO {
     sender: IProfileOutShort,
     message: string;
     dateTime: string;
-  }
+  },
+  status: ChatStatus
 }
