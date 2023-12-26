@@ -33,19 +33,6 @@ spec:
             value: "chernorusy@mail.ru"
           - name: MAILBOX_PASSWORD
             value: "KGw9Q2bmFZpyptJ4xfKZ"
-<<<<<<< HEAD
-      initContainers:
-      - name: db-back
-        image: busybox
-        command: ["sh","-c","mkdir -p /back/volume && chown -R 999:999 /back/volume"]
-        securityContext:
-          runAsUser: 0
-          privileged: true
-        volumeMounts:
-        - name: back-volume
-          mountPath: /back/volume
-=======
->>>>>>> parent of d57bc5a (Тестовая обнова кубера)
 ---
 apiVersion: apps/v1
 kind: Deployment
