@@ -13,6 +13,8 @@ import { MessageComponent } from './components/message/message.component';
 import {TooltipModule} from "ngx-bootstrap/tooltip";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatButtonModule} from "@angular/material/button";
+import {MatIconModule} from "@angular/material/icon";
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: MainChatPageComponent }
@@ -25,17 +27,19 @@ const routes: Routes = [
     MessageDialogComponent,
     MessageComponent
   ],
-    imports: [
-        CommonModule,
-        RouterModule.forChild(routes),
-        TabsModule,
-        NgLetDirective,
-        FormsModule,
-        TextareaResizeDirective,
-        GetChatTypePipe,
-        TooltipModule,
-        MatTooltipModule,
-        MatProgressSpinnerModule
-    ]
+  imports: [
+    CommonModule,
+    RouterModule.forChild(routes),
+    TabsModule,
+    NgLetDirective,
+    FormsModule,
+    TextareaResizeDirective,
+    GetChatTypePipe,
+    TooltipModule,
+    MatTooltipModule,
+    MatProgressSpinnerModule,
+    MatButtonModule,
+    MatIconModule
+  ]
 })
 export class ChatModule { }

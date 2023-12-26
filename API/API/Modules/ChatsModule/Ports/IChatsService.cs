@@ -10,9 +10,8 @@ namespace API.Modules.ChatsModule.Ports;
 public interface IChatsService
 {
     Task<Result<(ChatEntity chat, MessageEntity message)>> SendMessageAsync(
-        Guid recipientId,
         Guid senderId,
-        string message);
+        SendMessageRequest request);
 
     Task<Result<SearchResponseBaseDTO<ChatOutDTO>>> SearchChats(Guid userId, ChatsSearchRequest req);
 

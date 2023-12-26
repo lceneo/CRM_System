@@ -8,6 +8,7 @@ import {IMessageReceive} from "../../../shared/models/entities/MessageReceive";
 import {IMessageSuccess} from "../../../shared/models/entities/MessageSuccess";
 import {MessageMapperService} from "../../../shared/helpers/mappers/message.mapper.service";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {MAX_INT} from "../../../shared/helpers/constants/constants";
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +35,7 @@ export class MessageService {
   }
 
   public getMessages$(chatID: string) {
-    return this.httpS.get<IMessageInChatResponseDTO>(`/Chats/${chatID}/Messages`)
+    return this.httpS.get<IMessageInChatResponseDTO>(`/Chats/${chatID}/Messages?Skip=0&Take=${MAX_INT}`)
       .pipe(
         map(messages => (
           {...messages,

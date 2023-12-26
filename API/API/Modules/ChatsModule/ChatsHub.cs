@@ -1,4 +1,5 @@
-﻿using API.Extensions;
+﻿using System.Collections.Concurrent;
+using API.Extensions;
 using API.Infrastructure;
 using API.Modules.AccountsModule.Entities;
 using API.Modules.ChatsModule.ApiDTO;
@@ -19,12 +20,16 @@ public class ChatsHub : Hub, IHub
 
     public static string Route => "/Hubs/Chats";
 
+    private readonly HubConnectionsProvider connectionsProvider;
     private readonly IChatsService chatsService;
     private readonly IMapper mapper;
 
-    public ChatsHub(IChatsService chatsService,
+    public ChatsHub(
+        HubConnectionsProvider connectionsProvider,
+        IChatsService chatsService,
         IMapper mapper)
     {
+        this.connectionsProvider = connectionsProvider;
         this.chatsService = chatsService;
         this.mapper = mapper;
     }
@@ -33,9 +38,8 @@ public class ChatsHub : Hub, IHub
     {
         var senderId = Context.User.GetId();
         var response = await chatsService.SendMessageAsync(
-            request.RecipientId,
             senderId,
-            request.Message);
+            request);
         if (!response.IsSuccess)
         {
             await Clients.Caller.SendAsync("Error", response.Error);
@@ -73,17 +77,37 @@ public class ChatsHub : Hub, IHub
 
     public override Task OnConnectedAsync()
     {
-        Groups.AddToGroupAsync(Context.ConnectionId, Context.User.GetId().ToString());
+        var userId = Context.User.GetId();
+        var connectionId = Context.ConnectionId;
+        Groups.AddToGroupAsync(connectionId, userId.ToString());
         if (Context.User.GetRole() is AccountRole.Manager)
-            Groups.AddToGroupAsync(Context.ConnectionId, "Managers");
+            Groups.AddToGroupAsync(connectionId, "Managers");
+        Groups.AddToGroupAsync(connectionId, "All");
+        connectionsProvider.AddUser(userId);
+        
+        Clients.All.SendAsync("ActiveStatus", new ActiveStatusDTO
+        {
+            UserId = userId,
+            Status = ActiveStatus.Connected,
+        });
 
         return base.OnConnectedAsync();
     }
 
     public override Task OnDisconnectedAsync(Exception? exception)
     {
-        Groups.RemoveFromGroupAsync(Context.ConnectionId, Context.User.GetId().ToString());
-        Groups.RemoveFromGroupAsync(Context.ConnectionId, "Managers");
+        var userId = Context.User.GetId();
+        var connectionId = Context.ConnectionId;
+        Groups.RemoveFromGroupAsync(connectionId, userId.ToString());
+        Groups.RemoveFromGroupAsync(connectionId, "Managers");
+        Groups.RemoveFromGroupAsync(connectionId, "All");
+        connectionsProvider.RemoveUser(userId);
+
+        Clients.All.SendAsync("ActiveStatus", new ActiveStatusDTO
+        {
+            UserId = userId,
+            Status = ActiveStatus.Disconnected,
+        });
 
         return base.OnDisconnectedAsync(exception);
     }

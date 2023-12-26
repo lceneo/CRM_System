@@ -12,7 +12,8 @@ public class ChatsMapping : Profile
         CreateMap<ChatEntity, ChatOutDTO>()
             .ForMember(dest => dest.LastMessage,
                 opt => opt.MapFrom(src => src.Messages.OrderBy(m => m.DateTime).LastOrDefault()))
-            .ForMember(dest => dest.Name, opt => opt.MapFrom(GetChatName));
+            .ForMember(dest => dest.Name, opt => opt.MapFrom(GetChatName))
+            .ForMember(dest => dest.Profiles, opt => opt.MapFrom(src => src.Profiles));
     }
 
     private string GetChatName(ChatEntity src, ChatOutDTO dest, string _, ResolutionContext context)

@@ -39,12 +39,11 @@ public class ChatsService : IChatsService
     }
 
     public async Task<Result<(ChatEntity chat, MessageEntity message)>> SendMessageAsync(
-        Guid recipientId,
         Guid senderId,
-        string message)
+        SendMessageRequest request)
     {
-        var lazyUsers = new Lazy<Guid[]>(() => new[] {recipientId, senderId});
-        var chat = await chatsRepository.GetByIdAsync(recipientId)
+        var lazyUsers = new Lazy<Guid[]>(() => new[] {request.RecipientId, senderId});
+        var chat = await chatsRepository.GetByIdAsync(request.RecipientId)
                    ?? await chatsRepository.GetByUsers(new HashSet<Guid>(lazyUsers.Value))
                    ?? await CreateChatWithUsers(lazyUsers.Value);
         if (chat == null)
@@ -60,7 +59,9 @@ public class ChatsService : IChatsService
         }
         var messageEntity = new MessageEntity
         {
-            Message = message,
+            Message = request.Message,
+            FileName = request.FileName,
+            FileUrl = request.FileUrl,
             Type = MessageType.Text,
             Chat = chat,
             Sender = chat.Profiles.First(p => p.Id == senderId),

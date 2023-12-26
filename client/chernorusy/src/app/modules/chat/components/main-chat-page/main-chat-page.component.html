@@ -1,20 +1,28 @@
-<div class="wrapper">
+
+<div class="wrapper" *ngIf="(role$ | async) !== AccountRole.Client">
   <h2 class="title">Диалоги</h2>
   <tabset>
 
-    <tab heading="Входящие" #tabA="tab">
+    <tab heading="Входящие" #tabInbox="tab">
       <app-messages-list
         [tabType]="'Inbox'"></app-messages-list>
     </tab>
 
-    <tab heading="Мои" #tabB="tab">
+    <tab heading="Мои" #tabMine="tab">
       <app-messages-list
+        [selectedChat]="selectedTab?.heading === 'Мои' ? (selectedTab?.chat ?? null) : null"
         [tabType]="'Mine'"></app-messages-list>
     </tab>
 
-    <tab heading="Архив" #tabC="tab">
+    <tab heading="Архив" #tabArchive="tab">
       <app-messages-list
         [tabType]="'Archive'"
+      ></app-messages-list>
+    </tab>
+
+    <tab heading="Заблокированные" #tabBlocked="tab">
+      <app-messages-list
+        [tabType]="'Block'"
       ></app-messages-list>
     </tab>
   </tabset>
