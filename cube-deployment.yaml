@@ -22,9 +22,6 @@ spec:
           image: fnatikjk/back_crm_66bit:latest
           ports:
             - containerPort: 80
-          volumeMounts:
-          - name: back-volume
-            mountPath: /back/volume
           env:
           - name: ASPNETCORE_ENVIRONMENT
             value: Debug
@@ -36,6 +33,7 @@ spec:
             value: "chernorusy@mail.ru"
           - name: MAILBOX_PASSWORD
             value: "KGw9Q2bmFZpyptJ4xfKZ"
+<<<<<<< HEAD
       initContainers:
       - name: db-back
         image: busybox
@@ -46,6 +44,8 @@ spec:
         volumeMounts:
         - name: back-volume
           mountPath: /back/volume
+=======
+>>>>>>> parent of d57bc5a (Тестовая обнова кубера)
 ---
 apiVersion: apps/v1
 kind: Deployment
