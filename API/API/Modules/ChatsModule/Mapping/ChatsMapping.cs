@@ -1,5 +1,6 @@
 ﻿using API.Modules.ChatsModule.DTO;
 using API.Modules.ChatsModule.Entities;
+using API.Modules.ProfilesModule.Entities;
 using AutoMapper;
 
 namespace API.Modules.ChatsModule.Mapping;
@@ -16,11 +17,13 @@ public class ChatsMapping : Profile
 
     private string GetChatName(ChatEntity src, ChatOutDTO dest, string _, ResolutionContext context)
     {
-        return src.Profiles.Count switch
-        {
-            1 => src.Profiles.First().Name,
-            2 => src.Profiles.First(e => e.Id != (Guid) context.Items["userId"]).Name,
-            _ => src.Name,
-        };
+        ProfileEntity? profile = null;
+        if (src.Profiles.Count == 1)
+            profile = src.Profiles.First();
+        if (src.Profiles.Count == 2)
+            profile = src.Profiles.First(e => e.Id != (Guid) context.Items["userId"]);
+        return profile != null
+            ? $"{profile.Surname} {profile.Name}"
+            : src.Name;
     }
 }
