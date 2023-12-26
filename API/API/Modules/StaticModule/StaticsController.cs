@@ -26,6 +26,13 @@ public class StaticsController : ControllerBase
         var response = await staticsService.UploadFile(User.GetId(), file);
         return response.ActionResult;
     }
+    
+    [HttpPost("Upload/Concrete")]
+    public async Task<ActionResult<UploadResponse>> UploadConcreteAsync(IFormFile file)
+    {
+        var response = await staticsService.UploadConcreteFile(file);
+        return response.ActionResult;
+    }
 
     [HttpPost("Download")]
     public async Task<ActionResult<DownloadResponse>> DownloadAsync([FromBody] DownloadRequest request)
