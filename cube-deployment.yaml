@@ -22,6 +22,9 @@ spec:
           image: fnatikjk/back_crm_66bit:latest
           ports:
             - containerPort: 80
+          volumeMounts:
+          - name: back-volume
+            mountPath: /back/volume
           env:
           - name: ASPNETCORE_ENVIRONMENT
             value: Debug
@@ -33,6 +36,16 @@ spec:
             value: "chernorusy@mail.ru"
           - name: MAILBOX_PASSWORD
             value: "KGw9Q2bmFZpyptJ4xfKZ"
+      initContainers:
+      - name: db-back
+        image: busybox
+        command: ["sh","-c","mkdir -p /back/volume && chown -R 999:999 /back/volume"]
+        securityContext:
+          runAsUser: 0
+          privileged: true
+        volumeMounts:
+        - name: back-volume
+            mountPath: /back/volume
 ---
 apiVersion: apps/v1
 kind: Deployment
