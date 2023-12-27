@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component, DestroyRef,
   ElementRef,
@@ -12,15 +13,14 @@ import {
 import {IChatResponseDTO} from "../../../../shared/models/DTO/response/ChatResponseDTO";
 import {MessageService} from "../../services/message.service";
 import {IMessageInChat} from "../../../../shared/models/entities/MessageInChat";
-import {defer, filter, from, map, merge, Observable, Subject, switchMap, takeUntil, tap} from "rxjs";
+import {defer, filter, from, fromEvent, map, merge, Observable, Subject, switchMap, takeUntil, tap} from "rxjs";
 import {FreeChatService} from "../../services/free-chat.service";
 import {MyChatService} from "../../services/my-chat.service";
 import {MessageType} from "../../../../shared/models/enums/MessageType";
 import {MessagesListComponent, TabType} from "../messages-list/messages-list.component";
 import {ChatStatus} from "../../../../shared/models/enums/ChatStatus";
 import {MainChatPageComponent} from "../main-chat-page/main-chat-page.component";
-import {FileMapperService} from "../../../../shared/helpers/mappers/file-mapper.service";
-import {ISendMessageRequest} from "../../../../shared/models/DTO/request/SendMessageRequest";
+import {StaticService} from "../../../../shared/services/static.service";
 
 @Component({
   selector: 'app-message-dialog',
@@ -48,7 +48,7 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
     private messageS: MessageService,
     private myChatS: MyChatService,
     private freeChatS: FreeChatService,
-    private fileMapper: FileMapperService,
+    private staticS: StaticService,
     private renderer2: Renderer2,
     private messagesListComponent: MessagesListComponent,
     private mainChat: MainChatPageComponent,
@@ -111,13 +111,12 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
     let sendMessageObs$: Observable<void>;
 
     if (this.currentFile) {
-      sendMessageObs$ = this.fileMapper.fileToDataURL$(this.currentFile)
+      sendMessageObs$ = this.staticS.uploadFile(this.currentFile)
           .pipe(
-              map(fileUrl => {
+              map(fileNameObj => {
                 return {
                   message: this.msgValue.trim().length ? this.msgValue : undefined,
-                  fileUrl,
-                  fileType: this.fileMapper.getFileType(fileUrl)
+                  fileName: fileNameObj.fileKey
                 }
               }),
               switchMap(msgData =>
@@ -133,6 +132,10 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
             tap(() => {
               this.msgValue = '';
               this.currentFile = undefined;
+              if (this.fileInput) {
+                this.fileInput.nativeElement.value = '';
+                this.cdr.detectChanges();
+              }
               this.renderer2.setStyle(this.messageElementRef.nativeElement, 'height', `45px`);
             })
         )
@@ -150,6 +153,7 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   protected onFileChange(event: Event) {
     //@ts-ignore;
     const files = event.target['files'] as FileList;
+    console.log(files)
 
     if (!files || !files.length) { return; }
     else {
@@ -193,6 +197,13 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
       .subscribe();
   }
 
+  protected dropFile(ev: DragEvent) {
+    const files = ev.dataTransfer?.files;
+    if (files && files.length) {
+      this.currentFile = files.item(0) as File;
+    }
+    ev.preventDefault();
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
@@ -201,4 +212,5 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
 
   protected readonly MessageType = MessageType;
   protected readonly ChatStatus = ChatStatus;
+
 }

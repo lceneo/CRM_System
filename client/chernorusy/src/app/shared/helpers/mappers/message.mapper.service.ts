@@ -4,8 +4,7 @@ import {IMessageInChat} from "../../models/entities/MessageInChat";
 import {AuthorizationService} from "../../services/authorization.service";
 import {IMessageSuccess} from "../../models/entities/MessageSuccess";
 import {ProfileService} from "../../services/profile.service";
-import {ISendMessageRequest} from "../../models/DTO/request/SendMessageRequest";
-import {FileMapperService} from "./file-mapper.service";
+import {IPendingMessage} from "../../../modules/chat/services/message.service";
 
 @Injectable({
   providedIn: 'root'
@@ -14,24 +13,22 @@ export class MessageMapperService {
 
   constructor(
     private authorizationS: AuthorizationService,
-    private profileS: ProfileService,
-    private fileMapperS: FileMapperService
+    private profileS: ProfileService
   ) { }
 
    msgReceiveToMsgInChat(messReceive: IMessageReceive): IMessageInChat {
    return  {
       ...messReceive,
-      mine: this.authorizationS.userID === messReceive.sender.id,
-      fileType: this.fileMapperS.getFileType(messReceive.fileUrl)
+      mine: this.authorizationS.userID === messReceive.sender.id
     };
   }
 
-  msgSuccessToMsgInChat(messSuccess: IMessageSuccess, msgData: Pick<ISendMessageRequest, 'message' | 'fileUrl'>): IMessageInChat {
+  msgSuccessToMsgInChat(messSuccess: IMessageSuccess, msgData: IPendingMessage): IMessageInChat {
     return {
       ...messSuccess,
       id: messSuccess.messageId,
       message: msgData.message,
-      fileUrl: msgData.fileUrl,
+      fileName: msgData.fileName,
       dateTime: messSuccess.timeStamp,
       mine: true,
       sender: {

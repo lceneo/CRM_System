@@ -77,6 +77,7 @@
       </button>
       <textarea #message appTextareaResize
                 class="chat__sendMsg form-control"
+                (drop)="dropFile($event)"
                 [(ngModel)] = "msgValue"
                 [placeholder]="'Введите сообщение...'"
                 (keydown)="pressKey($event)"
@@ -114,6 +115,14 @@
            type="file"
            (change)="onFileChange($event)"
     >
-    <button mat-menu-item (click) = "fileInput.click()">Вложить</button>
-    <button mat-menu-item (click) = "currentFile = undefined;">Удалить</button>
+    <button mat-menu-item
+            [disabled] = "!!currentFile"
+            [matTooltip]="'Не больше одного файла'"
+            [matTooltipDisabled] = "!currentFile"
+            (click) = "fileInput.click()">Вложить</button>
+
+    <button mat-menu-item
+            (click) = "currentFile = undefined;"
+            [disabled] = "!currentFile"
+    >Удалить</button>
 </mat-menu>

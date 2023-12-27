@@ -8,8 +8,7 @@ export interface IMessageInChat {
   sender: IProfileOutShort;
   mine?: boolean;
   message?: string;
-  fileUrl?: string;
-  fileType?: FileType;
+  fileName?: string;
   type: MessageType;
   dateTime: string;
 }

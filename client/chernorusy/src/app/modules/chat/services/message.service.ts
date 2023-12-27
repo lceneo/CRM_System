@@ -1,16 +1,15 @@
-import {Injectable, OnDestroy, signal} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {SocketService} from "../../../shared/services/socket.service";
 import {HttpService} from "../../../shared/services/http.service";
 import {IMessageInChat} from "../../../shared/models/entities/MessageInChat";
 import {IMessageInChatResponseDTO} from "../../../shared/models/DTO/request/MessageInChatResponseDTO";
-import {map, Subject, takeUntil} from "rxjs";
+import {map, Subject } from "rxjs";
 import {IMessageReceive} from "../../../shared/models/entities/MessageReceive";
 import {IMessageSuccess} from "../../../shared/models/entities/MessageSuccess";
 import {MessageMapperService} from "../../../shared/helpers/mappers/message.mapper.service";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {MAX_INT} from "../../../shared/helpers/constants/constants";
 import {ISendMessageRequest} from "../../../shared/models/DTO/request/SendMessageRequest";
-import {FileType} from "../../../shared/models/entities/FileType";
 
 @Injectable({
   providedIn: 'root'
@@ -46,15 +45,15 @@ export class MessageService {
       );
   }
 
-  public sendMessage(userOrChatID: string, messageData: SendMsgRequestType) {
-    this.pendingMessages[this.requestNumber] = { message: messageData.message, fileUrl: messageData.fileUrl };
+  public sendMessage(userOrChatID: string, messageData: IPendingMessage) {
+    this.pendingMessages[this.requestNumber] = { message: messageData.message, fileName: messageData.fileName };
     const sendMsgObj: ISendMessageRequest = {
       "recipientId": userOrChatID,
       "requestNumber": this.requestNumber++
     };
 
     if (messageData.message) { sendMsgObj['message'] = messageData.message; }
-    if (messageData.fileUrl) { sendMsgObj['fileUrl'] = messageData.fileUrl; }
+    if (messageData.fileName) { sendMsgObj['fileName'] = messageData.fileName; }
 
     return this.socketS.sendMessage('Send', sendMsgObj);
   }
@@ -78,9 +77,7 @@ export class MessageService {
   }
 }
 
-interface IPendingMessage {
+export interface IPendingMessage {
   message?: string;
-  fileUrl?: string;
+  fileName?: string;
 }
-
-type SendMsgRequestType = Pick<ISendMessageRequest, 'message' | 'fileUrl'> & {fileType?: FileType};

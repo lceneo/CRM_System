@@ -90,7 +90,7 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
             lastMessage: {
               ...existingChat.lastMessage,
               message: msgReceive.message,
-              fileUrl: msgReceive.fileUrl,
+              fileName: msgReceive.fileName,
               dateTime: msgReceive.dateTime,
               sender: {...msgReceive.sender}
             }
@@ -117,7 +117,7 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
             lastMessage: {
               ...existingChat.lastMessage,
               message: msgInChat.message,
-              fileUrl: msgInChat.fileUrl,
+              fileName: msgInChat.fileName,
               dateTime: msgInChat.dateTime,
               sender: {...msgInChat.sender}
             }
