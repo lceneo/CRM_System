@@ -12,7 +12,7 @@ import {
 import {IChatResponseDTO} from "../../../../shared/models/DTO/response/ChatResponseDTO";
 import {MessageService} from "../../services/message.service";
 import {IMessageInChat} from "../../../../shared/models/entities/MessageInChat";
-import {filter, merge, Subject, switchMap, takeUntil, tap} from "rxjs";
+import {defer, filter, from, map, merge, Observable, Subject, switchMap, takeUntil, tap} from "rxjs";
 import {FreeChatService} from "../../services/free-chat.service";
 import {MyChatService} from "../../services/my-chat.service";
 import {MessageType} from "../../../../shared/models/enums/MessageType";
@@ -20,6 +20,7 @@ import {MessagesListComponent, TabType} from "../messages-list/messages-list.com
 import {ChatStatus} from "../../../../shared/models/enums/ChatStatus";
 import {MainChatPageComponent} from "../main-chat-page/main-chat-page.component";
 import {FileMapperService} from "../../../../shared/helpers/mappers/file-mapper.service";
+import {ISendMessageRequest} from "../../../../shared/models/DTO/request/SendMessageRequest";
 
 @Component({
   selector: 'app-message-dialog',
@@ -107,12 +108,35 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
     // для отправки надо, чтоб сообщение было не пустым или чтоб был файл
     if (!this.msgValue.trim().length && !this.currentFile) { return; }
 
-    this.messageS.sendMessage(this.chat?.id as string, this.msgValue)
-      .then(() => {
-        this.msgValue = '';
-        this.renderer2.setStyle(this.messageElementRef.nativeElement, 'height', `45px`);
-      });
+    let sendMessageObs$: Observable<void>;
 
+    if (this.currentFile) {
+      sendMessageObs$ = this.fileMapper.fileToDataURL$(this.currentFile)
+          .pipe(
+              map(fileUrl => {
+                return {
+                  message: this.msgValue.trim().length ? this.msgValue : undefined,
+                  fileUrl,
+                  fileType: this.fileMapper.getFileType(fileUrl)
+                }
+              }),
+              switchMap(msgData =>
+                  defer(() => from(this.messageS.sendMessage(this.chat?.id as string, msgData))))
+          );
+    } else {
+      sendMessageObs$ = defer(() =>
+          from(this.messageS.sendMessage(this.chat?.id as string, {message: this.msgValue})));
+    }
+
+    sendMessageObs$
+        .pipe(
+            tap(() => {
+              this.msgValue = '';
+              this.currentFile = undefined;
+              this.renderer2.setStyle(this.messageElementRef.nativeElement, 'height', `45px`);
+            })
+        )
+        .subscribe();
   }
 
   pressKey(ev: KeyboardEvent) {

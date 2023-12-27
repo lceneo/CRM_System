@@ -90,6 +90,7 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
             lastMessage: {
               ...existingChat.lastMessage,
               message: msgReceive.message,
+              fileUrl: msgReceive.fileUrl,
               dateTime: msgReceive.dateTime,
               sender: {...msgReceive.sender}
             }
@@ -100,7 +101,7 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
     }
 
     const successFn = (msgSuccess: IMessageSuccess) => {
-      const msgInChat = this.messageMapper.msgSuccessToMsgInChat(msgSuccess, this.messageS.getMessageTextByRequestNumber(msgSuccess.requestNumber));
+      const msgInChat = this.messageMapper.msgSuccessToMsgInChat(msgSuccess, this.messageS.getMessageDataByRequestNumber(msgSuccess.requestNumber));
       const existingChat = this.getEntitiesSync().find(chat => chat.id === msgInChat.chatId);
 
       if (!existingChat) {
@@ -116,6 +117,7 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
             lastMessage: {
               ...existingChat.lastMessage,
               message: msgInChat.message,
+              fileUrl: msgInChat.fileUrl,
               dateTime: msgInChat.dateTime,
               sender: {...msgInChat.sender}
             }

@@ -85,10 +85,10 @@
       <i
         class="bi bi-send sendMsgBtn"
         [ngClass]="{
-          'msgNotEmpty': !!msgValue.trim().length
+          'msgNotEmpty': !!msgValue.trim().length || currentFile
         }"
         [matTooltip]="'Отправить сообщение'"
-        [matTooltipDisabled] = "!msgValue.trim().length"
+        [matTooltipDisabled] = "!msgValue.trim().length && !currentFile"
         (click) = "sendMsg()"></i>
     </div>
 

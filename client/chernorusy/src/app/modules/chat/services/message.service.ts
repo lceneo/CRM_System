@@ -9,6 +9,8 @@ import {IMessageSuccess} from "../../../shared/models/entities/MessageSuccess";
 import {MessageMapperService} from "../../../shared/helpers/mappers/message.mapper.service";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {MAX_INT} from "../../../shared/helpers/constants/constants";
+import {ISendMessageRequest} from "../../../shared/models/DTO/request/SendMessageRequest";
+import {FileType} from "../../../shared/models/entities/FileType";
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +21,7 @@ export class MessageService {
   public successMessages$ = new Subject<IMessageInChat>();
 
   private requestNumber = 1;
-  private pendingMessages: {[requestNumber: number]: string} = {};
+  private pendingMessages: {[requestNumber: number]: IPendingMessage} = {};
   constructor(
     private socketS: SocketService,
     private httpS: HttpService,
@@ -44,14 +46,17 @@ export class MessageService {
       );
   }
 
-  public sendMessage(userOrChatID: string, messageText: string, fileURL?: string) {
-    this.pendingMessages[this.requestNumber] = messageText;
-
-    return this.socketS.sendMessage('Send', {
+  public sendMessage(userOrChatID: string, messageData: SendMsgRequestType) {
+    this.pendingMessages[this.requestNumber] = { message: messageData.message, fileUrl: messageData.fileUrl };
+    const sendMsgObj: ISendMessageRequest = {
       "recipientId": userOrChatID,
-      "message": messageText,
       "requestNumber": this.requestNumber++
-    });
+    };
+
+    if (messageData.message) { sendMsgObj['message'] = messageData.message; }
+    if (messageData.fileUrl) { sendMsgObj['fileUrl'] = messageData.fileUrl; }
+
+    return this.socketS.sendMessage('Send', sendMsgObj);
   }
 
   private listenSocket() {
@@ -68,7 +73,14 @@ export class MessageService {
     this.socketS.listenMethod('Success', successFn);
   }
 
-  public getMessageTextByRequestNumber(requestNumber: number) {
+  public getMessageDataByRequestNumber(requestNumber: number) {
     return this.pendingMessages[requestNumber];
   }
 }
+
+interface IPendingMessage {
+  message?: string;
+  fileUrl?: string;
+}
+
+type SendMsgRequestType = Pick<ISendMessageRequest, 'message' | 'fileUrl'> & {fileType?: FileType};

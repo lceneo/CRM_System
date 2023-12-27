@@ -7,7 +7,8 @@ export interface IChatResponseDTO {
   lastMessage: {
     id: string;
     sender: IProfileOutShort,
-    message: string;
+    message?: string;
+    fileUrl?: string;
     dateTime: string;
   },
   status: ChatStatus
