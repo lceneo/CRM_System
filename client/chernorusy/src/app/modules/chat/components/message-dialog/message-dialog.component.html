@@ -67,6 +67,14 @@
     <div class="form-group textMsgArea"
          *ngSwitchCase="'Mine'"
     >
+      <button mat-icon-button
+              [matMenuTriggerFor]="attachmentMenu"
+              [matBadge]="currentFile ? 1 : 0"
+              [matBadgeHidden] = "!currentFile"
+              [matTooltip]="'Файлы'"
+      >
+        <mat-icon> attach_file</mat-icon>
+      </button>
       <textarea #message appTextareaResize
                 class="chat__sendMsg form-control"
                 [(ngModel)] = "msgValue"
@@ -99,3 +107,13 @@
 </ng-template>
 
 </section>
+
+<mat-menu #attachmentMenu>
+    <input #fileInput
+           style="display: none"
+           type="file"
+           (change)="onFileChange($event)"
+    >
+    <button mat-menu-item (click) = "fileInput.click()">Вложить</button>
+    <button mat-menu-item (click) = "currentFile = undefined;">Удалить</button>
+</mat-menu>

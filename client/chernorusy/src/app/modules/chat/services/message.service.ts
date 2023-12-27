@@ -44,7 +44,7 @@ export class MessageService {
       );
   }
 
-  public sendMessage(userOrChatID: string, messageText: string) {
+  public sendMessage(userOrChatID: string, messageText: string, fileURL?: string) {
     this.pendingMessages[this.requestNumber] = messageText;
 
     return this.socketS.sendMessage('Send', {

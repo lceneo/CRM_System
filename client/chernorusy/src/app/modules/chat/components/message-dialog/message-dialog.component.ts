@@ -1,10 +1,10 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component,
+  Component, DestroyRef,
   ElementRef,
   Input,
   OnChanges,
-  OnDestroy,
+  OnDestroy, OnInit,
   Renderer2,
   signal,
   ViewChild
@@ -19,6 +19,7 @@ import {MessageType} from "../../../../shared/models/enums/MessageType";
 import {MessagesListComponent, TabType} from "../messages-list/messages-list.component";
 import {ChatStatus} from "../../../../shared/models/enums/ChatStatus";
 import {MainChatPageComponent} from "../main-chat-page/main-chat-page.component";
+import {FileMapperService} from "../../../../shared/helpers/mappers/file-mapper.service";
 
 @Component({
   selector: 'app-message-dialog',
@@ -33,7 +34,11 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   @ViewChild('msgList') msgListElementRef!: ElementRef<HTMLUListElement>;
   @ViewChild('message') messageElementRef!: ElementRef<HTMLTextAreaElement>;
 
+  @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
+
   protected msgValue = '';
+  protected currentFile?: File;
+
   protected messages = signal<IMessageInChat[]>([]);
   protected loadingChat$ = new Subject<boolean>();
   private destroy$ = new Subject<void>();
@@ -42,9 +47,11 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
     private messageS: MessageService,
     private myChatS: MyChatService,
     private freeChatS: FreeChatService,
+    private fileMapper: FileMapperService,
     private renderer2: Renderer2,
     private messagesListComponent: MessagesListComponent,
-    private mainChat: MainChatPageComponent
+    private mainChat: MainChatPageComponent,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnChanges(): void {
@@ -96,7 +103,10 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
 
 
   protected sendMsg() {
-    if (!this.msgValue.trim().length) { return; }
+
+    // для отправки надо, чтоб сообщение было не пустым или чтоб был файл
+    if (!this.msgValue.trim().length && !this.currentFile) { return; }
+
     this.messageS.sendMessage(this.chat?.id as string, this.msgValue)
       .then(() => {
         this.msgValue = '';
@@ -111,6 +121,17 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
 
   public resetMsgValue() {
     this.msgValue = '';
+  }
+
+  protected onFileChange(event: Event) {
+    //@ts-ignore;
+    const files = event.target['files'] as FileList;
+
+    if (!files || !files.length) { return; }
+    else {
+      this.currentFile = files.item(0) as File;
+      this.cdr.detectChanges();
+    }
   }
 
   protected joinChat() {
