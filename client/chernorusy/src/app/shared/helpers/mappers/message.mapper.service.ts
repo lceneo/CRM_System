@@ -4,6 +4,7 @@ import {IMessageInChat} from "../../models/entities/MessageInChat";
 import {AuthorizationService} from "../../services/authorization.service";
 import {IMessageSuccess} from "../../models/entities/MessageSuccess";
 import {ProfileService} from "../../services/profile.service";
+import {IPendingMessage} from "../../../modules/chat/services/message.service";
 
 @Injectable({
   providedIn: 'root'
@@ -22,11 +23,12 @@ export class MessageMapperService {
     };
   }
 
-  msgSuccessToMsgInChat(messSuccess: IMessageSuccess, msgText: string): IMessageInChat {
+  msgSuccessToMsgInChat(messSuccess: IMessageSuccess, msgData: IPendingMessage): IMessageInChat {
     return {
       ...messSuccess,
       id: messSuccess.messageId,
-      message: msgText,
+      message: msgData.message,
+      fileName: msgData.fileName,
       dateTime: messSuccess.timeStamp,
       mine: true,
       sender: {

@@ -47,7 +47,6 @@ public class StaticsService : IStaticsService
             {
                 FileKey = fileKey,
                 FileName = file.FileName,
-                Profile = profile,
             };
             await staticsRepository.CreateAsync(fileEntity);
         }

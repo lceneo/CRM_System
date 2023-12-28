@@ -1,14 +1,15 @@
-import {Injectable, OnDestroy, signal} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {SocketService} from "../../../shared/services/socket.service";
 import {HttpService} from "../../../shared/services/http.service";
 import {IMessageInChat} from "../../../shared/models/entities/MessageInChat";
 import {IMessageInChatResponseDTO} from "../../../shared/models/DTO/request/MessageInChatResponseDTO";
-import {map, Subject, takeUntil} from "rxjs";
+import {map, Subject } from "rxjs";
 import {IMessageReceive} from "../../../shared/models/entities/MessageReceive";
 import {IMessageSuccess} from "../../../shared/models/entities/MessageSuccess";
 import {MessageMapperService} from "../../../shared/helpers/mappers/message.mapper.service";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {MAX_INT} from "../../../shared/helpers/constants/constants";
+import {ISendMessageRequest} from "../../../shared/models/DTO/request/SendMessageRequest";
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +20,7 @@ export class MessageService {
   public successMessages$ = new Subject<IMessageInChat>();
 
   private requestNumber = 1;
-  private pendingMessages: {[requestNumber: number]: string} = {};
+  private pendingMessages: {[requestNumber: number]: IPendingMessage} = {};
   constructor(
     private socketS: SocketService,
     private httpS: HttpService,
@@ -44,14 +45,17 @@ export class MessageService {
       );
   }
 
-  public sendMessage(userOrChatID: string, messageText: string) {
-    this.pendingMessages[this.requestNumber] = messageText;
-
-    return this.socketS.sendMessage('Send', {
+  public sendMessage(userOrChatID: string, messageData: IPendingMessage) {
+    this.pendingMessages[this.requestNumber] = { message: messageData.message, fileName: messageData.fileName };
+    const sendMsgObj: ISendMessageRequest = {
       "recipientId": userOrChatID,
-      "message": messageText,
       "requestNumber": this.requestNumber++
-    });
+    };
+
+    if (messageData.message) { sendMsgObj['message'] = messageData.message; }
+    if (messageData.fileName) { sendMsgObj['fileName'] = messageData.fileName; }
+
+    return this.socketS.sendMessage('Send', sendMsgObj);
   }
 
   private listenSocket() {
@@ -68,7 +72,12 @@ export class MessageService {
     this.socketS.listenMethod('Success', successFn);
   }
 
-  public getMessageTextByRequestNumber(requestNumber: number) {
+  public getMessageDataByRequestNumber(requestNumber: number) {
     return this.pendingMessages[requestNumber];
   }
+}
+
+export interface IPendingMessage {
+  message?: string;
+  fileName?: string;
 }

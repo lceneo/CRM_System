@@ -1,33 +1,35 @@
-import { NgModule } from '@angular/core';
+import {ErrorHandler, NgModule} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { MainChatPageComponent } from './modules/chat/components/main-chat-page/main-chat-page.component';
 import {TooltipModule} from "ngx-bootstrap/tooltip";
 import {HttpClientModule} from "@angular/common/http";
 import {NgLetDirective} from "./shared/directives/ng-let.directive";
 import {checkResponseInterceptor} from "./interceptors/check-response-status.interceptor";
 import {BsDropdownModule} from "ngx-bootstrap/dropdown";
-import {AnimationBuilder} from "@angular/animations";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
-import { TextareaResizeDirective } from './shared/directives/textarea-resize.directive';
+import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from "@angular/material/form-field";
+import {CustomErrorHandlerService} from "./shared/services/custom-error-handler.service";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
 
 @NgModule({
   declarations: [
     AppComponent
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        HttpClientModule,
-        TooltipModule.forRoot(),
-        NgLetDirective,
-        BsDropdownModule,
-        BrowserAnimationsModule
-    ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    TooltipModule.forRoot(),
+    NgLetDirective,
+    BsDropdownModule,
+    BrowserAnimationsModule,
+    MatSnackBarModule
+  ],
   providers: [
-    checkResponseInterceptor
+    checkResponseInterceptor,
+    { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline'} },
+    { provide: ErrorHandler, useClass: CustomErrorHandlerService }
   ],
   bootstrap: [AppComponent]
 })

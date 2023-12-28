@@ -5,7 +5,8 @@ export interface IMessageReceive {
   id: string;
   chatId: string;
   sender: IProfileOutShort;
-  message: string;
+  message?: string;
+  fileName?: string;
   type: MessageType;
   dateTime: string;
 }

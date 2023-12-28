@@ -1,11 +1,12 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {FormControl, FormGroup} from "@angular/forms";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AuthorizationService} from "../../../../shared/services/authorization.service";
 import {Router} from "@angular/router";
 import {ILoginRequestDTO} from "../../../../shared/models/DTO/request/LoginRequestDTO";
 import {IRecoverPasswordRequestDTO} from "../../../../shared/models/DTO/request/RecoverPasswordRequestDTO";
 import {ProfileService} from "../../../../shared/services/profile.service";
 import {tap} from "rxjs";
+import {MyValidatorsService} from "../../../../shared/services/my-validators.service";
 
 @Component({
   selector: 'app-login',
@@ -18,15 +19,17 @@ export class LoginComponent {
   constructor(
     private authorizationS: AuthorizationService,
     private profileS: ProfileService,
+    private myValidatorS: MyValidatorsService,
     private router: Router
   ) {}
 
   protected passwordMode: 'login' | 'recover' = 'login';
   protected authMode: 'login' | 'registration' = 'login';
+  protected passwordVisible = false;
 
   protected form = new FormGroup({
-    login: new FormControl<string>(''),
-    password: new FormControl<string>('')
+    login: new FormControl<string>('', [Validators.required, this.myValidatorS.minMaxLengthValidator(4, 15), this.myValidatorS.onlyLatinSymbolsAndDigits]),
+    password: new FormControl<string>('', [Validators.required, this.myValidatorS.minMaxLengthValidator(3, 15), this.myValidatorS.passwordValidator])
   });
 
   protected submitForm() {
@@ -57,5 +60,9 @@ export class LoginComponent {
 
   protected changeAuthMode() {
     this.authMode = this.authMode === 'login' ? 'registration' : 'login';
+  }
+
+  protected changePasswordVisibility() {
+    this.passwordVisible = !this.passwordVisible;
   }
 }
