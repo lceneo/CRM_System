@@ -14,7 +14,7 @@ public class StaticsRepository : CRUDRepository<FileEntity>, IStaticsRepository
     {
     }
 
-    public async Task<FileEntity?> Get(Guid userId, string fileKey)
+    public async Task<FileEntity?> Get(string fileKey)
     {
         var existed = await Set
             .FirstOrDefaultAsync(e => e.FileKey == fileKey);
