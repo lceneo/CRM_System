@@ -10,5 +10,5 @@ public class FileEntity : IEntity
     public Guid Id { get; set; }
     public string FileKey { get; set; }
     public string FileName { get; set; }
-    public MessageEntity Profile { get; set; }
+    public MessageEntity Message { get; set; }
 }

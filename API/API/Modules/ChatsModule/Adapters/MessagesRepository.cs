@@ -19,7 +19,8 @@ public class MessagesRepository : CRUDRepository<MessageEntity>, IMessagesReposi
     {
         var query = Set
             .AsNoTracking()
-            .Include(c => c.Sender)
+            .Include(m => m.Sender)
+            .Include(m => m.Files)
             .Where(m => m.Chat.Id == chatId);
 
         if (request.MessageIds != null)

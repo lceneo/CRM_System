@@ -8,6 +8,7 @@ using API.Modules.ChatsModule.Ports;
 using API.Modules.LogsModule;
 using API.Modules.ProfilesModule.DTO;
 using API.Modules.ProfilesModule.Ports;
+using API.Modules.StaticModule.Ports;
 using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
 
@@ -21,6 +22,7 @@ public class ChatsService : IChatsService
     private readonly ILog log;
     private readonly IMapper mapper;
     private readonly IHubContext<ChatsHub> chatHub;
+    private readonly IStaticsRepository staticsRepository;
 
     public ChatsService(
         ILog log,
@@ -28,7 +30,8 @@ public class ChatsService : IChatsService
         IChatsRepository chatsRepository,
         IProfilesRepository profilesRepository,
         IMessagesRepository messagesRepository,
-        IHubContext<ChatsHub> chatHub)
+        IHubContext<ChatsHub> chatHub,
+        IStaticsRepository staticsRepository)
     {
         this.log = log;
         this.chatsRepository = chatsRepository;
@@ -36,6 +39,7 @@ public class ChatsService : IChatsService
         this.messagesRepository = messagesRepository;
         this.mapper = mapper;
         this.chatHub = chatHub;
+        this.staticsRepository = staticsRepository;
     }
 
     public async Task<Result<(ChatEntity chat, MessageEntity message)>> SendMessageAsync(
@@ -50,7 +54,11 @@ public class ChatsService : IChatsService
             return Result.NotFound<(ChatEntity chat, MessageEntity message)>("Неправильный идентификатор чата/пользователя");
         if (chat.Status == ChatStatus.Blocked)
             return Result.BadRequest<(ChatEntity chat, MessageEntity message)>("Чат заблокирован сервисом");
-        
+
+        var files = staticsRepository.Get(request.FileKeys).ToHashSet();
+        if (files.Count() != request.FileKeys.Count())
+            return Result.NotFound<(ChatEntity chat, MessageEntity message)>("Не удалось найти файлы");
+
         if (chat.Status == ChatStatus.Archived)
         {
             chat.Status = ChatStatus.Active;
@@ -60,8 +68,7 @@ public class ChatsService : IChatsService
         var messageEntity = new MessageEntity
         {
             Message = request.Message,
-            FileName = request.FileName,
-            FileUrl = request.FileUrl,
+            Files = files,
             Type = MessageType.Text,
             Chat = chat,
             Sender = chat.Profiles.First(p => p.Id == senderId),
