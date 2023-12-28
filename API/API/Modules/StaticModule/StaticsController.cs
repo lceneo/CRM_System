@@ -1,4 +1,5 @@
-﻿using API.Extensions;
+﻿using System.Text.Json;
+using API.Extensions;
 using API.Infrastructure;
 using API.Infrastructure.BaseApiDTOs;
 using API.Modules.StaticModule.Models;
@@ -35,16 +36,16 @@ public class StaticsController : ControllerBase
     }
 
     [HttpPost("Download")]
-    public async Task<ActionResult<DownloadResponse>> DownloadAsync([FromBody] DownloadRequest request)
+    public async Task DownloadAsync([FromBody] DownloadRequest request)
     {
         var response = await staticsService.GetFile(User.GetId(), request.FileKey);
         if (!response.IsSuccess)
-            return response.ActionResult;
+        {
+            HttpContext.Response.StatusCode = (int) response.StatusCode;
+            await HttpContext.Response.WriteAsync(JsonSerializer.Serialize(response.Error));
+            return;
+        }
 
         await HttpContext.Response.SendFileAsync(response.Value.FileInfo);
-        return new DownloadResponse
-        {
-            FileName = response.Value.FileName,
-        };
     }
 }
