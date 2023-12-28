@@ -43,7 +43,7 @@ public class AccountsService : IAccountsService
 
         account = mapper.Map<AccountEntity>(registerByAdminRequest);
         await accountRepository.CreateAsync(account);
-        await mailMessagesService.SendVerificationAsync(account.Login, account.Id);
+        await mailMessagesService.SendVerificationAsync(account.Login);
         
         await log.Info($"Зарегистрирован аккаунт с Login: {account.Login}, Email: {account.Email}");
         return Result.Ok(account.Id);
