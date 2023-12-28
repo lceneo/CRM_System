@@ -9,11 +9,12 @@ const routes: Routes = [
     canActivate:  [authorizationGuard] },
   { path: 'profile', loadChildren: () => import('./modules/profile/profile.module').then(f => f.ProfileModule)},
   { path: 'vidjets', loadChildren: () => import('./modules/vidjet/vidjet.module').then(f => f.VidjetModule)},
+  { path: 'success', loadComponent: () => import('./shared/components/success/success.component').then(f => f.SuccessComponent)},
   { path: '**', loadComponent: () => import('./shared/components/not-found/not-found.component').then(f => f.NotFoundComponent) }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {enableTracing: true})],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

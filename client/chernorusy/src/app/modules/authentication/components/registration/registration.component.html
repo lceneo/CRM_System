@@ -2,24 +2,29 @@
 <h2 style="text-align: center">Регистрация</h2>
 
 <form class = "authorization" [formGroup]="form" (submit)="submitForm()">
-  <div class="mb-3">
-    <label for="loginFormControl" class="form-label">Логин</label>
-    <input
-      class="form-control"
-      id="loginFormControl"
-      placeholder="Введите логин"
-      formControlName = "login"
-    >
+
+  <div class="formControl">
+    <mat-form-field>
+      <mat-label>Логин</mat-label>
+      <input
+        formControlName = "login"
+        matInput
+      >
+    </mat-form-field>
+    <app-error-validation *ngIf="form.get('login')?.invalid && form.get('login')?.touched"
+                          [errors]="form.get('login')?.errors"></app-error-validation>
   </div>
 
-  <div class="mb-3">
-    <label for="emailFormControl" class="form-label">Почта</label>
-    <input
-      class="form-control"
-      id="emailFormControl"
-      placeholder="Введите почту"
-      formControlName = "email"
-    >
+  <div class="formControl">
+    <mat-form-field>
+      <mat-label>Почта</mat-label>
+      <input
+        formControlName = "email"
+        matInput
+      >
+    </mat-form-field>
+    <app-error-validation *ngIf="form.get('email')?.invalid && form.get('email')?.touched"
+                          [errors]="form.get('email')?.errors"></app-error-validation>
   </div>
 
   <div class="mb-3" *ngIf="mode === 'admin'">
@@ -33,7 +38,10 @@
       <option [value]="AccountRole.Manager">Менеджер</option>
       <option [value]="AccountRole.Client">Клиент</option>
     </select>
+    <app-error-validation *ngIf="form.get('role')?.invalid && form.get('role')?.touched"
+                          [errors]="form.get('role')?.errors"></app-error-validation>
   </div>
 
-  <button class="btn btn-primary enterBtn">Создать</button>
+  <button class="btn btn-primary enterBtn"
+          [disabled]="form.invalid">Создать</button>
 </form>

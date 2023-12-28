@@ -1,7 +1,9 @@
 
+
 <div class="wrapper" *ngIf="(role$ | async) !== AccountRole.Client">
   <h2 class="title">Диалоги</h2>
-  <tabset>
+
+  <tabset *ngIf = "profile(); else noProfileTemplate">
 
     <tab heading="Входящие" #tabInbox="tab">
       <app-messages-list
@@ -26,4 +28,16 @@
       ></app-messages-list>
     </tab>
   </tabset>
+
+
+  <ng-template #noProfileTemplate>
+
+    <section class="noProfile">
+      <p class="noProfileText">Диалоги не доступны, пока не создан профиль</p>
+
+      <button class="btn btn-primary"
+      [routerLink]="['/profile']"
+      >Создать профиль</button>
+    </section>
+  </ng-template>
 </div>

@@ -1,0 +1,5 @@
+
+<ng-container *ngIf="errMsg$ | async as errorMsg">
+  <mat-error class="error" [matTooltip]="errorMsg">{{errorMsg}}</mat-error>
+</ng-container>
+

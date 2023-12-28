@@ -2,4 +2,16 @@
   .title {
     margin-bottom: 1rem;
   }
+  .noProfile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: 1rem;
+    .noProfileText {
+      text-align: center;
+      font-size: 24px;
+      color: gray;
+    }
+  }
 }

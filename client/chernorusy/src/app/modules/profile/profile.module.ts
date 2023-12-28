@@ -13,6 +13,11 @@ import {authorizationGuard} from "../../guards/authorizationGuard";
 import {unauthorizationGuard} from "../../guards/unauthorizationGuard";
 import {profileGuard} from "../../guards/profileGuard";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {ErrorValidationComponent} from "../../shared/components/error-validation/error-validation.component";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatInputModule} from "@angular/material/input";
+import {MatButtonModule} from "@angular/material/button";
+import {MatIconModule} from "@angular/material/icon";
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', canActivate: [redirectToMyProfileGuard],
@@ -28,15 +33,20 @@ const routes: Routes = [
     SetPasswordComponent,
     CreateProfileComponent
   ],
-    imports: [
-        CommonModule,
-        RouterModule.forChild(routes),
-        ReactiveFormsModule,
-        TabsModule,
-        FormsModule,
-        NgLetDirective,
-        BsDropdownModule,
-        MatTooltipModule
-    ]
+  imports: [
+    CommonModule,
+    RouterModule.forChild(routes),
+    ReactiveFormsModule,
+    TabsModule,
+    FormsModule,
+    NgLetDirective,
+    BsDropdownModule,
+    MatTooltipModule,
+    ErrorValidationComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule
+  ]
 })
 export class ProfileModule { }

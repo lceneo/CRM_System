@@ -1,5 +1,7 @@
 
-<section *ngLet="profile$ | async as profile">
+<section
+  class="wrapper"
+  *ngLet="profile$ | async as profile">
   <button
     *ngIf="mode !== 'create' && profile?.id === myProfile()?.id"
     [matTooltip]="mode === 'change' ? 'Выйти из редактирования' : 'Изменить'"
@@ -7,50 +9,63 @@
     <i class="bi bi-pencil-square icon"></i>
   </button>
   <form class = "authorization" [formGroup]="form" (submit)="submitForm()">
-    <div class="mb-3">
-      <label for="surnameFormControl" class="form-label">Фамилия</label>
-      <input
-        class="form-control"
-        id="surnameFormControl"
-        placeholder="Фамилия..."
-        formControlName = "surname"
-      >
+
+    <div class="formControl">
+      <mat-form-field>
+        <mat-label>Фамилия</mat-label>
+        <input
+          formControlName = "surname"
+          matInput
+        >
+      </mat-form-field>
+      <app-error-validation *ngIf="form.get('surname')?.invalid && form.get('surname')?.touched"
+                            [errors]="form.get('surname')?.errors"></app-error-validation>
     </div>
 
-    <div class="mb-3">
-      <label for="nameFormControl" class="form-label">Имя</label>
-      <input
-        class="form-control"
-        id="nameFormControl"
-        placeholder="Имя..."
-        formControlName = "name"
-      >
+    <div class="formControl">
+      <mat-form-field>
+        <mat-label>Имя</mat-label>
+        <input
+          formControlName = "name"
+          matInput
+        >
+      </mat-form-field>
+      <app-error-validation *ngIf="form.get('name')?.invalid && form.get('name')?.touched"
+                            [errors]="form.get('name')?.errors"></app-error-validation>
     </div>
 
-    <div class="mb-3">
-      <label for="patronimicFormControl" class="form-label">Отчество</label>
-      <input
-        class="form-control"
-        id="patronimicFormControl"
-        placeholder="Отчество..."
-        formControlName = "patronimic"
-      >
+    <div class="formControl">
+      <mat-form-field>
+        <mat-label>Отчество</mat-label>
+        <input
+          formControlName = "patronimic"
+          matInput
+        >
+      </mat-form-field>
+      <app-error-validation *ngIf="form.get('patronimic')?.invalid && form.get('patronimic')?.touched"
+                            [errors]="form.get('patronimic')?.errors"></app-error-validation>
     </div>
 
-    <div class="mb-3">
-      <label for="aboutFormControl" class="form-label">О себе</label>
-      <textarea
-        class="form-control textarea"
-        id="aboutFormControl"
-        placeholder="О себе..."
-        formControlName = "about"
-        rows="10"
-      ></textarea>
+    <div class="formControl">
+      <mat-form-field hintLabel="Максимум 255 символов">
+        <mat-label>О себе</mat-label>
+        <textarea
+          #aboutControl
+          formControlName = "about"
+          matInput
+          rows="10"
+          maxlength="255"
+          [style.resize]="'none'"
+        ></textarea>
+        <mat-hint align="end">{{aboutControl.value.length}}/255</mat-hint>
+      </mat-form-field>
     </div>
 
     <button
       *ngIf="mode === 'change' || mode === 'create'"
-      class="btn btn-primary enterBtn">
+      class="btn btn-primary enterBtn"
+      [disabled]="form.invalid || (mode === 'change' ? !(infoHasChanged$ | async) : false)"
+    >
       {{ mode === 'change' ? 'Сохранить изменения' : 'Создать профиль'}}
     </button>
   </form>
