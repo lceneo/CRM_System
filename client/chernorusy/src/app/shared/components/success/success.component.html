@@ -1,0 +1,5 @@
+<section class="wrapper">
+  <h1 class="title">{{stateData?.title}}</h1>
+  <p [innerHtml]="stateData?.body" class="body"></p>
+  <img *ngIf = "stateData?.imgName" [ngSrc] = "'/assets/img/raster/' + stateData!.imgName" width="400" height="350">
+</section>

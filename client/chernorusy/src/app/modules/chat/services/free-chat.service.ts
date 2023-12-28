@@ -29,6 +29,7 @@ export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
             lastMessage: {
               ...existingChat!.lastMessage,
               message: msgReceive.message,
+              fileName: msgReceive.fileName,
               dateTime: msgReceive.dateTime,
               sender: {...msgReceive.sender}
             }

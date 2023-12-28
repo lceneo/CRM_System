@@ -67,8 +67,17 @@
     <div class="form-group textMsgArea"
          *ngSwitchCase="'Mine'"
     >
+      <button mat-icon-button
+              [matMenuTriggerFor]="attachmentMenu"
+              [matBadge]="currentFile ? 1 : 0"
+              [matBadgeHidden] = "!currentFile"
+              [matTooltip]="'Файлы'"
+      >
+        <mat-icon> attach_file</mat-icon>
+      </button>
       <textarea #message appTextareaResize
                 class="chat__sendMsg form-control"
+                (drop)="dropFile($event)"
                 [(ngModel)] = "msgValue"
                 [placeholder]="'Введите сообщение...'"
                 (keydown)="pressKey($event)"
@@ -77,10 +86,10 @@
       <i
         class="bi bi-send sendMsgBtn"
         [ngClass]="{
-          'msgNotEmpty': !!msgValue.trim().length
+          'msgNotEmpty': !!msgValue.trim().length || currentFile
         }"
         [matTooltip]="'Отправить сообщение'"
-        [matTooltipDisabled] = "!msgValue.trim().length"
+        [matTooltipDisabled] = "!msgValue.trim().length && !currentFile"
         (click) = "sendMsg()"></i>
     </div>
 
@@ -99,3 +108,21 @@
 </ng-template>
 
 </section>
+
+<mat-menu #attachmentMenu>
+    <input #fileInput
+           style="display: none"
+           type="file"
+           (change)="onFileChange($event)"
+    >
+    <button mat-menu-item
+            [disabled] = "!!currentFile"
+            [matTooltip]="'Не больше одного файла'"
+            [matTooltipDisabled] = "!currentFile"
+            (click) = "fileInput.click()">Вложить</button>
+
+    <button mat-menu-item
+            (click) = "currentFile = undefined;"
+            [disabled] = "!currentFile"
+    >Удалить</button>
+</mat-menu>

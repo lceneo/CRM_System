@@ -9,36 +9,54 @@
     *ngIf="authMode === 'login'; else registrationMode"
     class = "authorization"
     [formGroup]="form" (submit)="submitForm()">
-    <div class="mb-3">
-      <label for="loginFormControl" class="form-label">Логин</label>
-      <input
-        class="form-control"
-        id="loginFormControl"
-        placeholder="Введите логин"
-        formControlName = "login"
-      >
+
+    <div class="formControl">
+      <mat-form-field>
+        <mat-label>Логин</mat-label>
+        <input
+          formControlName = "login"
+          matInput
+        >
+      </mat-form-field>
+      <app-error-validation *ngIf="form.get('login')?.invalid && form.get('login')?.touched"
+                            [errors]="form.get('login')?.errors"></app-error-validation>
     </div>
 
     <div
       *ngIf="form.controls.password.enabled"
-      class="mb-3">
-      <label for="passwordFormControl" class="form-label">Пароль</label>
-      <input
-        type="password"
-        class="form-control"
-        id="passwordFormControl"
-        placeholder="Введите пароль"
-        formControlName = "password"
-      >
+      class="formControl">
+      <mat-form-field>
+        <mat-label>Пароль</mat-label>
+        <input
+          [type]="passwordVisible ? 'text' : 'password'"
+          formControlName = "password"
+          matInput
+        >
+        <button
+                type="button"
+                mat-icon-button matSuffix
+                (click)="changePasswordVisibility()"
+                [disabled] = "!form.get('password')?.value"
+        >
+          <mat-icon>{{passwordVisible ? 'visibility' : 'visibility_off'}}</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <app-error-validation *ngIf="form.get('password')?.invalid && form.get('password')?.touched"
+                            [errors]="form.get('password')?.errors"></app-error-validation>
     </div>
 
-    <button class="btn btn-primary enterBtn">{{passwordMode === 'login' ? 'Войти' : 'Восстановить'}}</button>
+    <button
+      class="btn btn-primary enterBtn"
+      type="submit"
+      [disabled]="form.invalid"
+    >{{passwordMode === 'login' ? 'Войти' : 'Восстановить'}}</button>
   </form>
 
   <ng-template #registrationMode>
     <app-registration [mode]="'user'"></app-registration>
   </ng-template>
 
-  <a class="link" (click) = "changePasswordMode()">{{passwordMode === 'login' ? 'Восстановить пароль' : 'Войти'}}</a>
+  <a class="link" *ngIf="authMode === 'login'" (click) = "changePasswordMode()">{{passwordMode === 'login' ? 'Восстановить пароль' : 'Войти'}}</a>
   <a class="link" (click) = "changeAuthMode()">{{authMode === 'login' ? 'Регистрация' : 'Авторизация'}}</a>
 </section>

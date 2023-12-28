@@ -2,7 +2,7 @@ import {inject} from "@angular/core";
 import {ProfileService} from "../shared/services/profile.service";
 import {ActivatedRoute, ActivatedRouteSnapshot, Router} from "@angular/router";
 import {AuthorizationService} from "../shared/services/authorization.service";
-import {map, of, tap} from "rxjs";
+import {interval, map, of, take, tap} from "rxjs";
 
 export const profileGuard = (route: ActivatedRouteSnapshot) => {
   const profileS = inject(ProfileService);
@@ -10,9 +10,10 @@ export const profileGuard = (route: ActivatedRouteSnapshot) => {
   const router = inject(Router);
   const myProfileID = profileS.profile()?.id ?? authS.userID;
   const id = route.paramMap.get('id') as string;
-  return myProfileID === id ? of(true) : profileS.getProfile$(id)
+  return myProfileID === id ? of(true) : interval(1000)
     .pipe(
-      map(profile => !!profile),
+      take(1),
+      map(() => authS.userID === id),
       tap(state => {
         if (!state) { router.navigate(['not-found']); }
       })

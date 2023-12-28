@@ -9,6 +9,7 @@ import {IChangePasswordRequestDTO} from "../models/DTO/request/ChangePasswordReq
 import {IRecoverPasswordRequestDTO} from "../models/DTO/request/RecoverPasswordRequestDTO";
 import {AccountRole} from "../models/enums/AccountRole";
 import {SocketService} from "./socket.service";
+import {CustomErrorHandlerService} from "./custom-error-handler.service";
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,8 @@ export class AuthorizationService {
 
   constructor(
     private httpS: HttpService,
-    private socketS: SocketService
+    private socketS: SocketService,
+    private errorHandlerS: CustomErrorHandlerService
   ) {
     setTimeout(() => this.initAccountInfo());
     this._token = localStorage.getItem('jwtToken') ?? undefined;
@@ -70,7 +72,10 @@ export class AuthorizationService {
           this.token = loginResponse.jwtToken;
           if (!this.socketS.isConnected()) { this.socketS.init(); }
         }),
-        catchError(err => of(false))
+        catchError(err => {
+          this.errorHandlerS.handleError(err);
+          return of(false);
+        })
       );
   }
 
