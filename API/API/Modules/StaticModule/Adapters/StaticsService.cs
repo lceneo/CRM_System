@@ -32,7 +32,7 @@ public class StaticsService : IStaticsService
         if (profile == null)
             return Result.BadRequest<UploadResponse>("Такого пользователя не существует");
         
-        var fileEntity = await staticsRepository.Get(userId, file.FileName);
+        var fileEntity = await staticsRepository.Get(file.FileName);
         if (fileEntity != null)
         {
             fileEntity.FileName = file.FileName;
@@ -71,7 +71,7 @@ public class StaticsService : IStaticsService
 
     public async Task<Result<DownloadServiceResponse>> GetFile(Guid userId, string fileKey)
     {
-        var existed = await staticsRepository.Get(userId, fileKey);
+        var existed = await staticsRepository.Get(fileKey);
         if (existed == null)
             return Result.NotFound<DownloadServiceResponse>("");
         

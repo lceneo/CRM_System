@@ -11,10 +11,10 @@ public class AccountsFiller : IDbFiller
     {
         var accounts = dataContext.Accounts;
         var profiles = dataContext.Profiles;
-        var adminAcc = Account("admin", "admin", AccountRole.Admin);
-        var emptyAcc = Account("empty", "empty", AccountRole.Manager);
-        var managerAcc = Account("manager", "manager", AccountRole.Manager);
-        var clientAcc = Account("client", "client", AccountRole.Client);
+        var adminAcc = Account("admin", "Password1!", AccountRole.Admin);
+        var emptyAcc = Account("empty", "Password1!", AccountRole.Manager);
+        var managerAcc = Account("manager", "Password1!", AccountRole.Manager);
+        var clientAcc = Account("client", "Password1!", AccountRole.Client);
         accounts.Add(adminAcc);
         accounts.Add(emptyAcc);
         accounts.Add(managerAcc);

@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Collections.Concurrent;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using API.Infrastructure;
@@ -9,6 +10,7 @@ using API.Modules.LogsModule;
 using API.Modules.MailsModule.Ports;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Modules.AccountsModule.Adapters;
@@ -83,9 +85,32 @@ public class AccountsService : IAccountsService
         return Result.NoContent<bool>();
     }
 
-    public async Task RecoverPasswordAsync(string login)
+    private ConcurrentDictionary<Guid, string> loginsByRecover = new();
+    public async Task<Result<bool>> SendPasswordRecovery(string login)
     {
-        await mailMessagesService.SendPasswordRecovery(login);
+        var user = await accountRepository.GetByLoginAsync(login);
+        if (user == null)
+            return Result.NotFound<bool>("Такого пользователя не существует");
+
+        var recoverId = new Guid();
+        await mailMessagesService.SendPasswordRecovery(login, recoverId);
+        loginsByRecover.AddOrUpdate(recoverId, (key) => login,  (key, value) => login);
+        return Result.NoContent<bool>();
+    }
+
+    public async Task<Result<RecoverPasswordResponse>> RecoverPassword(Guid recoverId, PasswordRecoveryReq request)
+    {
+        if (!loginsByRecover.TryGetValue(recoverId, out var login))
+            return Result.NotFound<RecoverPasswordResponse>("Такого запроса на восстановление нет");
+
+        var user = await accountRepository.GetByLoginAsync(login);
+        user.PasswordHash = passwordHasher.CalculateHash(request.Password);
+        await accountRepository.UpdateAsync(user);
+        
+        return Result.Ok(new RecoverPasswordResponse
+        {
+            Email = user.Email,
+        });
     }
 
     public async Task<Result<ClaimsResponse>> ChangePasswordUnauthorizedAsync(Guid userId,
