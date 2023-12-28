@@ -16,5 +16,4 @@ public class ProfileEntity : IEntity
     public string? About { get; set; }
     public HashSet<ChatEntity> Chats { get; set; }
     public HashSet<MessageEntity> Messages { get; set; }
-    public HashSet<FileEntity> Files { get; set; }
 }

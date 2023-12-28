@@ -20,10 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Modules\StaticModule\Mapping\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Compile Update="Modules\ChatsModule\Entities\ChatStatus.cs">
       <DependentUpon>ChatEntity.cs</DependentUpon>
     </Compile>
