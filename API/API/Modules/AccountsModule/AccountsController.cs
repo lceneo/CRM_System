@@ -91,11 +91,18 @@ public class AccountsController : ControllerBase
     }
 
     [HttpPost("Password/Recover")]
-    public async Task<ActionResult> RecoverPasswordAsync([FromBody] PasswordRecoveryReq passwordRecoveryReq)
+    public async Task<ActionResult> RecoverPasswordAsync([FromBody] PasswordSendRecoveryReq passwordSendRecoveryReq)
     {
-        await accountsService.RecoverPasswordAsync(passwordRecoveryReq.Login);
+        await accountsService.SendPasswordRecovery(passwordSendRecoveryReq.Login);
 
         return NoContent();
+    }
+
+    [HttpPost("Password/Recover/{recoverId:Guid}")]
+    public async Task<ActionResult<RecoverPasswordResponse>> RecoverPasswordAsync([FromRoute] Guid recoverId, [FromBody]PasswordRecoveryReq request)
+    {
+        var response = await accountsService.RecoverPassword(recoverId, request);
+        return response.ActionResult;
     }
 
     [HttpPost("Password/{userId:Guid}")]

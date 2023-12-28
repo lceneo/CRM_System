@@ -20,7 +20,7 @@ public class MailMessagesService : IMailMessagesService
         this.accountsRepository = accountsRepository;
     }
 
-    public async Task SendPasswordRecovery(string login)
+    public async Task SendPasswordRecovery(string login, Guid recoverId)
     {
         var account = await accountsRepository.GetByLoginAsync(login);
         if (account == null)
@@ -33,7 +33,7 @@ public class MailMessagesService : IMailMessagesService
         var messageBody = pattern.FormatWith(new()
         {
             {"login", login},
-            {"url", @"https://" + Config.Host + @"/Accounts/Password/Recover"}
+            {"url", $@"https://{Config.Host}/Accounts/Password/Recover/{recoverId}"}
         });
 
         SendMailsAsync("Восстановление пароля", messageBody, account.Email);
@@ -50,7 +50,7 @@ public class MailMessagesService : IMailMessagesService
         {
             {"login", login},
             {"host", Config.Host},
-            {"url", @"https://" + Config.Host + @"/Accounts/Password/" + account.Id}
+            {"url", $@"https://{Config.Host}/Profile/Create/{account.Id}"}
         });
 
         SendMailsAsync("Подтверждение аккаунта", messageBody, account.Email);
