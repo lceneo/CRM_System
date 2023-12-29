@@ -33,7 +33,7 @@ public class MailMessagesService : IMailMessagesService
         var messageBody = pattern.FormatWith(new()
         {
             {"login", login},
-            {"url", $@"https://{Config.Host}/Accounts/Password/Recover/{recoverId}"}
+            {"url", $@"https://{Config.Host}/profile/recover/{recoverId}"}
         });
 
         SendMailsAsync("Восстановление пароля", messageBody, account.Email);
@@ -50,7 +50,7 @@ public class MailMessagesService : IMailMessagesService
         {
             {"login", login},
             {"host", Config.Host},
-            {"url", $@"https://{Config.Host}/Profile/Create/{account.Id}"}
+            {"url", $@"https://{Config.Host}/profile/create/{account.Id}"}
         });
 
         SendMailsAsync("Подтверждение аккаунта", messageBody, account.Email);
