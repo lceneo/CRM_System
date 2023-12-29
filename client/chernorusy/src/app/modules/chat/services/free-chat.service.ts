@@ -1,8 +1,11 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {EntityStateManager} from "../../../shared/helpers/entityStateManager";
 import {IChatResponseDTO} from "../../../shared/models/DTO/response/ChatResponseDTO";
 import {IMessageReceive} from "../../../shared/models/entities/MessageReceive";
 import {tap} from "rxjs";
+import {IUserConnectionStatus} from "../../../shared/models/entities/UserConnectionStatus";
+import {IProfileOutShort} from "../../../shared/models/entities/ProfileOutShort";
+import {ActiveStatus} from "../../../shared/models/enums/ActiveStatus";
 
 @Injectable({
   providedIn: 'root'
@@ -29,15 +32,30 @@ export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
             lastMessage: {
               ...existingChat!.lastMessage,
               message: msgReceive.message,
-              fileName: msgReceive.fileName,
+              files: msgReceive.files,
               dateTime: msgReceive.dateTime,
               sender: {...msgReceive.sender}
             }
           });
     }
+
+    const activeStatusFn = (statusUpdate: IUserConnectionStatus) => {
+      const chatsWithUser = this.getEntitiesSync()
+        .filter(freeChat => freeChat.profiles.some(p => p.id === statusUpdate.userId) && !this.isPendingJoin(freeChat.id));
+
+      chatsWithUser.forEach(chat => {
+        const profileIndex = chat.profiles.findIndex(p => p.id === statusUpdate.userId);
+        const newProfilesArr = [...chat.profiles];
+        newProfilesArr[profileIndex].isConnected = statusUpdate.status === ActiveStatus.Connected;
+        this.updateByID(chat.id, {...chat,
+          profiles: newProfilesArr
+        });
+      })
+    }
+
     this.socketS.listenMethod('UpdateFreeChats', updateFreeChatsFn);
     this.socketS.listenMethod('Recieve', receiveFn);
-
+    this.socketS.listenMethod('ActiveStatus', activeStatusFn);
   }
 
   public isPendingJoin(chatID: string) {

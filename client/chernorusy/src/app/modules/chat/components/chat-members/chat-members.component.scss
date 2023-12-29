@@ -1,0 +1,30 @@
+:host {
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.header {
+  font-size: 18px;
+  margin: 5px;
+}
+
+.membersList {
+  list-style: none;
+
+  .member {
+    display: flex;
+    margin-bottom: 0.5em;
+    gap: 5px;
+    .connectionIcon {
+      font-size: 21px;
+      height: 21px;
+      width: 21px;
+      min-width: 21px;
+    }
+    .memberName {
+      font-size: 16px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+}

@@ -20,7 +20,7 @@ import {FreeChatService} from "../../services/free-chat.service";
 })
 export class MessagesListComponent implements OnChanges, OnInit {
   @Input({required: true}) tabType!: TabType;
-  @Input() selectedChat: IChatResponseDTO | null = null;
+  @Input() selectedChatID?: string;
 
   @ViewChild(MessageDialogComponent, {static: true}) dialog!: MessageDialogComponent;
   @ViewChild('dialog', {static: true}) dialogWrapper!: ElementRef<HTMLElement>;
@@ -34,8 +34,8 @@ export class MessagesListComponent implements OnChanges, OnInit {
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if ('selectedChat' in changes && this.selectedChat) {
-      this.openDialogMessage(this.selectedChat, true);
+    if ('selectedChatID' in changes && this.selectedChatID) {
+      this.openDialogMessage(this.selectedChatID, true);
     }
   }
   ngOnInit(): void {
@@ -47,8 +47,8 @@ export class MessagesListComponent implements OnChanges, OnInit {
             this.chats = this.freeChatS.getEntitiesAsync();
             effect(() => {
               const currentFreeChats = this.chats!();
-              if (!this.selectedChat) { return; }
-              else if (!currentFreeChats.find(freeChat => freeChat.id === this.selectedChat?.id)) { this.closeChat(); }
+              if (!this.selectedChatID) { return; }
+              else if (!currentFreeChats.find(freeChat => freeChat.id === this.selectedChatID)) { this.closeChat(); }
             }, {injector: this.injector})
             break;
           case 'Archive':
@@ -61,18 +61,18 @@ export class MessagesListComponent implements OnChanges, OnInit {
     }
 
 
-  protected openDialogMessage(chat: IChatResponseDTO, fromOtherTab = false) {
-    if (this.selectedChat?.id === chat.id && !fromOtherTab) {
+  protected openDialogMessage(chatID: string, fromOtherTab = false) {
+    if (this.selectedChatID === chatID && !fromOtherTab) {
       this.closeChat();
       return;
     }
     this.dialog.resetMsgValue();
-    this.selectedChat = chat;
+    this.selectedChatID = chatID;
     this.dialogWrapper.nativeElement.classList.remove('chats__hidden');
   }
 
   public closeChat() {
-    this.selectedChat = null;
+    this.selectedChatID = undefined;
     this.dialogWrapper.nativeElement.classList.add('chats__hidden');
     this.dialog.resetMsgValue();
   }

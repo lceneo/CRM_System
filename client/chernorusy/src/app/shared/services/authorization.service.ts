@@ -124,6 +124,10 @@ export class AuthorizationService {
     return this.httpS.post('/Accounts/Password/Recover', credentials);
   }
 
+  public recoverPasswordToUser(recoverID: string, newPassword: ICreatePasswordRequestDTO) {
+    return this.httpS.post(`/Accounts/Password/Recover/${recoverID}`, newPassword);
+  }
+
   private initAccountInfo() {
     this.httpS.get<Partial<ILoginResponseDTO>>('/Accounts/My')
       .subscribe(

@@ -8,6 +8,8 @@ import {MessageService} from "./message.service";
 import {tap} from "rxjs";
 import {FreeChatService} from "./free-chat.service";
 import {ChatStatus} from "../../../shared/models/enums/ChatStatus";
+import {IUserConnectionStatus} from "../../../shared/models/entities/UserConnectionStatus";
+import {ActiveStatus} from "../../../shared/models/enums/ActiveStatus";
 
 @Injectable({
   providedIn: 'root'
@@ -90,7 +92,7 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
             lastMessage: {
               ...existingChat.lastMessage,
               message: msgReceive.message,
-              fileName: msgReceive.fileName,
+              files: msgReceive.files,
               dateTime: msgReceive.dateTime,
               sender: {...msgReceive.sender}
             }
@@ -117,7 +119,7 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
             lastMessage: {
               ...existingChat.lastMessage,
               message: msgInChat.message,
-              fileName: msgInChat.fileName,
+              files: msgInChat.files,
               dateTime: msgInChat.dateTime,
               sender: {...msgInChat.sender}
             }
@@ -127,7 +129,22 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
       }
     }
 
+    const activeStatusFn = (statusUpdate: IUserConnectionStatus) => {
+      const chatsWithUser = this.getEntitiesSync()
+        .filter(freeChat => freeChat.profiles.some(p => p.id === statusUpdate.userId));
+
+      chatsWithUser.forEach(chat => {
+        const profileIndex = chat.profiles.findIndex(p => p.id === statusUpdate.userId);
+        const newProfilesArr = [...chat.profiles];
+        newProfilesArr[profileIndex].isConnected = statusUpdate.status === ActiveStatus.Connected;
+        this.updateByID(chat.id, {...chat,
+          profiles: newProfilesArr
+        });
+      })
+    }
+
     this.socketS.listenMethod('Recieve', receiveFn);
     this.socketS.listenMethod('Success', successFn);
+    this.socketS.listenMethod('ActiveStatus', activeStatusFn);
   }
 }

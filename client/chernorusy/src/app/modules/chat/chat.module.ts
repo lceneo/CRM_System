@@ -17,6 +17,7 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatMenuModule} from "@angular/material/menu";
 import {MatBadgeModule} from "@angular/material/badge";
+import { ChatMembersComponent } from './components/chat-members/chat-members.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: MainChatPageComponent }
@@ -27,7 +28,8 @@ const routes: Routes = [
     MainChatPageComponent,
     MessagesListComponent,
     MessageDialogComponent,
-    MessageComponent
+    MessageComponent,
+    ChatMembersComponent
   ],
     imports: [
         CommonModule,

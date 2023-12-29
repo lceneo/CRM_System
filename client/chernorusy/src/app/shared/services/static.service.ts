@@ -10,7 +10,7 @@ export class StaticService {
 
   constructor(private httpS: HttpService) { }
 
-  public uploadFile(file: File) {
+  public uploadFile$(file: File) {
     const formData = new FormData();
     formData.append('file', file);
     return this.httpS.post<IFilePOSTResponseDTO>('/Statics/Upload', formData);

@@ -10,9 +10,9 @@
   padding-top: 10px;
   &__messages {
     display: flex;
-    flex-direction: column;
     overflow-y: auto;
-    padding-right: 0.5rem;
+    flex-direction: column;
+    padding-right: 1.7rem;
   }
   &__message {
     display: inline-block;
@@ -43,7 +43,7 @@
   }
   &__sendMsg {
     resize:none;
-    max-height:145px;
+    max-height:110px;
     width: 100%;
     padding:0;
   }
@@ -127,4 +127,18 @@
       color: green;
     }
   }
+}
+
+.chatAndMembersWrapper {
+  display: grid;
+  column-gap: 0.5em;
+  height: inherit;
+}
+
+.membersOpened {
+  grid-template-columns: 4fr 200px;
+}
+
+.membersClosed {
+  grid-template-columns: 1fr;
 }

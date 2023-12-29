@@ -101,6 +101,10 @@ export class EntityStateManager<T extends {id: string}> {
     return this.entityState().entities;
   }
 
+  getEntityAsync(id: string) {
+    return computed(() => this.entityState().entities.find(entity => entity.id === id))
+  }
+
   public getEntitiesAsync() {
     return computed(() => this.entityState().entities);
   }
