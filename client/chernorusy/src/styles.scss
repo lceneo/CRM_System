@@ -2,6 +2,7 @@
 @import './assets/styles/modal';
 @import './assets/styles/accordion';
 @import './assets/styles/scroll';
+@import './assets/styles/mat-menu';
 @import "bootstrap-icons/font/bootstrap-icons";
 
 @include form();
@@ -15,3 +16,18 @@ body{
   }
 }
 body { font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.smileMenu {
+    border: 1px solid #c4b2b2;
+
+  .mat-mdc-menu-content {
+    display: flex;
+    flex-wrap: wrap;
+    max-height: 200px;
+    padding: 0 10px;
+  }
+}
+
+.disable-backdrop-click .cdk-overlay-backdrop.cdk-overlay-transparent-backdrop.cdk-overlay-backdrop-showing {
+  pointer-events: none;
+}

@@ -12,7 +12,7 @@
     display: flex;
     overflow-y: auto;
     flex-direction: column;
-    padding-right: 1.7rem;
+    padding-right: 3.5rem;
   }
   &__message {
     display: inline-block;
@@ -142,3 +142,18 @@
 .membersClosed {
   grid-template-columns: 1fr;
 }
+
+.smileIcon {
+  align-self: end;
+  ::ng-deep svg {
+    fill: grey !important;
+  }
+}
+
+.openedSmileMenu {
+  ::ng-deep svg {
+    fill: black !important;
+  }
+}
+
+
