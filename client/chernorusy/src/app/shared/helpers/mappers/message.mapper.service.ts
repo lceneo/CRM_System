@@ -28,7 +28,7 @@ export class MessageMapperService {
       ...messSuccess,
       id: messSuccess.messageId,
       message: msgData.message,
-      fileName: msgData.fileName,
+      files: msgData.files,
       dateTime: messSuccess.timeStamp,
       mine: true,
       sender: {

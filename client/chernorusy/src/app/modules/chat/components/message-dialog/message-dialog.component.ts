@@ -1,19 +1,28 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, DestroyRef,
+  Component,
   ElementRef,
   Input,
   OnChanges,
-  OnDestroy, OnInit,
+  OnDestroy,
   Renderer2,
   signal,
   ViewChild
 } from '@angular/core';
-import {IChatResponseDTO} from "../../../../shared/models/DTO/response/ChatResponseDTO";
 import {MessageService} from "../../services/message.service";
 import {IMessageInChat} from "../../../../shared/models/entities/MessageInChat";
-import {defer, filter, from, fromEvent, map, merge, Observable, Subject, switchMap, takeUntil, tap} from "rxjs";
+import {
+  defer,
+  filter, forkJoin,
+  from,
+  map,
+  merge,
+  Observable,
+  Subject,
+  switchMap,
+  takeUntil,
+  tap
+} from "rxjs";
 import {FreeChatService} from "../../services/free-chat.service";
 import {MyChatService} from "../../services/my-chat.service";
 import {MessageType} from "../../../../shared/models/enums/MessageType";
@@ -21,6 +30,7 @@ import {MessagesListComponent, TabType} from "../messages-list/messages-list.com
 import {ChatStatus} from "../../../../shared/models/enums/ChatStatus";
 import {MainChatPageComponent} from "../main-chat-page/main-chat-page.component";
 import {StaticService} from "../../../../shared/services/static.service";
+import {IChatResponseDTO} from "../../../../shared/models/DTO/response/ChatResponseDTO";
 
 @Component({
   selector: 'app-message-dialog',
@@ -29,7 +39,7 @@ import {StaticService} from "../../../../shared/services/static.service";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MessageDialogComponent implements OnChanges, OnDestroy {
-  @Input({required: true}) chat: IChatResponseDTO | null = null;
+  @Input({required: true}) chatID?: string;
   @Input({required: true}) chatType: TabType | null = null;
 
   @ViewChild('msgList') msgListElementRef!: ElementRef<HTMLUListElement>;
@@ -37,8 +47,11 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
 
   @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
 
+  protected membersSectionOpened = false;
   protected msgValue = '';
-  protected currentFile?: File;
+  protected currentFiles: File[] = [];
+  private maxFilesCount = 10;
+  protected chat?: IChatResponseDTO;
 
   protected messages = signal<IMessageInChat[]>([]);
   protected loadingChat$ = new Subject<boolean>();
@@ -56,11 +69,14 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   ) {}
 
   ngOnChanges(): void {
-    if ('chat in changes') { this.initNewChat(); }
+    if ('chatID in changes' && this.chatID) {
+      this.initNewChat();
+      this.chat = this.chatType === 'Inbox' ? this.freeChatS.getByID(this.chatID) : this.myChatS.getByID(this.chatID);
+    }
   }
 
   private initNewChat() {
-    if (!this.chat) { return; }
+    if (!this.chatID) { return; }
 
     this.destroy$.next(); // уничтожаем предыдущую подписку
     this.loadingChat$.next(true);
@@ -69,7 +85,7 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
       .pipe(
         tap(() => { this.loadingChat$.next(false); this.scrollToTheBottom(); }),
         switchMap(() => merge(this.messageS.receivedMessages$, this.messageS.successMessages$)),
-        filter(msg => msg.chatId === this.chat?.id),
+        filter(msg => msg.chatId === this.chatID),
         takeUntil(this.destroy$),
       ).subscribe(msg => {
 
@@ -83,7 +99,7 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   }
 
   private getExistingMessagesInChat() {
-    return this.messageS.getMessages$(this.chat!.id)
+    return this.messageS.getMessages$(this.chatID!)
       .pipe(
         tap(messages => {
           this.messages.set(
@@ -105,33 +121,38 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
 
   protected sendMsg() {
 
-    // для отправки надо, чтоб сообщение было не пустым или чтоб был файл
-    if (!this.msgValue.trim().length && !this.currentFile) { return; }
+    // для отправки надо, чтоб сообщение было не пустым или чтоб был хотя бы один файл
+    if (!this.msgValue.trim().length && !this.currentFiles.length) { return; }
 
     let sendMessageObs$: Observable<void>;
 
-    if (this.currentFile) {
-      sendMessageObs$ = this.staticS.uploadFile(this.currentFile)
+    if (this.currentFiles.length) {
+      sendMessageObs$ =
+        forkJoin(this.currentFiles.map(file => this.staticS.uploadFile$(file)
           .pipe(
-              map(fileNameObj => {
+            map(fileKeyObj => ({...fileKeyObj, fileName: file.name}))
+          )
+        ))
+            .pipe(
+              map(files => {
                 return {
                   message: this.msgValue.trim().length ? this.msgValue : undefined,
-                  fileName: fileNameObj.fileKey
+                  files
                 }
               }),
               switchMap(msgData =>
-                  defer(() => from(this.messageS.sendMessage(this.chat?.id as string, msgData))))
+                  defer(() => from(this.messageS.sendMessage(this.chatID!, msgData))))
           );
     } else {
       sendMessageObs$ = defer(() =>
-          from(this.messageS.sendMessage(this.chat?.id as string, {message: this.msgValue})));
+          from(this.messageS.sendMessage(this.chatID!, {message: this.msgValue, files: []})));
     }
 
     sendMessageObs$
         .pipe(
             tap(() => {
               this.msgValue = '';
-              this.currentFile = undefined;
+              this.currentFiles = [];
               if (this.fileInput) {
                 this.fileInput.nativeElement.value = '';
                 this.cdr.detectChanges();
@@ -153,26 +174,29 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   protected onFileChange(event: Event) {
     //@ts-ignore;
     const files = event.target['files'] as FileList;
-    console.log(files)
 
-    if (!files || !files.length) { return; }
+    if (!files || !files.length || this.currentFiles.length === this.maxFilesCount) { return; }
     else {
-      this.currentFile = files.item(0) as File;
+      for (let i = this.currentFiles.length, initialLength = this.currentFiles.length; i < this.maxFilesCount ; i++) {
+        const file = files.item(i - initialLength);
+        if (!file) { break; }
+        this.currentFiles.push(file);
+      }
       this.cdr.detectChanges();
     }
   }
 
   protected joinChat() {
     // не обновляем стор, т.к там рисив будет
-    this.freeChatS.joinChat(this.chat!.id)
+    this.freeChatS.joinChat(this.chatID!)
       .pipe(
-        tap(() => this.mainChat.changeTab('Мои', this.chat!))
+        tap(() => this.mainChat.changeTab('Мои', this.chat))
       )
       .subscribe();
   }
 
   protected leaveChat() {
-    this.myChatS.leaveChat(this.chat?.id as string)
+    this.myChatS.leaveChat(this.chatID!)
       .subscribe(() => this.closeDialog());
   }
   protected closeDialog() {
@@ -181,7 +205,7 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
 
   protected toggleBlockStatus() {
     const newStatus = this.chat?.status === ChatStatus.Active ? ChatStatus.Blocked : ChatStatus.Active;
-    this.myChatS.changeChatStatus(this.chat!.id, newStatus)
+    this.myChatS.changeChatStatus(this.chatID!, newStatus)
       .pipe(
         tap(() => this.closeDialog())
       )
@@ -190,17 +214,21 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
 
   protected toggleArchiveStatus() {
     const newStatus = this.chat?.status === ChatStatus.Archive ? ChatStatus.Active : ChatStatus.Archive;
-    this.myChatS.changeChatStatus(this.chat!.id, newStatus)
+    this.myChatS.changeChatStatus(this.chatID!, newStatus)
       .pipe(
         tap(() => this.closeDialog())
       )
       .subscribe();
   }
 
-  protected dropFile(ev: DragEvent) {
+  protected dropFiles(ev: DragEvent) {
     const files = ev.dataTransfer?.files;
-    if (files && files.length) {
-      this.currentFile = files.item(0) as File;
+    if (files && files.length && this.currentFiles.length < this.maxFilesCount) {
+      for (let i = this.currentFiles.length, initialLength = this.currentFiles.length; i < this.maxFilesCount ; i++) {
+        const file = files.item(i - initialLength);
+        if (!file) { break; }
+        this.currentFiles.push(file);
+      }
     }
     ev.preventDefault();
   }

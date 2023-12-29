@@ -10,6 +10,7 @@ import {MessageMapperService} from "../../../shared/helpers/mappers/message.mapp
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {MAX_INT} from "../../../shared/helpers/constants/constants";
 import {ISendMessageRequest} from "../../../shared/models/DTO/request/SendMessageRequest";
+import {IFileInMessage} from "../../../shared/models/entities/FileInMessage";
 
 @Injectable({
   providedIn: 'root'
@@ -46,15 +47,14 @@ export class MessageService {
   }
 
   public sendMessage(userOrChatID: string, messageData: IPendingMessage) {
-    this.pendingMessages[this.requestNumber] = { message: messageData.message, fileName: messageData.fileName };
+    this.pendingMessages[this.requestNumber] = { message: messageData.message, files: messageData.files };
     const sendMsgObj: ISendMessageRequest = {
       "recipientId": userOrChatID,
       "requestNumber": this.requestNumber++
     };
 
     if (messageData.message) { sendMsgObj['message'] = messageData.message; }
-    if (messageData.fileName) { sendMsgObj['fileName'] = messageData.fileName; }
-
+    sendMsgObj['fileKeys'] = messageData.files.map(file => file.fileKey);
     return this.socketS.sendMessage('Send', sendMsgObj);
   }
 
@@ -79,5 +79,5 @@ export class MessageService {
 
 export interface IPendingMessage {
   message?: string;
-  fileName?: string;
+  files: IFileInMessage[];
 }

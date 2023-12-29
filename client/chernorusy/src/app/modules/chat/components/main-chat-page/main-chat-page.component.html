@@ -12,7 +12,7 @@
 
     <tab heading="Мои" #tabMine="tab">
       <app-messages-list
-        [selectedChat]="selectedTab?.heading === 'Мои' ? (selectedTab?.chat ?? null) : null"
+        [selectedChatID]="selectedTab?.heading === 'Мои' ? (selectedTab?.chat?.id ?? undefined) : undefined"
         [tabType]="'Mine'"></app-messages-list>
     </tab>
 
