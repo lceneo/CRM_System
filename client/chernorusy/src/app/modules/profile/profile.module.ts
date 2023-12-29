@@ -24,6 +24,7 @@ const routes: Routes = [
     loadComponent: () => import('./../../shared/components/not-found/not-found.component').then(f => f.NotFoundComponent)},
   { path: 'create/:id', component: CreateProfileComponent, canActivate: [unauthorizationGuard]},
   { path: 'changePassword', component: SetPasswordComponent, canActivate: [authorizationGuard]},
+  { path: 'recover/:id', component: SetPasswordComponent, data: {mode: 'recover'}, canActivate: [unauthorizationGuard] },
   { path: ':id', component: ManageProfileComponent, pathMatch: "full", canActivate: [authorizationGuard, profileGuard]}
 ]
 

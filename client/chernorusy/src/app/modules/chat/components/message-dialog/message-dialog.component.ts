@@ -1,11 +1,10 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, DestroyRef,
+  Component,
   ElementRef,
   Input,
   OnChanges,
-  OnDestroy, OnInit,
+  OnDestroy,
   Renderer2,
   signal,
   ViewChild
@@ -13,7 +12,18 @@ import {
 import {IChatResponseDTO} from "../../../../shared/models/DTO/response/ChatResponseDTO";
 import {MessageService} from "../../services/message.service";
 import {IMessageInChat} from "../../../../shared/models/entities/MessageInChat";
-import {defer, filter, from, fromEvent, map, merge, Observable, Subject, switchMap, takeUntil, tap} from "rxjs";
+import {
+  defer,
+  filter, forkJoin,
+  from,
+  map,
+  merge,
+  Observable,
+  Subject,
+  switchMap,
+  takeUntil,
+  tap
+} from "rxjs";
 import {FreeChatService} from "../../services/free-chat.service";
 import {MyChatService} from "../../services/my-chat.service";
 import {MessageType} from "../../../../shared/models/enums/MessageType";
@@ -38,7 +48,8 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
 
   protected msgValue = '';
-  protected currentFile?: File;
+  protected currentFiles: File[] = [];
+  private maxFilesCount = 10;
 
   protected messages = signal<IMessageInChat[]>([]);
   protected loadingChat$ = new Subject<boolean>();
@@ -105,18 +116,23 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
 
   protected sendMsg() {
 
-    // для отправки надо, чтоб сообщение было не пустым или чтоб был файл
-    if (!this.msgValue.trim().length && !this.currentFile) { return; }
+    // для отправки надо, чтоб сообщение было не пустым или чтоб был хотя бы один файл
+    if (!this.msgValue.trim().length && !this.currentFiles.length) { return; }
 
     let sendMessageObs$: Observable<void>;
 
-    if (this.currentFile) {
-      sendMessageObs$ = this.staticS.uploadFile(this.currentFile)
+    if (this.currentFiles.length) {
+      sendMessageObs$ =
+        forkJoin(this.currentFiles.map(file => this.staticS.uploadFile$(file)
           .pipe(
-              map(fileNameObj => {
+            map(fileKeyObj => ({...fileKeyObj, fileName: file.name}))
+          )
+        ))
+            .pipe(
+              map(files => {
                 return {
                   message: this.msgValue.trim().length ? this.msgValue : undefined,
-                  fileName: fileNameObj.fileKey
+                  files
                 }
               }),
               switchMap(msgData =>
@@ -124,14 +140,14 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
           );
     } else {
       sendMessageObs$ = defer(() =>
-          from(this.messageS.sendMessage(this.chat?.id as string, {message: this.msgValue})));
+          from(this.messageS.sendMessage(this.chat?.id as string, {message: this.msgValue, files: []})));
     }
 
     sendMessageObs$
         .pipe(
             tap(() => {
               this.msgValue = '';
-              this.currentFile = undefined;
+              this.currentFiles = [];
               if (this.fileInput) {
                 this.fileInput.nativeElement.value = '';
                 this.cdr.detectChanges();
@@ -153,11 +169,14 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   protected onFileChange(event: Event) {
     //@ts-ignore;
     const files = event.target['files'] as FileList;
-    console.log(files)
 
-    if (!files || !files.length) { return; }
+    if (!files || !files.length || this.currentFiles.length === this.maxFilesCount) { return; }
     else {
-      this.currentFile = files.item(0) as File;
+      for (let i = this.currentFiles.length, initialLength = this.currentFiles.length; i < this.maxFilesCount ; i++) {
+        const file = files.item(i - initialLength);
+        if (!file) { break; }
+        this.currentFiles.push(file);
+      }
       this.cdr.detectChanges();
     }
   }
@@ -197,10 +216,14 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
       .subscribe();
   }
 
-  protected dropFile(ev: DragEvent) {
+  protected dropFiles(ev: DragEvent) {
     const files = ev.dataTransfer?.files;
-    if (files && files.length) {
-      this.currentFile = files.item(0) as File;
+    if (files && files.length && this.currentFiles.length < this.maxFilesCount) {
+      for (let i = this.currentFiles.length, initialLength = this.currentFiles.length; i < this.maxFilesCount ; i++) {
+        const file = files.item(i - initialLength);
+        if (!file) { break; }
+        this.currentFiles.push(file);
+      }
     }
     ev.preventDefault();
   }

@@ -43,7 +43,7 @@ export class RegistrationComponent {
               body: `Для завершения регистрации проверьте почту <b>${this.form.get('email')?.value}</b> и перейдите по ссылке указанной в письме для установления пароля.`,
               imgName: 'envelope.png'
             }
-          })
+          });
         })
       )
       .subscribe();
