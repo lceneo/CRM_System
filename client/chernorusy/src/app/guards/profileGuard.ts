@@ -1,6 +1,6 @@
 import {inject} from "@angular/core";
 import {ProfileService} from "../shared/services/profile.service";
-import {ActivatedRoute, ActivatedRouteSnapshot, Router} from "@angular/router";
+import {ActivatedRouteSnapshot, Router} from "@angular/router";
 import {AuthorizationService} from "../shared/services/authorization.service";
 import {interval, map, of, take, tap} from "rxjs";
 
