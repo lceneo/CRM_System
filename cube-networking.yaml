@@ -1,0 +1,47 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: service-ingress
+  namespace: application
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 50m
+    nginx.org/client-max-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+    nginx.ingress.kubernetes.io/affinity-canary-behavior: "sticky"
+    nginx.org/websocket-services: api-service
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: request.stk8s.66bit.ru
+    http:
+      paths:
+      - pathType: Prefix
+        path: /
+        backend:
+          service:
+            name: front-service
+            port:
+              number: 3000
+      - pathType: Prefix
+        path: /swagger
+        backend:
+          service:
+            name: api-service
+            port:
+              number: 80
+      - pathType: Prefix
+        path: /api
+        backend:
+          service:
+            name: api-service
+            port:
+              number: 80
+      - pathType: Prefix
+        path: /Hubs
+        backend:
+          service:
+            name: api-service
+            port:
+              number: 80
