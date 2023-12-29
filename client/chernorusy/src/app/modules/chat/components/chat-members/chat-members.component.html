@@ -1,0 +1,17 @@
+
+<section class="wrapper">
+  <h2 class="header">Участники:</h2>
+  <ul class="membersList">
+    <li
+      *ngFor="let member of chatMembers ? chatMembers() : []"
+      class="member"
+    >
+      <mat-icon
+        class="connectionIcon"
+        [matTooltip]="member.isConnected ? 'Онлайн' : 'Оффлайн'"
+        [matTooltipPosition]="'above'"
+        [style.color]="member.isConnected ? '#0ca10c' : 'red'"
+      >circle</mat-icon>
+      <span class="memberName">{{member.name}}</span></li>
+  </ul>
+</section>

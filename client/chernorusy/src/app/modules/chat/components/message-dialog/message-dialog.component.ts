@@ -9,7 +9,6 @@ import {
   signal,
   ViewChild
 } from '@angular/core';
-import {IChatResponseDTO} from "../../../../shared/models/DTO/response/ChatResponseDTO";
 import {MessageService} from "../../services/message.service";
 import {IMessageInChat} from "../../../../shared/models/entities/MessageInChat";
 import {
@@ -31,6 +30,7 @@ import {MessagesListComponent, TabType} from "../messages-list/messages-list.com
 import {ChatStatus} from "../../../../shared/models/enums/ChatStatus";
 import {MainChatPageComponent} from "../main-chat-page/main-chat-page.component";
 import {StaticService} from "../../../../shared/services/static.service";
+import {IChatResponseDTO} from "../../../../shared/models/DTO/response/ChatResponseDTO";
 
 @Component({
   selector: 'app-message-dialog',
@@ -39,7 +39,7 @@ import {StaticService} from "../../../../shared/services/static.service";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MessageDialogComponent implements OnChanges, OnDestroy {
-  @Input({required: true}) chat: IChatResponseDTO | null = null;
+  @Input({required: true}) chatID?: string;
   @Input({required: true}) chatType: TabType | null = null;
 
   @ViewChild('msgList') msgListElementRef!: ElementRef<HTMLUListElement>;
@@ -47,9 +47,11 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
 
   @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
 
+  protected membersSectionOpened = false;
   protected msgValue = '';
   protected currentFiles: File[] = [];
   private maxFilesCount = 10;
+  protected chat?: IChatResponseDTO;
 
   protected messages = signal<IMessageInChat[]>([]);
   protected loadingChat$ = new Subject<boolean>();
@@ -67,11 +69,14 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   ) {}
 
   ngOnChanges(): void {
-    if ('chat in changes') { this.initNewChat(); }
+    if ('chatID in changes' && this.chatID) {
+      this.initNewChat();
+      this.chat = this.chatType === 'Inbox' ? this.freeChatS.getByID(this.chatID) : this.myChatS.getByID(this.chatID);
+    }
   }
 
   private initNewChat() {
-    if (!this.chat) { return; }
+    if (!this.chatID) { return; }
 
     this.destroy$.next(); // уничтожаем предыдущую подписку
     this.loadingChat$.next(true);
@@ -80,7 +85,7 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
       .pipe(
         tap(() => { this.loadingChat$.next(false); this.scrollToTheBottom(); }),
         switchMap(() => merge(this.messageS.receivedMessages$, this.messageS.successMessages$)),
-        filter(msg => msg.chatId === this.chat?.id),
+        filter(msg => msg.chatId === this.chatID),
         takeUntil(this.destroy$),
       ).subscribe(msg => {
 
@@ -94,7 +99,7 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
   }
 
   private getExistingMessagesInChat() {
-    return this.messageS.getMessages$(this.chat!.id)
+    return this.messageS.getMessages$(this.chatID!)
       .pipe(
         tap(messages => {
           this.messages.set(
@@ -136,11 +141,11 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
                 }
               }),
               switchMap(msgData =>
-                  defer(() => from(this.messageS.sendMessage(this.chat?.id as string, msgData))))
+                  defer(() => from(this.messageS.sendMessage(this.chatID!, msgData))))
           );
     } else {
       sendMessageObs$ = defer(() =>
-          from(this.messageS.sendMessage(this.chat?.id as string, {message: this.msgValue, files: []})));
+          from(this.messageS.sendMessage(this.chatID!, {message: this.msgValue, files: []})));
     }
 
     sendMessageObs$
@@ -183,15 +188,15 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
 
   protected joinChat() {
     // не обновляем стор, т.к там рисив будет
-    this.freeChatS.joinChat(this.chat!.id)
+    this.freeChatS.joinChat(this.chatID!)
       .pipe(
-        tap(() => this.mainChat.changeTab('Мои', this.chat!))
+        tap(() => this.mainChat.changeTab('Мои', this.chat))
       )
       .subscribe();
   }
 
   protected leaveChat() {
-    this.myChatS.leaveChat(this.chat?.id as string)
+    this.myChatS.leaveChat(this.chatID!)
       .subscribe(() => this.closeDialog());
   }
   protected closeDialog() {
@@ -200,7 +205,7 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
 
   protected toggleBlockStatus() {
     const newStatus = this.chat?.status === ChatStatus.Active ? ChatStatus.Blocked : ChatStatus.Active;
-    this.myChatS.changeChatStatus(this.chat!.id, newStatus)
+    this.myChatS.changeChatStatus(this.chatID!, newStatus)
       .pipe(
         tap(() => this.closeDialog())
       )
@@ -209,7 +214,7 @@ export class MessageDialogComponent implements OnChanges, OnDestroy {
 
   protected toggleArchiveStatus() {
     const newStatus = this.chat?.status === ChatStatus.Archive ? ChatStatus.Active : ChatStatus.Archive;
-    this.myChatS.changeChatStatus(this.chat!.id, newStatus)
+    this.myChatS.changeChatStatus(this.chatID!, newStatus)
       .pipe(
         tap(() => this.closeDialog())
       )

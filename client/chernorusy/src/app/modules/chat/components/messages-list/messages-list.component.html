@@ -1,7 +1,7 @@
 <div class="wrapper">
   <section class="chats"
    [ngClass]="{
-      dialogOpened: selectedChat
+      dialogOpened: selectedChatID
    }"
   >
         <ul
@@ -12,16 +12,16 @@
             <li
               class="chats__item card"
               [ngClass]="{
-               'chats__item-selected': selectedChat && selectedChat.id === chat.id
+               'chats__item-selected': selectedChatID && selectedChatID === chat.id
               }"
               *ngFor="let chat of chats"
-              (click) = "openDialogMessage(chat)">
+              (click) = "openDialogMessage(chat.id)">
               <section>
                 <h3>{{chat.name}}</h3>
                 <p class="chats__item-text">{{chat?.lastMessage?.message}}</p>
                 <span
                   class="chats__item-date"
-                  [style.color]="selectedChat && selectedChat.id === chat.id ? 'unset' : 'grey'"
+                  [style.color]="selectedChatID && selectedChatID === chat.id ? 'unset' : 'grey'"
                 >{{chat?.lastMessage?.dateTime | date: 'HH:mm'}}</span>
               </section>
             </li>
@@ -29,7 +29,7 @@
         </ul>
     <section #dialog class="chats__hidden chats__dialog">
       <app-message-dialog
-        [chat] = "selectedChat"
+        [chatID] = "selectedChatID"
         [chatType]= "tabType"
       ></app-message-dialog>
     </section>

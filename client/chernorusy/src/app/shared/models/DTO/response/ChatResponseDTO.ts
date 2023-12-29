@@ -5,6 +5,7 @@ import {IFileInMessage} from "../../entities/FileInMessage";
 export interface IChatResponseDTO {
   id: string;
   name: string;
+  profiles: IProfileOutShort[],
   lastMessage: {
     id: string;
     sender: IProfileOutShort,
