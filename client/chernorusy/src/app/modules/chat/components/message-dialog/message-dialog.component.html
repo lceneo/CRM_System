@@ -1,5 +1,4 @@
 <nav class="btn_container">
-
   <i *ngIf = "chatType === 'Mine'"
      [matTooltip]="'Покинуть'"
      class="bi bi-box-arrow-in-left leaveBtn"
@@ -102,8 +101,19 @@
                 (drop)="dropFiles($event)"
                 [(ngModel)] = "msgValue"
                 [placeholder]="'Введите сообщение...'"
-                (keydown)="pressKey($event)"
-      ></textarea>
+                (keydown)="pressKey($event)">
+      </textarea>
+
+      <mat-icon #smileMenuTriggerer="matMenuTrigger" [svgIcon]="'smile'"
+                #smileIcon
+                [matMenuTriggerFor]="smileMenu"
+                (mouseenter) ="smileMenuTriggerer.openMenu()"
+                (menuOpened)="openSmileMenu(smileMenuTriggerer, smileIcon)"
+                class="smileIcon"
+                [ngClass]="{
+                  'openedSmileMenu': smileMenuTriggerer.menuOpen
+                }"
+      ></mat-icon>
 
       <i
         class="bi bi-send sendMsgBtn"
@@ -149,4 +159,10 @@
             (click) = "currentFiles = [];"
             [disabled] = "!currentFiles.length"
     >Удалить</button>
+</mat-menu>
+
+<mat-menu class="smileMenu" #smileMenu>
+  <ng-template matMenuContent>
+    <p (click) = "addIconToMsg($event, smile)" *ngFor="let smile of smiles">{{smile}}</p>
+  </ng-template>
 </mat-menu>

@@ -1,0 +1,18 @@
+
+.smileMenu {
+  border: 1px solid #c4b2b2;
+
+  .mat-mdc-menu-content {
+    div:first-of-type {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      max-height: 200px;
+      padding: 10px 10px 0 10px;
+      p:hover {
+        background-color: #766c6c5e;
+        border-radius: 90%;
+      }
+    }
+  }
+}
