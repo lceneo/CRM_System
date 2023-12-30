@@ -12,46 +12,30 @@ public class StaticsService : IStaticsService
 {
     private readonly string pathToStatic;
     private readonly IStaticsRepository staticsRepository;
-    private readonly IProfilesRepository profilesRepository;
     private readonly ILog log;
 
     public StaticsService(
         IStaticsRepository staticsRepository,
-        IProfilesRepository profilesRepository,
         ILog log)
     {
         this.pathToStatic = Config.PathToStatic;
         this.staticsRepository = staticsRepository;
-        this.profilesRepository = profilesRepository;
         this.log = log;
     }
 
-    public async Task<Result<UploadResponse>> UploadFile(Guid userId, IFormFile file)
+    public async Task<Result<UploadResponse>> UploadFile(IFormFile file)
     {
-        var profile = await profilesRepository.GetByIdAsync(userId);
-        if (profile == null)
-            return Result.BadRequest<UploadResponse>("Такого пользователя не существует");
-        
-        var fileEntity = await staticsRepository.Get(file.FileName);
-        if (fileEntity != null)
+        var fileKey = GenerateFileKey(new Guid());
+        await using var fileStream = GetFileStream(fileKey);
+        await file.CopyToAsync(fileStream);
+        var fileEntity = new FileEntity
         {
-            fileEntity.FileName = file.FileName;
-            await staticsRepository.UpdateAsync(fileEntity);
-        }
-        else
-        {
-            var fileKey = GenerateFileKey(userId);
-            await using var fileStream = GetFileStream(fileKey);
-            await file.CopyToAsync(fileStream);
-            fileEntity = new FileEntity
-            {
-                FileKey = fileKey,
-                FileName = file.FileName,
-            };
-            await staticsRepository.CreateAsync(fileEntity);
-        }
+            FileKey = fileKey,
+            FileName = file.FileName,
+        };
+        await staticsRepository.CreateAsync(fileEntity);
 
-        await log.Info($"Uploaded file(FileKey: {fileEntity.FileKey}, FileName: {fileEntity.FileName}) by user(Id: {userId})");
+        await log.Info($"Uploaded file(FileKey: {fileEntity.FileKey}, FileName: {fileEntity.FileName})");
         return Result.Ok(new UploadResponse
         {
             FileKey = fileEntity.FileKey
