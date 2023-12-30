@@ -11,6 +11,7 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from "@angular/material/form-field";
 import {CustomErrorHandlerService} from "./shared/services/custom-error-handler.service";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {IconModule} from "./shared/modules/icon.module";
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import {MatSnackBarModule} from "@angular/material/snack-bar";
     NgLetDirective,
     BsDropdownModule,
     BrowserAnimationsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    IconModule
   ],
   providers: [
     checkResponseInterceptor,
