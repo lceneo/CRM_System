@@ -21,4 +21,5 @@ interface IStateData {
   title: string;
   body: string;
   imgName?: string;
+  innerHtml: boolean;
 }

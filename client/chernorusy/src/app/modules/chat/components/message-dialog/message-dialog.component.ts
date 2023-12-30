@@ -260,10 +260,20 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
     return upd;
   }
   protected addIconToMsg(event: MouseEvent, icon: string) {
+    const textAreaElement = this.messageElementRef.nativeElement;
+    const selectionStart = textAreaElement.selectionStart;
+    const selectionEnd = textAreaElement.selectionEnd;
+
+    this.msgValue = this.msgValue.substring(0, selectionStart) + icon + this.msgValue.substring(selectionEnd);
     event.stopPropagation();
     event.stopImmediatePropagation();
     event.stopImmediatePropagation();
-    this.msgValue += icon;
+
+    textAreaElement.selectionStart = selectionStart;
+    textAreaElement.selectionEnd = selectionStart;
+    setTimeout(() => {
+      textAreaElement.setSelectionRange(selectionStart, selectionStart);
+    });
   }
 
   protected openSmileMenu(smileMenuTriggerer: MatMenuTrigger, smileIcon: MatIcon) {

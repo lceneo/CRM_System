@@ -16,3 +16,23 @@
     }
   }
 }
+
+.mat-mdc-menu-panel.autoRepliesMenu  {
+  max-width: 790px;
+  padding: 0 20px;
+  border-radius: 20px;
+  border: 1.5px solid #9c93936e;
+  .mdc-evolution-chip__cell, .mdc-evolution-chip__text-label, .mdc-evolution-chip__action {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .mdc-evolution-chip__text-label {
+    color: white !important;
+  }
+
+  .mat-mdc-chip {
+    background-color: #109cf1 !important;
+  }
+}

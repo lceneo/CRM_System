@@ -96,6 +96,14 @@
       >
         <mat-icon>attach_file</mat-icon>
       </button>
+
+      <button mat-icon-button
+              [matMenuTriggerFor]="autoRepliesMenu"
+              [matTooltip]="'Быстрые ответы'"
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+
       <textarea #message appTextareaResize
                 class="chat__sendMsg form-control"
                 (drop)="dropFiles($event)"
@@ -132,9 +140,6 @@
         class="btn btn-success"
         (click)="joinChat()"
       >Принять</button>
-      <button
-        class="btn btn-danger"
-      >Отклонить</button>
     </div>
   </ng-container>
 </ng-template>
@@ -164,5 +169,24 @@
 <mat-menu class="smileMenu" #smileMenu>
   <ng-template matMenuContent>
     <p (click) = "addIconToMsg($event, smile)" *ngFor="let smile of smiles">{{smile}}</p>
+  </ng-template>
+</mat-menu>
+
+<mat-menu class="autoRepliesMenu" #autoRepliesMenu>
+  <ng-template matMenuContent>
+    <mat-chip-set aria-label="Dog selection">
+      <mat-chip #first (click)="this.msgValue = first._elementRef.nativeElement.innerText; sendMsg()">
+        Вы можете задать мне свой вопрос, и я отвечу Вам в кратчайшие сроки
+      </mat-chip>
+      <mat-chip color="primary" #second (click)="this.msgValue = second._elementRef.nativeElement.innerText; sendMsg()">
+        Напишите свой вопрос, и я постараюсь дать вам наиболее полезный ответ.
+      </mat-chip>
+      <mat-chip color="primary" #trird (click)="this.msgValue = trird._elementRef.nativeElement.innerText; sendMsg()">
+        Добро пожаловать! Я готов помочь вам со всеми вопросами и проблемами.
+      </mat-chip>
+      <mat-chip color="primary" #fourth (click)="this.msgValue = fourth._elementRef.nativeElement.innerText; sendMsg()">
+        Привет! Я здесь, чтобы помочь. Если у вас есть вопросы или требуется консультация, обратитесь ко мне.
+      </mat-chip>
+    </mat-chip-set>
   </ng-template>
 </mat-menu>

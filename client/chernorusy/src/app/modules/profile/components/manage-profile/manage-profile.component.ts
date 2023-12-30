@@ -8,6 +8,7 @@ import {IProfileResponseDTO} from "../../../../shared/models/DTO/response/Profil
 import {AuthorizationService} from "../../../../shared/services/authorization.service";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {MyValidatorsService} from "../../../../shared/services/my-validators.service";
+import {AccountRole} from "../../../../shared/models/enums/AccountRole";
 
 @Component({
   selector: 'app-manage-profile',
@@ -80,7 +81,20 @@ export class ManageProfileComponent implements OnInit{
   protected submitForm() {
     this.profileS.createOrUpdate$(this.form.value as IProfileCreateRequestDTO)
       .subscribe(() => {
-        if (this.mode === 'create') { this.router.navigate(['main']) }
+        if (this.mode === 'create') {
+          if (this.myProfile()?.role === AccountRole.Client) {
+            this.router.navigate(['success'], {
+              state: {
+
+                title: `Установите код на сайт`,
+                  body: `Для того, чтобы принимать обращения клиентов с сайта, вам необходимо установить следующий код на каждую страницу вашего сайта перед закрывающим тегом </head>:\n\n
+                <script src="https://request.stk8s.66bit.ru/api/Vidjets/Script" async></script>`
+              }
+            });
+            return;
+          }
+          this.router.navigate(['main']);
+        }
         else if (this.mode === 'change') { this.changeMode(); this.savedProfileJson = JSON.stringify(this.form.value) }
       });
   }

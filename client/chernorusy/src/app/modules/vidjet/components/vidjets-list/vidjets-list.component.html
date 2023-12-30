@@ -1,5 +1,11 @@
 
 <section class="wrapper">
+
+  <p class="vidjetInfo">{{'Для того, чтобы принимать обращения клиентов с сайта, вам необходимо установить следующий код на каждую страницу' +
+    'вашего сайта перед закрывающим тегом <' + 'head>'}}<br><br>
+    {{'<' + 'script src="https://request.stk8s.66bit.ru/api/Vidjets/Script" async>'}}
+  </p>
+
   <h2 class="header">Мои виджеты: </h2>
   <ul
     *ngLet="vidjets() as vidjets"
