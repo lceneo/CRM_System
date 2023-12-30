@@ -50,7 +50,8 @@ export class LoginComponent {
             state: {
               title: `Подтверждение email`,
               body: `Для восстановления пароля проверьте почту <b>${this.form.get('email')?.value}</b> и перейдите по ссылке указанной в письме для установления пароля.`,
-              imgName: 'envelope.png'
+              imgName: 'envelope.png',
+              innerHtml: true
             }
           })
         });

@@ -18,6 +18,7 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatMenuModule} from "@angular/material/menu";
 import {MatBadgeModule} from "@angular/material/badge";
 import { ChatMembersComponent } from './components/chat-members/chat-members.component';
+import {MatChipsModule} from "@angular/material/chips";
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: MainChatPageComponent }
@@ -46,7 +47,8 @@ const routes: Routes = [
         MatIconModule,
         MatMenuModule,
         MatBadgeModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        MatChipsModule
     ]
 })
 export class ChatModule { }
