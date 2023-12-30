@@ -269,10 +269,8 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
     event.stopImmediatePropagation();
     event.stopImmediatePropagation();
 
-    textAreaElement.selectionStart = selectionStart;
-    textAreaElement.selectionEnd = selectionStart;
     setTimeout(() => {
-      textAreaElement.setSelectionRange(selectionStart, selectionStart);
+      textAreaElement.setSelectionRange(selectionStart + icon.length, selectionStart + icon.length);
     });
   }
 
