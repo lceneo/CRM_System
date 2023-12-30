@@ -11,7 +11,6 @@ namespace API.Modules.StaticModule;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
 public class StaticsController : ControllerBase
 {
     private readonly IStaticsService staticsService;
@@ -24,7 +23,7 @@ public class StaticsController : ControllerBase
     [HttpPost("Upload")]
     public async Task<ActionResult<UploadResponse>> UploadAsync(IFormFile file)
     {
-        var response = await staticsService.UploadFile(User.GetId(), file);
+        var response = await staticsService.UploadFile(file);
         return response.ActionResult;
     }
     
