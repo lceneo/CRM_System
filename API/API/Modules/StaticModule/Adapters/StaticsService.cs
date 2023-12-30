@@ -25,9 +25,12 @@ public class StaticsService : IStaticsService
 
     public async Task<Result<UploadResponse>> UploadFile(IFormFile file)
     {
-        var fileKey = GenerateFileKey(new Guid());
-        await using var fileStream = GetFileStream(fileKey);
-        await file.CopyToAsync(fileStream);
+        var fileKey = GenerateFileKey(Guid.NewGuid());
+        await using(var fileStream = File.Create(pathToStatic + "/" + fileKey))
+        {
+            await file.CopyToAsync(fileStream);
+        }
+        
         var fileEntity = new FileEntity
         {
             FileKey = fileKey,
@@ -44,22 +47,24 @@ public class StaticsService : IStaticsService
 
     public async Task<Result<bool>> UploadConcreteFile(IFormFile file)
     {
-        var path = pathToStatic + "\\" + file.FileName;
+        var path = pathToStatic + "/" + file.FileName;
         if (File.Exists(path))
             File.Delete(path);
         
-        await using var fileStream = GetFileStream(file.FileName);
-        await file.CopyToAsync(fileStream);
+        await using(var fileStream = File.Create(path))
+        {
+            await file.CopyToAsync(fileStream);
+        }
         return Result.Ok(true);
     }
 
-    public async Task<Result<DownloadServiceResponse>> GetFile(Guid userId, string fileKey)
+    public async Task<Result<DownloadServiceResponse>> GetFile(string fileKey)
     {
         var existed = await staticsRepository.Get(fileKey);
         if (existed == null)
             return Result.NotFound<DownloadServiceResponse>("");
         
-        await log.Info($"Downloaded file(FileKey: {existed.FileKey}, FileName: {existed.FileName}) by user(Id: {userId})");
+        await log.Info($"Downloaded file(FileKey: {existed.FileKey}, FileName: {existed.FileName})");
         using var provider = new PhysicalFileProvider(pathToStatic);
         return Result.Ok(new DownloadServiceResponse
         {
@@ -67,9 +72,6 @@ public class StaticsService : IStaticsService
             FileInfo = provider.GetFileInfo(existed.FileKey),
         });
     }
-
-    private FileStream GetFileStream(string fileKey)
-        => File.Open(pathToStatic + "\\" + fileKey, FileMode.Create);
 
     private string GenerateFileKey(Guid userId) 
         => $"{userId}__{Guid.NewGuid()}";

@@ -1,10 +1,7 @@
 ﻿using System.Text.Json;
-using API.Extensions;
 using API.Infrastructure;
-using API.Infrastructure.BaseApiDTOs;
 using API.Modules.StaticModule.Models;
 using API.Modules.StaticModule.Ports;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Modules.StaticModule;
@@ -37,7 +34,7 @@ public class StaticsController : ControllerBase
     [HttpPost("Download")]
     public async Task DownloadAsync([FromBody] DownloadRequest request)
     {
-        var response = await staticsService.GetFile(User.GetId(), request.FileKey);
+        var response = await staticsService.GetFile(request.FileKey);
         if (!response.IsSuccess)
         {
             HttpContext.Response.StatusCode = (int) response.StatusCode;
@@ -46,5 +43,13 @@ public class StaticsController : ControllerBase
         }
 
         await HttpContext.Response.SendFileAsync(response.Value.FileInfo);
+    }
+
+    [HttpGet]
+    public ActionResult EnumerateFiles()
+    {
+        var dir = Directory.EnumerateFiles(Config.PathToStatic);
+
+        return Ok(new {res = dir});
     }
 }
