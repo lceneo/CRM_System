@@ -6,4 +6,6 @@ public class ProfileDTO
     public string Name { get; set; }
     public string? Patronimic { get; set; }
     public string? About { get; set; }
+    public string? StartMessage { get; set; }
+    public string? EndMesssage { get; set; }
 }
