@@ -33,7 +33,6 @@
               min-height: unset !important;
             }
           }
-
         }
     }
     .formControl:last-of-type {
@@ -44,6 +43,12 @@
     }
     .textarea {
       resize: none;
+    }
+
+    .mat-divider-horizontal {
+      width: 40%;
+      margin-top: -1rem;
+      margin-bottom: 1.5rem;
     }
   }
 }

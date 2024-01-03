@@ -9,7 +9,6 @@
     <i class="bi bi-pencil-square icon"></i>
   </button>
   <form class = "authorization" [formGroup]="form" (submit)="submitForm()">
-
     <div class="formControl">
       <mat-form-field>
         <mat-label>Фамилия</mat-label>
@@ -46,6 +45,8 @@
                             [errors]="form.get('patronimic')?.errors"></app-error-validation>
     </div>
 
+
+
     <div class="formControl">
       <mat-form-field hintLabel="Максимум 255 символов">
         <mat-label>О себе</mat-label>
@@ -59,6 +60,32 @@
         ></textarea>
         <mat-hint align="end">{{aboutControl.value.length}}/255</mat-hint>
       </mat-form-field>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="formControl">
+      <mat-form-field>
+        <mat-label>Приветственное сообщение</mat-label>
+        <input
+          formControlName = "startMessage"
+          matInput
+        >
+      </mat-form-field>
+      <app-error-validation *ngIf="form.get('startMessage')?.invalid && form.get('startMessage')?.touched"
+                            [errors]="form.get('startMessage')?.errors"></app-error-validation>
+    </div>
+
+    <div class="formControl">
+      <mat-form-field>
+        <mat-label>Прощальное сообщение</mat-label>
+        <input
+          formControlName = "endMesssage"
+          matInput
+        >
+      </mat-form-field>
+      <app-error-validation *ngIf="form.get('endMesssage')?.invalid && form.get('endMesssage')?.touched"
+                            [errors]="form.get('endMesssage')?.errors"></app-error-validation>
     </div>
 
     <button

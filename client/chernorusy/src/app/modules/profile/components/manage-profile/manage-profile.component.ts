@@ -39,7 +39,9 @@ export class ManageProfileComponent implements OnInit{
     surname: new FormControl<string>( '', [Validators.required, this.myValidatorS.minMaxLengthValidator(2, 30)]),
     name: new FormControl<string>('', [Validators.required, this.myValidatorS.minMaxLengthValidator(2, 30)]),
     patronimic: new FormControl<string>(''),
-    about: new FormControl<string>('')
+    about: new FormControl<string>(''),
+    startMessage: new FormControl<string>('', [this.myValidatorS.minMaxLengthValidator(0, 50)]),
+    endMesssage: new FormControl<string>('', [this.myValidatorS.minMaxLengthValidator(0, 50)])
   });
 
   ngOnInit(): void {
@@ -107,7 +109,9 @@ export class ManageProfileComponent implements OnInit{
         about: this.myProfile()?.about ?? '',
         name: this.myProfile()?.name ?? '',
         patronimic: this.myProfile()?.patronimic ?? '',
-        surname: this.myProfile()?.surname ?? ''
+        surname: this.myProfile()?.surname ?? '',
+        startMessage: this.myProfile()?.startMessage ?? '',
+        endMesssage: this.myProfile()?.endMesssage ?? ''
       })
     }
     else { this.form.enable(); }
