@@ -66,8 +66,16 @@ export class EntityStateManager<T extends {id: string}> {
       .subscribe();
   }
   public upsertEntities(entities: T[]) {
+    const entitiesArr: T[] = [];
+    entities.forEach(entity => {
+      const existingEntity = this.getByID(entity.id);
+      if (existingEntity) { entitiesArr.push({...existingEntity, ...entity}); }
+      else { entitiesArr.push(entity); }
+    })
     this.entityState.set(
-      {...this.entityState(), entities: [...this.entityState().entities, ...entities]}
+      {...this.entityState(),
+        entities: [...this.entityState().entities.filter(existing => !entities.some(ent => ent.id === existing.id)),
+          ...entitiesArr]}
     );
   }
 

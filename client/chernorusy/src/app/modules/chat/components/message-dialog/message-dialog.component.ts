@@ -36,6 +36,7 @@ import {OverlayContainer} from "@angular/cdk/overlay";
 import {MatMenu, MatMenuTrigger} from "@angular/material/menu";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {MatIcon} from "@angular/material/icon";
+import {ProfileService} from "../../../../shared/services/profile.service";
 
 @Component({
   selector: 'app-message-dialog',
@@ -71,6 +72,7 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
     private renderer2: Renderer2,
     private messagesListComponent: MessagesListComponent,
     private mainChat: MainChatPageComponent,
+    private profileS: ProfileService,
     private destroyRef: DestroyRef,
     private overLayContainer: OverlayContainer,
     private cdr: ChangeDetectorRef
@@ -131,11 +133,14 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
   }
 
 
+  protected sendMsg(msgText?: string) {
+    this.sendMsg$(msgText)?.subscribe();
+  }
 
-  protected sendMsg() {
+  protected sendMsg$(msgText?: string) {
 
     // для отправки надо, чтоб сообщение было не пустым или чтоб был хотя бы один файл
-    if (!this.msgValue.trim().length && !this.currentFiles.length) { return; }
+    if ((!this.msgValue.trim().length && !msgText?.trim().length) && !this.currentFiles.length) { return; }
 
     let sendMessageObs$: Observable<void>;
 
@@ -149,7 +154,7 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
             .pipe(
               map(files => {
                 return {
-                  message: this.msgValue.trim().length ? this.msgValue : undefined,
+                  message: (msgText ?? this.msgValue).trim().length ? (msgText ?? this.msgValue) : undefined,
                   files
                 }
               }),
@@ -158,10 +163,10 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
           );
     } else {
       sendMessageObs$ = defer(() =>
-          from(this.messageS.sendMessage(this.chatID!, {message: this.msgValue, files: []})));
+          from(this.messageS.sendMessage(this.chatID!, {message: (msgText ?? this.msgValue), files: []})));
     }
 
-    sendMessageObs$
+    return sendMessageObs$
         .pipe(
             tap(() => {
               this.msgValue = '';
@@ -170,14 +175,13 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
                 this.fileInput.nativeElement.value = '';
                 this.cdr.detectChanges();
               }
-              this.renderer2.setStyle(this.messageElementRef.nativeElement, 'height', `45px`);
+              this.messageElementRef && this.renderer2.setStyle(this.messageElementRef.nativeElement, 'height', `45px`);
             })
-        )
-        .subscribe();
+        );
   }
 
   pressKey(ev: KeyboardEvent) {
-    (ev.key === 'Enter' && ev.ctrlKey) && this.sendMsg()
+    (ev.key === 'Enter' && ev.ctrlKey) && this.sendMsg();
   }
 
   public resetMsgValue() {
@@ -203,14 +207,31 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
     // не обновляем стор, т.к там рисив будет
     this.freeChatS.joinChat(this.chatID!)
       .pipe(
-        tap(() => this.mainChat.changeTab('Мои', this.chat))
+        tap(() => {
+          const startMsg = this.profileS.profile()?.startMessage;
+          if (startMsg) {
+            this.sendMsg$(startMsg)?.pipe(
+                tap(() => this.mainChat.changeTab('Мои', this.chat))
+              ).subscribe();
+          } else {
+            this.mainChat.changeTab('Мои', this.chat);
+          }
+        })
       )
       .subscribe();
   }
 
   protected leaveChat() {
-    this.myChatS.leaveChat(this.chatID!)
-      .subscribe(() => this.closeDialog());
+    const endMsg = this.profileS.profile()?.endMesssage;
+    const beforeObs = (endMsg ? this.sendMsg$(endMsg) : of(null)) as Observable<void>;
+
+    beforeObs.pipe(
+      switchMap(() => this.myChatS.leaveChat(this.chatID!)),
+      tap(() => {
+        this.chatID = undefined;
+        this.mainChat['selectedTab'] = undefined;
+      } )
+    ).subscribe(() => this.closeDialog());
   }
   protected closeDialog() {
     this.messagesListComponent.closeChat();
