@@ -10,4 +10,6 @@ public class ProfileOutDTO
     public string? Patronimic { get; set; }
     public string? About { get; set; }
     public AccountRole Role { get; set; }
+    public string? StartMessage { get; set; }
+    public string? EndMesssage { get; set; }
 }
