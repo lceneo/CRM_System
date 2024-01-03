@@ -75,6 +75,32 @@ public class ChatsHub : Hub, IHub
         });
     }
 
+    public async Task Typing(TypingRequest request)
+    {
+        var userId = Context.User.GetId();
+        var chatResponse = await chatsService.GetChatByIdAsync(userId, request.ChatId);
+        if (!chatResponse.IsSuccess)
+        {
+            await Clients.Caller.SendAsync("Error", chatResponse.Error);
+            return;
+        }
+
+        var chat = chatResponse.Value;
+        var othersInGroup = chat.Profiles.Where(p => p.Id != userId);
+        if (othersInGroup.Count() > 0)
+        {
+            foreach (var user in othersInGroup)
+            {
+                try
+                {
+                    await Clients.Group(user.Id.ToString())
+                        .SendAsync("Typing", request);
+                }
+                catch{}
+            }
+        }
+    }
+
     public override Task OnConnectedAsync()
     {
         var userId = Context.User.GetId();
