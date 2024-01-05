@@ -126,14 +126,15 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
       .pipe(
         map(msgs => msgs.items),
         mergeMap(messages =>
-          forkJoin(messages.map(msg => !msg.files.length ? of(msg)
+          !messages.length ? of([]) :
+            (forkJoin(messages.map(msg => !msg.files.length ? of(msg)
             : forkJoin(msg.files.map(file =>
               this.fileMapperS.fileResponseToFileInMessage$(file)
             ))
               .pipe(
                 map(files => ({...msg, files: files}))
               )
-          ))),
+          )))),
         tap(messages => {
           this.messages.set(
             messages.sort((f, s) =>
