@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
-import {IFileInMessageResponse} from "../../models/entities/FileInMessageResponse";
 import {IFileInMessage} from "../../models/entities/FileInMessage";
 import {HttpService} from "../../services/http.service";
 import {map, Observable, switchMap} from "rxjs";
-import mime from 'mime';
+import mime from 'mime'
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +13,7 @@ export class FileMapperService {
     private httpS: HttpService
   ) { }
 
-  public fileKeyToFileInMessage$(fileKeyObj: IFileInMessageResponse): Observable<IFileInMessage> {
+  public fileResponseToFileInMessage$(fileKeyObj: Pick<IFileInMessage, 'fileKey' | 'fileName'>): Observable<IFileInMessage> {
     return this.httpS.post<ArrayBuffer>('/Statics/Download', { fileKey: fileKeyObj.fileKey}, {responseType: 'arraybuffer'})
       .pipe(
         switchMap(arrBuffer =>
@@ -23,6 +22,7 @@ export class FileMapperService {
               {type: mime.getType(fileKeyObj.fileName) ?? 'text/plain'}))),
         map(dataUrl => ({
           fileName: fileKeyObj.fileName,
+          fileKey: fileKeyObj.fileKey,
           dataUrl: dataUrl,
           fileType: mime.getType(fileKeyObj.fileName) ?? 'text/plain'
         }))

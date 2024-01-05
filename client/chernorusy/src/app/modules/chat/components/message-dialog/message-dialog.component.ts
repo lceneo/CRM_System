@@ -17,7 +17,7 @@ import {
   filter, forkJoin,
   from, fromEvent,
   map,
-  merge,
+  merge, mergeMap,
   Observable, of, startWith,
   Subject, Subscription,
   switchMap, take,
@@ -37,6 +37,7 @@ import {MatMenu, MatMenuTrigger} from "@angular/material/menu";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {MatIcon} from "@angular/material/icon";
 import {ProfileService} from "../../../../shared/services/profile.service";
+import {FileMapperService} from "../../../../shared/helpers/mappers/file.mapper.service";
 
 @Component({
   selector: 'app-message-dialog',
@@ -57,7 +58,7 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
   protected membersSectionOpened = false;
   protected msgValue = '';
   protected currentFiles: File[] = [];
-  private maxFilesCount = 10;
+  private maxFilesCount = 1;
   protected chat?: IChatResponseDTO;
 
   protected messages = signal<IMessageInChat[]>([]);
@@ -73,6 +74,7 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
     private messagesListComponent: MessagesListComponent,
     private mainChat: MainChatPageComponent,
     private profileS: ProfileService,
+    private fileMapperS: FileMapperService,
     private destroyRef: DestroyRef,
     private overLayContainer: OverlayContainer,
     private cdr: ChangeDetectorRef
@@ -101,6 +103,12 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
         tap(() => { this.loadingChat$.next(false); this.scrollToTheBottom(); }),
         switchMap(() => merge(this.messageS.receivedMessages$, this.messageS.successMessages$)),
         filter(msg => msg.chatId === this.chatID),
+        mergeMap(msg => !msg.files.length ? of(msg) : forkJoin(msg.files.map(file =>
+          this.fileMapperS.fileResponseToFileInMessage$(file)
+        ))
+          .pipe(
+            map(files => ({...msg, files: files}))
+          )),
         takeUntil(this.destroy$),
       ).subscribe(msg => {
 
@@ -116,14 +124,25 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
   private getExistingMessagesInChat() {
     return this.messageS.getMessages$(this.chatID!)
       .pipe(
+        map(msgs => msgs.items),
+        mergeMap(messages =>
+          forkJoin(messages.map(msg => !msg.files.length ? of(msg)
+            : forkJoin(msg.files.map(file =>
+              this.fileMapperS.fileResponseToFileInMessage$(file)
+            ))
+              .pipe(
+                map(files => ({...msg, files: files}))
+              )
+          ))),
         tap(messages => {
           this.messages.set(
-            messages.items.sort((f, s) =>
+            messages.sort((f, s) =>
               new Date(f.dateTime).getTime() - new Date(s.dateTime).getTime())
           )
         })
       );
   }
+
 
   private scrollToTheBottom() {
     setTimeout(() => this.msgListElementRef?.nativeElement.scrollTo({
@@ -191,7 +210,9 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
   protected onFileChange(event: Event) {
     //@ts-ignore;
     const files = event.target['files'] as FileList;
-
+    if (files.item(0) && files.item(0)!.size > 6144 * 1024) {
+      throw new Error('Максимальный размер файла - 5 МБ')
+    }
     if (!files || !files.length || this.currentFiles.length === this.maxFilesCount) { return; }
     else {
       for (let i = this.currentFiles.length, initialLength = this.currentFiles.length; i < this.maxFilesCount ; i++) {
@@ -257,6 +278,12 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
 
   protected dropFiles(ev: DragEvent) {
     const files = ev.dataTransfer?.files;
+    if ((files && files.length > 1) || this.currentFiles.length) {
+      throw new Error('Не больше одного файла')
+    }
+    if (files![0].size > 6144 * 1024) {
+      throw new Error('Максимальный размер файла - 5 МБ')
+    }
     if (files && files.length && this.currentFiles.length < this.maxFilesCount) {
       for (let i = this.currentFiles.length, initialLength = this.currentFiles.length; i < this.maxFilesCount ; i++) {
         const file = files.item(i - initialLength);
