@@ -151,7 +151,6 @@
     <input #fileInput
            style="display: none"
            type="file"
-           multiple
            maxlength="10"
            (change)="onFileChange($event)"
     >
@@ -162,7 +161,7 @@
             (click) = "fileInput.click()">Вложить</button>
 
     <button mat-menu-item
-            (click) = "currentFiles = [];"
+            (click) = "currentFiles = []; fileInput.value = '';"
             [disabled] = "!currentFiles.length"
     >Удалить</button>
 </mat-menu>
