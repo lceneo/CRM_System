@@ -1,7 +1,7 @@
 
 
 <ng-container *ngTemplateOutlet="(message?.type === MessageType.Text) ? textMessage :
-                                (message?.type === MessageType.System ? systemMessage : fileMessage)">
+                                systemMessage">
 
 </ng-container>
 
@@ -9,6 +9,11 @@
 <ng-template #textMessage>
   <div class="textMsgWrapper">
     <span class="textMsgWrapper__text">{{message?.message}}</span>
+    <section *ngIf="message?.files?.length" [style.margin-top]="'10px'">
+      <ng-container *ngFor="let file of message?.files">
+        <ng-container *ngTemplateOutlet="fileInMessage; context: {$implicit: file}"></ng-container>
+      </ng-container>
+    </section>
     <span class="textMsgWrapper__date">{{message?.dateTime | date: 'HH:mm'}}</span>
   </div>
 </ng-template>
@@ -19,6 +24,22 @@
   </div>
 </ng-template>
 
-<ng-template #fileMessage>
+<ng-template #fileInMessage let-file>
+  <ng-container *ngIf="file.fileType.includes('image'); else downloadFileTemplate">
+    <img #img [src]="file.dataUrl" [width]="(img.naturalWidth < 300 && img.naturalWidth !== 0) ? img.naturalWidth :
+     300" [height]="(img.naturalHeight < 300 && img.naturalHeight !== 0) ? img.naturalHeight : 300"
+         (click) = "openImage(file.dataUrl)"
+    >
+  </ng-container>
 
+  <ng-template #downloadFileTemplate>
+    <div class="file" (click)="link.click()">
+      <div class="iconWrapper">
+        <mat-icon class="icon">insert_drive_file</mat-icon>
+      </div>
+      <a #link class="link" [href]="file.dataUrl" [download]="file.fileName">{{file.fileName}}</a>
+      <p class="size">{{(file.dataUrl | fileSize).toFixed(2) + ' МБ'}}</p>
+    </div>
+  </ng-template>
 </ng-template>
+

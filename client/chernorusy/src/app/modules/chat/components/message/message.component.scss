@@ -3,17 +3,14 @@
   display: grid;
   align-items: end;
   column-gap: 5px;
-  grid-template-areas:
-        "message message datе";
 
   &__text {
     margin: 0;
     display: inline-block;
-    grid-area: message;
   }
 
   &__date {
-    grid-area: datе;
+    justify-self: end;
     font-size: 12px;
   }
 }
@@ -23,5 +20,28 @@
   &__text {
     text-align: center;
     color: gray;
+  }
+}
+
+.file {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
+  cursor: pointer;
+  .iconWrapper {
+    grid-row: 1 / span 2;
+    .icon {
+      font-size: 35px;
+      height: 35px;
+      width: 35px;
+    }
+  }
+  .link {
+    color: #100f0fcf;
+    text-decoration: none;
+    font-size: 12px;
+  }
+  .size {
+    color: #e7d8d8c9;
   }
 }

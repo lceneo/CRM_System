@@ -23,6 +23,7 @@
     "@material/density": "^15.0.0-canary.bc9ae6c9c.0",
     "@microsoft/signalr": "^8.0.0",
     "bootstrap-icons": "^1.11.1",
+    "mime": "^4.0.1",
     "ngx-bootstrap": "^11.0.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
