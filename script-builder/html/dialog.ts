@@ -63,7 +63,7 @@ export function createDialog({ text, id, className, positionX = PositionX.BOTTOM
 	async function sendMessage(msg: string) {
 		const message = new Message(msg, new Date(), 'client');
 		messagesStore.setPending(message);
-		const msgTimestamp = await socket.sendMessage(msg);
+		const msgTimestamp = await socket?.sendMessage(msg);
 		messagesStore.movePending(message, {timeStamp: msgTimestamp})
 	}
 

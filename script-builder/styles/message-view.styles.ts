@@ -19,6 +19,10 @@ export const messageViewStyles = `
         align-self: flex-start;
     }
     
+    .${prefix}-message-view-join .${prefix}-message-view-content {
+        line-height: 1em;
+    }
+    
     .${prefix}-message-view-author {
         font-size: 0.5em;
         align-self: flex-start;

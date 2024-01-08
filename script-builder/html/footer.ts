@@ -3,6 +3,8 @@ import { createButton } from "./button";
 import { cls } from "../helpers/cls";
 import { createInput } from "./input";
 import { socket } from "../index";
+import {stylesStore} from "../store/styles";
+import {Customization} from "../customization";
 
 export function createFooter({ text, id, className, styles, onSend }: {
 	text?: string,
@@ -69,6 +71,10 @@ export function createFooter({ text, id, className, styles, onSend }: {
 	applyFooterStyles(style);
 	Object.assign(style, styles);
 
+	stylesStore.on('footer', (styles: Customization['footer']) => {
+		footer.style.backgroundColor = styles.bgc;
+		footer.style.padding = styles.padding;
+	})
 
 	const closeFooter = () => {
 		document.body.removeChild(footer)

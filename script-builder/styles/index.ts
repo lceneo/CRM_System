@@ -8,6 +8,7 @@ import {messageViewStyles} from "./message-view.styles";
 import {borderStyles} from "./border.styles";
 import {animations} from "./animations";
 import {loadingStyles} from "./loading.styles";
+import {activeStatusMessage} from "./active-status-message";
 
 export const cssStyles = [
 	animations,
@@ -21,5 +22,6 @@ export const cssStyles = [
 	messageViewStyles,
 	borderStyles,
 	loadingStyles,
+	activeStatusMessage,
 ].join('\t');
 

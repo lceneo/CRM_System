@@ -1,9 +1,20 @@
+import {cls} from "../helpers/cls";
+import {getIsCustomizing} from "../customization";
+
 class MessagesStore {
 	items: Message[] = [];
 	pending: Message[] = [];
 
 	private itemsChangeListeners: ((mes: Message) => any)[] = [];
 	private pendingChangeListeners: ((mes: Message[]) => any)[] = [];
+
+	constructor() {
+		if (getIsCustomizing()) {
+			this.items.push(new Message("Менеджер вошел в чат", new Date(), 'join'))
+			this.items.push(new Message("Добрый день, у меня появился вопрос", new Date(), 'client'))
+			this.items.push(new Message("День добрый, сейчас найдем решение", new Date(), 'server', 'Майкл', 'Жордан'))
+		}
+	}
 
 	setMessage(mes: Message) {
 		this.items.push(mes);
@@ -41,7 +52,7 @@ export class Message {
 	constructor(
 		public content: string,
 		timestamp: Date | string | number,
-		public side: 'client' | 'server',
+		public side: 'client' | 'server' | 'join',
 		public name?: string,
 		public surName?: string,
 	) {

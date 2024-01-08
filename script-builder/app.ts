@@ -3,8 +3,9 @@ import { addEventListener } from "./helpers/addEventListener";
 import { createButton } from "./html/button";
 import { createDialog, PositionY } from "./html/dialog";
 import { useOnClickOutside } from "./helpers/useOnClickOutside";
+import {Customization} from "./customization";
 
-export function execute(connection: HubConnection, ip: string) {
+export function execute(connection: HubConnection, ip: string): [HTMLElement, (show: boolean)=> any] {
     const [button, removeButton, showButton] = createButton({
         text: '+',
         keepCircle: true,
@@ -21,21 +22,12 @@ export function execute(connection: HubConnection, ip: string) {
     document.body.appendChild(button);
     showDialog(false);
     document.body.appendChild(dialog);
-    addEventListener(button, 'click', () => {
+    const onButtonClick = () => {
         button.disabled = true;
         showButton(false);
         showDialog(true);
-        /*setTimeout(() => {
-            const removeOutsideListener = useOnClickOutside(dialog, () => closeDialog())
-            const closeDialog = () => {
-                removeOutsideListener();
-                showDialog(false);
-                button.disabled = false;
-                showButton( true);
-            }
-            document.body.appendChild(dialog);
-        });*/
-    });
+    }
+    addEventListener(button, 'click', onButtonClick);
+    return [button, showButton]
 }
-
 

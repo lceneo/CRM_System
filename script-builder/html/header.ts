@@ -1,6 +1,8 @@
 import { notNull } from "../helpers/notNull";
 import { createButton } from "./button";
 import { cls } from "../helpers/cls";
+import {stylesStore} from "../store/styles";
+import {Customization} from "../customization";
 
 export function createHeader({ text, id, className, styles, onCloseClick }: {
 	text?: string,
@@ -45,6 +47,10 @@ export function createHeader({ text, id, className, styles, onCloseClick }: {
 	applyHeaderStyles(style);
 	Object.assign(style, styles);
 
+	stylesStore.on('header', (styles) => {
+		header.style.padding = styles.padding;
+		header.style.backgroundColor = styles.bgc;
+	})
 
 	const closeHeader = () => {
 		document.body.removeChild(header)

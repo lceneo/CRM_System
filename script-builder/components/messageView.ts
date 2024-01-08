@@ -2,6 +2,8 @@ import { notNull } from "../helpers/notNull";
 import { cls } from "../helpers/cls";
 import { createDiv } from "../html/div";
 import { Message, messagesStore } from "../store/messages";
+import {stylesStore} from "../store/styles";
+import {Customization, DefaultMessage, DefaultSection, messageSideToAlignSelf} from "../customization";
 
 export function createMessageView({ id, className, styles, message, pending = false }: {
     id?: string,
@@ -10,10 +12,20 @@ export function createMessageView({ id, className, styles, message, pending = fa
     pending?: boolean
     styles?: Partial<CSSStyleDeclaration>
 }): [HTMLDivElement, () => void, (show: boolean) => void] {
+    const joinStyles = {
+        textAlign: 'center',
+        fontSize: '13px',
+        lineHeight: '2em',
+        backgroundColor: '#b29b57',
+        display: 'block',
+        height: '2em',
+        margin: '0',
+        borderRadius: '10px',
+    }
     const [messageView, closeMessage, showMessage] = createDiv({
         className: 'message-view',
-        styles: {
-            alignSelf: message.side === 'client' ? 'flex-end' : 'flex-start',
+        styles: message.side === 'join' ? joinStyles : {
+            alignSelf: message.side === 'client' ? 'flex-end' : message.side === 'server' ? 'flex-start' : undefined,
             display: 'flex',
             flexFlow: 'column',
             backgroundColor: 'lightblue',
@@ -33,6 +45,9 @@ export function createMessageView({ id, className, styles, message, pending = fa
         <p class="${cls('message-view-content')}">${message.content}</p>
         ${message.pending ? loading : time}
     `
+    if (message.side === 'join') {
+        messageView.innerHTML = `<p class="${cls('message-view-content')}">${message.content}</p>`
+    }
 
     const listeners: (() => void)[] = [];
 
@@ -49,7 +64,39 @@ export function createMessageView({ id, className, styles, message, pending = fa
     const style = messageView.style;
     Object.assign(style, styles);
 
-
+    let type: 'comeMsg' | 'mngMsg' | 'userMsg'
+    const listener = (s: Customization['userMsg' | 'mngMsg' | 'comeMsg']) => {
+        const contentS = messageView.querySelector<HTMLParagraphElement>(`.${cls('message-view-content')}`)?.style;
+        const timeS = messageView.querySelector<HTMLTimeElement>(`.${cls('message-view-time')}`)?.style;
+        mvs.padding = s.padding;
+        mvs.backgroundColor = s.bgc;
+        mvs.alignSelf = messageSideToAlignSelf[s.side];
+        if (contentS) {
+            contentS.textAlign = s.content.align;
+            contentS.fontSize = `${s.content.size}${s.content.type}`;
+            contentS.lineHeight = s.content.lineHeight.toString();
+            contentS.color = s.content.color;
+        }
+        if ('time' in s && timeS) {
+            timeS.textAlign = s.time.align;
+            timeS.fontSize = `${s.time.size}${s.time.type}`;
+            timeS.lineHeight = s.time.lineHeight.toString();
+            timeS.color = s.time.color;
+        }
+    }
+    const mvs = messageView.style;
+    switch (message.side) {
+        case "client":
+            type = 'userMsg';
+            break
+        case "join":
+            type = 'comeMsg';
+            break
+        case "server":
+            type = 'mngMsg';
+            break
+    }
+    stylesStore.on(type, listener)
 
     const closeDialog = () => {
         document.body.removeChild(messageView)
