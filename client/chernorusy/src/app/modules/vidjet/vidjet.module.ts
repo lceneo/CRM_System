@@ -11,6 +11,9 @@ import {AccordionModule} from "ngx-bootstrap/accordion";
 import {MatCardModule} from "@angular/material/card";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {TooltipModule} from "ngx-bootstrap/tooltip";
+import {CdkDrag, CdkDragHandle} from "@angular/cdk/drag-drop";
+import {NgxModalDraggableDirective} from "../../shared/directives/ngx-modal-draggable";
+import {WidgetService} from "../../shared/services/widget.service";
 
 
 const routes: Routes = [
@@ -18,10 +21,14 @@ const routes: Routes = [
 ]
 
 @NgModule({
+  providers: [
+    WidgetService,
+  ],
   declarations: [
     VidjetsListComponent,
     VidjetItemComponent,
-    VidjetCreateComponent
+    VidjetCreateComponent,
+    NgxModalDraggableDirective
   ],
   imports: [
     CommonModule,
@@ -32,7 +39,9 @@ const routes: Routes = [
     AccordionModule,
     MatCardModule,
     MatTooltipModule,
-    TooltipModule
+    TooltipModule,
+    CdkDrag,
+    CdkDragHandle,
   ]
 })
 export class VidjetModule { }

@@ -4,6 +4,8 @@ import {BsModalRef, BsModalService} from "ngx-bootstrap/modal";
 import {FormControl} from "@angular/forms";
 import {VidjetService} from "../../services/vidjet.service";
 import {tap} from "rxjs";
+import {CdkDrag} from "@angular/cdk/drag-drop";
+import {WidgetService} from "../../../../shared/services/widget.service";
 
 @Component({
   selector: 'app-vidjet-item',
@@ -19,7 +21,8 @@ export class VidjetItemComponent implements OnInit {
   protected modalRef?: BsModalRef;
   constructor(
     private modalService: BsModalService,
-    private vidjetS: VidjetService
+    private vidjetS: VidjetService,
+    private widgetS: WidgetService,
   ) {}
 
   ngOnInit(): void {
@@ -27,7 +30,9 @@ export class VidjetItemComponent implements OnInit {
   }
 
   protected openModal(template: TemplateRef<void>) {
+    this.widgetS.show(true);
     this.modalRef = this.modalService.show(template);
+    this.modalRef.onHide?.subscribe(() => this.widgetS.show(false));
   }
 
   protected submitChanges() {
@@ -46,4 +51,7 @@ export class VidjetItemComponent implements OnInit {
       .subscribe();
   }
 
+  showWidget(show: boolean) {
+    this.widgetS.show(show);
+  }
 }
