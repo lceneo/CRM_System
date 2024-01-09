@@ -10,4 +10,5 @@ public class ChatOutDTO
     public IEnumerable<ProfileInChatDTO> Profiles { get; set; }
     public MessageInChatDTO LastMessage { get; set; }
     public ChatStatus Status { get; set; }
+    public int UnreadMessagesCount { get; set; }
 }

@@ -90,7 +90,7 @@ public class ChatsController : ControllerBase
             return BadRequest(response.Error);
 
         var message = response.Value.message;
-        return Ok(mapper.Map<MessageOutDTO>(message));
+        return Ok(mapper.Map<MessageOutDTO>(message, opt => opt.Items["userId"] = senderId));
     }
 
     [HttpGet("{chatId:Guid}/Messages")]

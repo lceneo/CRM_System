@@ -4,8 +4,11 @@ using API.Infrastructure;
 using API.Modules.AccountsModule.Entities;
 using API.Modules.ChatsModule.ApiDTO;
 using API.Modules.ChatsModule.DTO;
+using API.Modules.ChatsModule.Entities;
 using API.Modules.ChatsModule.Ports;
 using API.Modules.ProfilesModule.DTO;
+using API.Modules.ProfilesModule.Entities;
+using API.Modules.ProfilesModule.Ports;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -22,15 +25,24 @@ public class ChatsHub : Hub, IHub
 
     private readonly HubConnectionsProvider connectionsProvider;
     private readonly IChatsService chatsService;
+    private readonly IMessagesRepository messagesRepository;
+    private readonly IChatsRepository chatsRepository;
+    private readonly IProfilesRepository profilesRepository;
     private readonly IMapper mapper;
 
     public ChatsHub(
         HubConnectionsProvider connectionsProvider,
         IChatsService chatsService,
+        IMessagesRepository messagesRepository,
+        IChatsRepository chatsRepository,
+        IProfilesRepository profilesRepository,
         IMapper mapper)
     {
         this.connectionsProvider = connectionsProvider;
         this.chatsService = chatsService;
+        this.messagesRepository = messagesRepository;
+        this.chatsRepository = chatsRepository;
+        this.profilesRepository = profilesRepository;
         this.mapper = mapper;
     }
 
@@ -54,15 +66,17 @@ public class ChatsHub : Hub, IHub
             {
                 try
                 {
-                    await Clients.Group(user.Id.ToString())
-                        .SendAsync("Recieve", mapper.Map<MessageOutDTO>(response.Value.message));
+                    await Clients
+                        .Group(user.Id.ToString())
+                        .SendAsync("Recieve", mapper.Map<MessageOutDTO>(response.Value.message, opt => opt.Items["userId"] = user.Id));
                 }
                 catch{}
             }
         }
         else
         {
-            await Managers.SendAsync("Recieve", mapper.Map<MessageOutDTO>(response.Value.message));
+            await Managers
+                .SendAsync("Recieve", mapper.Map<MessageOutDTO>(response.Value.message, opt => opt.Items["userId"] = Guid.Empty));
         }
 
         await Clients.Caller.SendAsync("Success", new SendMessageResponse
@@ -95,6 +109,36 @@ public class ChatsHub : Hub, IHub
                 {
                     await Clients.Group(user.Id.ToString())
                         .SendAsync("Typing", request);
+                }
+                catch{}
+            }
+        }
+    }
+
+    public async Task Check(CheckMessagesRequest request)
+    {
+        var userId = Context.User.GetId();
+        var profile = await profilesRepository.GetByIdAsync(userId);
+        var messages = await messagesRepository.GetByIdsAsync(request.MessageIds);
+        foreach (var message in messages)
+        {
+            var check = new CheckEntity {Message = message, Profile = profile};
+            if (message.Checks == null)
+                message.Checks = new HashSet<CheckEntity> {check};
+            else
+                message.Checks.Add(check);
+            await messagesRepository.UpdateAsync(message);
+        }
+        var chat = await chatsRepository.GetByIdAsync(messages.First().Chat.Id);
+        var othersInGroup = chat.Profiles.Where(p => p.Id != userId);
+        if (othersInGroup.Any())
+        {
+            foreach (var user in othersInGroup)
+            {
+                try
+                {
+                    await Clients.Group(user.Id.ToString())
+                        .SendAsync("Check", request);
                 }
                 catch{}
             }

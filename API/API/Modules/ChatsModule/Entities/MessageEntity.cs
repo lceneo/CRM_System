@@ -14,6 +14,7 @@ public class MessageEntity : IEntity
     public MessageType Type { get; set; }
     public DateTime DateTime { get; set; }
     public HashSet<FileEntity>? Files { get; set; }
+    public HashSet<CheckEntity>? Checks { get; set; }
 }
 
 public enum MessageType
