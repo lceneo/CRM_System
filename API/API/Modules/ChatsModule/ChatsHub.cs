@@ -143,6 +143,10 @@ public class ChatsHub : Hub, IHub
                 catch{}
             }
         }
+        else
+        {
+            await Managers.SendAsync("Check", request);
+        }
     }
 
     public override Task OnConnectedAsync()
