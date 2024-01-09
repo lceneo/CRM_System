@@ -130,6 +130,12 @@ public class ChatsHub : Hub, IHub
             await messagesRepository.UpdateAsync(message);
         }
         var chat = await chatsRepository.GetByIdAsync(messages.First().Chat.Id);
+        var reponse = new CheckMessagesResponse
+        {
+            Checker = mapper.Map<ProfileOutShortDTO>(profile),
+            ChatId = chat.Id,
+            MessageIds = request.MessageIds,
+        };
         var othersInGroup = chat.Profiles.Where(p => p.Id != userId);
         if (othersInGroup.Any())
         {
@@ -138,14 +144,14 @@ public class ChatsHub : Hub, IHub
                 try
                 {
                     await Clients.Group(user.Id.ToString())
-                        .SendAsync("Check", request);
+                        .SendAsync("Check", reponse);
                 }
                 catch{}
             }
         }
         else
         {
-            await Managers.SendAsync("Check", request);
+            await Managers.SendAsync("Check", reponse);
         }
     }
 
