@@ -12,6 +12,7 @@ public class VidjetsMapping : Profile
         CreateMap<VidjetEntity, VidjetEntity>();
         CreateMap<VidjetEntity, VidjetOutDTO>()
             .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Account.Id));
-        CreateMap<VidjetCreateRequest, VidjetEntity>();
+        CreateMap<VidjetCreateOrUpdateRequest, VidjetEntity>()
+            .ForMember(dest => dest.Styles, opt => opt.MapFrom(src => src.Styles.ToString()));
     }
 }

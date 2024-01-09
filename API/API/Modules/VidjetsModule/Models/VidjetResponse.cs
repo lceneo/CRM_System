@@ -4,4 +4,5 @@ public class VidjetResponse
 {
     public string Token { get; set; }
     public Guid ChatId { get; set; }
+    public string Styles { get; set; }
 }
