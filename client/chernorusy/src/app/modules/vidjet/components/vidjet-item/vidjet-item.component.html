@@ -34,7 +34,7 @@
       <span aria-hidden="true" class="visually-hidden">&times;</span>
     </button>
   </div>
-  <div class="modal-body">
+  <div class="modal-body" style="overflow-y: scroll; max-height: 60vh">
     <div class="mb-3">
       <label for="loginFormControl" class="form-label">Пароль</label>
       <input
@@ -45,9 +45,100 @@
     </div>
     <button
       class="btn btn-primary enterBtn"
-      [disabled]="domainFormControl.value === vidjet.domen"
+      [disabled]="saveDisabled"
       (click) = "submitChanges()"
     >Сохранить</button>
+    <br>
+    <accordion>
+      <accordion-group>
+        <h4 class="pull-left" accordion-heading>Хэдер</h4>
+        <label for="loginFormControl" class="form-label">Фон</label>
+        <input
+          class="form-control"
+          type="color"
+          [(ngModel)]="widgetStyles.header.bgc"
+          (ngModelChange)="applyWidgetStyles.next()"
+        >
+          <!--(input)="setWidgetStyle($event, 'header', 'bgc')"-->
+
+      </accordion-group>
+      <accordion-group>
+        <h4 class="pull-left" accordion-heading>Основной контент</h4>
+        <label for="loginFormControl" class="form-label">Фон</label>
+        <input
+          class="form-control"
+          type="color"
+          [(ngModel)]="widgetStyles.content.bgc"
+          (ngModelChange)="applyWidgetStyles.next()"
+        >
+      </accordion-group>
+      <accordion-group>
+        <h4 class="pull-left" accordion-heading>Футер</h4>
+        <label for="loginFormControl" class="form-label">Фон</label>
+        <input
+          class="form-control"
+          type="color"
+          [(ngModel)]="widgetStyles.footer.bgc"
+          (ngModelChange)="applyWidgetStyles.next()"
+        >
+      </accordion-group>
+      <accordion-group>
+        <h4 class="pull-left" accordion-heading>Сообщения</h4>
+        <accordion>
+          <accordion-group>
+            <h5 class="pull-left" accordion-heading>Сообщения от клиента</h5>
+            <label for="loginFormControl" class="form-label">Фон</label>
+            <input
+              class="form-control"
+              type="color"
+              [(ngModel)]="widgetStyles.userMsg.bgc"
+              (ngModelChange)="applyWidgetStyles.next()"
+            >
+            <label for="userMsgPosGroup">Положение сообщения</label>
+            <mat-radio-group id="userMsgPosGroup" [(ngModel)]="widgetStyles.userMsg.side"
+                             (ngModelChange)="applyWidgetStyles.next()">
+              <mat-radio-button value="left">Слева</mat-radio-button>
+              <mat-radio-button value="center">По центру</mat-radio-button>
+              <mat-radio-button value="right">Справа</mat-radio-button>
+            </mat-radio-group>
+          </accordion-group>
+          <accordion-group>
+            <h5 class="pull-left" accordion-heading>Сообщения от менеджера</h5>
+            <label for="loginFormControl" class="form-label">Фон</label>
+            <input
+              class="form-control"
+              type="color"
+              [(ngModel)]="widgetStyles.mngMsg.bgc"
+              (ngModelChange)="applyWidgetStyles.next()"
+            >
+            <label for="mngMsgPosGroup">Положение сообщения</label>
+            <mat-radio-group id="mngMsgPosGroup" [(ngModel)]="widgetStyles.mngMsg.side"
+                             (ngModelChange)="applyWidgetStyles.next()">
+              <mat-radio-button value="left">Слева</mat-radio-button>
+              <mat-radio-button value="center">По центру</mat-radio-button>
+              <mat-radio-button value="right">Справа</mat-radio-button>
+            </mat-radio-group>
+          </accordion-group>
+          <accordion-group>
+            <h5 class="pull-left" accordion-heading>Сообщения о входе</h5>
+            <label for="loginFormControl" class="form-label">Фон</label>
+            <input
+              class="form-control"
+              type="color"
+              [(ngModel)]="widgetStyles.comeMsg.bgc"
+              (ngModelChange)="applyWidgetStyles.next()"
+            >
+            <label for="joinMsgPosGroup">Положение сообщения</label>
+            <mat-radio-group id="joinMsgPosGroup" [(ngModel)]="widgetStyles.comeMsg.side"
+                             (ngModelChange)="applyWidgetStyles.next()">
+              <mat-radio-button value="left">Слева</mat-radio-button>
+              <mat-radio-button value="center">По центру</mat-radio-button>
+              <mat-radio-button value="right">Справа</mat-radio-button>
+            </mat-radio-group>
+          </accordion-group>
+        </accordion>
+      </accordion-group>
+    </accordion>
   </div>
 </ng-template>
 

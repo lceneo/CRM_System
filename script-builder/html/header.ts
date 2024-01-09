@@ -61,6 +61,7 @@ export function createHeader({ text, id, className, styles, onCloseClick }: {
 	Object.assign(style, styles);
 
 	stylesStore.on('header', (styles) => {
+		console.log('setting header styles');
 		header.style.padding = styles.padding;
 		header.style.backgroundColor = styles.bgc;
 	})

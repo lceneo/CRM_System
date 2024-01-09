@@ -10,6 +10,9 @@ export function execute(connection: HubConnection, ip: string): [HTMLElement, (s
         text: '+',
         keepCircle: true,
         className: 'open-widget-button',
+        styles: {
+            zIndex: '10000',
+        }
     });
     const [dialog, removeDialog, showDialog] = createDialog({
         positionY: PositionY.LEFT,
@@ -17,7 +20,10 @@ export function execute(connection: HubConnection, ip: string): [HTMLElement, (s
             button.disabled = false;
             showButton(true)
         },
-        className: 'chat-dialog-wrapper'
+        className: 'chat-dialog-wrapper',
+        styles: {
+            zIndex: '10000',
+        }
     });
     document.body.appendChild(button);
     showDialog(false);

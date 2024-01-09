@@ -29,6 +29,10 @@ export class WidgetService {
       setTimeout(() => this.show(t), 10)
     }
   }
+
+  setStyle(s: Customization) {
+    window.applyStylesWidget(s);
+  }
 }
 
 declare global {
