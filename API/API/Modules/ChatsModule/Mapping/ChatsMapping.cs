@@ -35,9 +35,15 @@ public class ChatsMapping : Profile
         int _,
         ResolutionContext context)
     {
-        var userId = (Guid) context.Items["userId"];
+        Guid? userId = null;
+        if (context.Items.TryGetValue("userId", out var userIdObj))
+        {
+            userId = (Guid) userIdObj;
+        }
+        
         return src
             .Messages
-            .Count(m => m.Checks == null || m.Checks.All(c => c.Id != userId));
+            .Count(m => m.Checks == null 
+                        || m.Checks.All(c => userId == null || c.Id != userId));
     }
 }
