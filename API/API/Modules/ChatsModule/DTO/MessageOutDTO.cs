@@ -13,4 +13,5 @@ public class MessageOutDTO
     public IEnumerable<FileInMessageDTO>? Files { get; set; }
     public MessageType Type { get; set; }
     public DateTime DateTime { get; set; }
+    public IEnumerable<ProfileOutShortDTO>? Checkers { get; set; }
 }

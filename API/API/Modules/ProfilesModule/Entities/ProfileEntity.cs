@@ -18,4 +18,5 @@ public class ProfileEntity : IEntity
     public HashSet<MessageEntity> Messages { get; set; }
     public string? StartMessage { get; set; }
     public string? EndMesssage { get; set; }
+    public HashSet<CheckEntity> Checks { get; set; }
 }

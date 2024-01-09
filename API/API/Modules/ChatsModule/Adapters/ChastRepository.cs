@@ -23,6 +23,7 @@ public class ChatsRepository : CRURepository<ChatEntity>, IChatsRepository
             .Include(c => c.Profiles).ThenInclude(p => p.Account)
             .Include(c => c.Messages).ThenInclude(m => m.Sender)
             .Include(c => c.Messages).ThenInclude(m => m.Files)
+            .Include(c => c.Messages).ThenInclude(m => m.Checks)
             .Where(c => c.Profiles.Count == 1)
             .ToListAsync();
     }
@@ -33,6 +34,7 @@ public class ChatsRepository : CRURepository<ChatEntity>, IChatsRepository
             .Include(c => c.Profiles).ThenInclude(p => p.Account)
             .Include(c => c.Messages).ThenInclude(m => m.Sender)
             .Include(c => c.Messages).ThenInclude(m => m.Files)
+            .Include(c => c.Messages).ThenInclude(m => m.Checks)
             .FirstOrDefaultAsync(c => c.Id == id);
     }
 
@@ -42,6 +44,7 @@ public class ChatsRepository : CRURepository<ChatEntity>, IChatsRepository
             .Include(c => c.Profiles).ThenInclude(p => p.Account)
             .Include(c => c.Messages).ThenInclude(m => m.Sender)
             .Include(c => c.Messages).ThenInclude(m => m.Files)
+            .Include(c => c.Messages).ThenInclude(m => m.Checks)
             .Where(c => c.Profiles.Any(p => p.Id == userId))
             .ToListAsync();
     }
@@ -52,6 +55,7 @@ public class ChatsRepository : CRURepository<ChatEntity>, IChatsRepository
             .Include(c => c.Profiles).ThenInclude(p => p.Account)
             .Include(c => c.Messages).ThenInclude(m => m.Sender)
             .Include(c => c.Messages).ThenInclude(m => m.Files)
+            .Include(c => c.Messages).ThenInclude(m => m.Checks)
             .FirstOrDefaultAsync(c => c.Profiles.Count == userIds.Count
                                       && c.Profiles.All(p => userIds.Contains(p.Id)));
     }
@@ -60,10 +64,9 @@ public class ChatsRepository : CRURepository<ChatEntity>, IChatsRepository
     {
         var query = Set
             .Include(c => c.Profiles)
-            .Include(c => c.Messages)
-            .ThenInclude(m => m.Sender)
-            .Include(c => c.Messages)
-            .ThenInclude(m => m.Files)
+            .Include(c => c.Messages).ThenInclude(m => m.Sender)
+            .Include(c => c.Messages).ThenInclude(m => m.Files)
+            .Include(c => c.Messages).ThenInclude(m => m.Checks)
             .AsQueryable();
         if (asNoTracking)
             query = query.AsNoTracking();

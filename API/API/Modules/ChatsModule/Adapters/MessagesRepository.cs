@@ -21,6 +21,7 @@ public class MessagesRepository : CRUDRepository<MessageEntity>, IMessagesReposi
             .AsNoTracking()
             .Include(m => m.Sender)
             .Include(m => m.Files)
+            .Include(m => m.Checks)
             .Where(m => m.Chat.Id == chatId);
 
         if (request.MessageIds != null)

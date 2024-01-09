@@ -8,6 +8,7 @@ using API.Modules.ChatsModule.Ports;
 using API.Modules.LogsModule;
 using API.Modules.ProfilesModule.DTO;
 using API.Modules.ProfilesModule.Ports;
+using API.Modules.StaticModule.Entities;
 using API.Modules.StaticModule.Ports;
 using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
@@ -55,9 +56,13 @@ public class ChatsService : IChatsService
         if (chat.Status == ChatStatus.Blocked)
             return Result.BadRequest<(ChatEntity chat, MessageEntity message)>("Чат заблокирован сервисом");
 
-        var files = staticsRepository.Get(request.FileKeys).ToHashSet();
-        if (files.Count() != request.FileKeys.Count())
-            return Result.NotFound<(ChatEntity chat, MessageEntity message)>("Не удалось найти файлы");
+        HashSet<FileEntity> files = null;
+        if (request.FileKeys != null)
+        {
+            files = staticsRepository.Get(request.FileKeys).ToHashSet();
+            if (files.Count != request.FileKeys.Count())
+                return Result.NotFound<(ChatEntity chat, MessageEntity message)>("Не удалось найти файлы");
+        }
 
         if (chat.Status == ChatStatus.Archived)
         {
@@ -113,7 +118,12 @@ public class ChatsService : IChatsService
 
         var receivers = chat.Profiles;
         foreach (var receiver in receivers)
-            await chatHub.Clients.Group(receiver.Id.ToString()).SendAsync("Recieve", mapper.Map<MessageOutDTO>(messageEntity));
+        {
+            var receiverId = receiver.Id.ToString();
+            await chatHub.Clients
+                .Group(receiverId)
+                .SendAsync("Recieve", mapper.Map<MessageOutDTO>(messageEntity, opt => opt.Items["userId"] = receiverId));
+        }
 
         await LogMessage(messageEntity, chatId);
         return Result.Ok((chat, messageEntity));

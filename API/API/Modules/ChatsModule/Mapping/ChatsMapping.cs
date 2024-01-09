@@ -13,7 +13,8 @@ public class ChatsMapping : Profile
             .ForMember(dest => dest.LastMessage,
                 opt => opt.MapFrom(src => src.Messages.OrderBy(m => m.DateTime).LastOrDefault()))
             .ForMember(dest => dest.Name, opt => opt.MapFrom(GetChatName))
-            .ForMember(dest => dest.Profiles, opt => opt.MapFrom(src => src.Profiles));
+            .ForMember(dest => dest.Profiles, opt => opt.MapFrom(src => src.Profiles))
+            .ForMember(dest => dest.UnreadMessagesCount, opt => opt.MapFrom(MapUnreadsCount));
     }
 
     private string GetChatName(ChatEntity src, ChatOutDTO dest, string _, ResolutionContext context)
@@ -26,5 +27,17 @@ public class ChatsMapping : Profile
         return profile != null
             ? $"{profile.Surname} {profile.Name}"
             : src.Name;
+    }
+
+    private int MapUnreadsCount(
+        ChatEntity src,
+        ChatOutDTO dest,
+        int _,
+        ResolutionContext context)
+    {
+        var userId = (Guid) context.Items["userId"];
+        return src
+            .Messages
+            .Count(m => m.Checks == null || m.Checks.All(c => c.Id != userId));
     }
 }
