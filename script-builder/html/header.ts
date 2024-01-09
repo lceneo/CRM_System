@@ -3,6 +3,8 @@ import { createButton } from "./button";
 import { cls } from "../helpers/cls";
 import {stylesStore} from "../store/styles";
 import {Customization} from "../customization";
+import {createDiv} from "./div";
+import {socket} from "../index";
 
 export function createHeader({ text, id, className, styles, onCloseClick }: {
 	text?: string,
@@ -11,7 +13,7 @@ export function createHeader({ text, id, className, styles, onCloseClick }: {
 	onCloseClick?: (ev: MouseEvent) => void,
 	styles?: Partial<CSSStyleDeclaration>
 }): [HTMLDivElement, () => void, (show: boolean) => void] {
-	const header = document.createElement('div')
+	const header = document.createElement('div');
 	header.classList.add(cls('border-radius-top'));
 	const [closeButton, _, showButton] = createButton({
 		text: 'X',
@@ -30,6 +32,17 @@ export function createHeader({ text, id, className, styles, onCloseClick }: {
 		closeButton.addEventListener('click', onCloseClick);
 	}
 	header.appendChild(closeButton);
+	const [onlineIndicator] = createDiv({
+		styles: {
+			width: '10px',
+			height: '10px',
+			borderRadius: '100%',
+			backgroundColor: 'red',
+		}
+	});
+	header.appendChild(onlineIndicator);
+
+	socket?.onActiveStatus(connected => onlineIndicator.style.backgroundColor = connected ? 'green' : 'red')
 	const listeners: (() => void)[] = [];
 
 	if (notNull(text)) {
