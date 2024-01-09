@@ -61,19 +61,19 @@ public class VidjetsService : IVidjetsService
         return Result.Ok(mapper.Map<VidjetOutDTO>(vidjetEntity));
     }
 
-    public async Task<Result<CreateResponse<Guid>>> CreateOrUpdateVidjet(Guid userId, VidjetCreateRequest vidjetCreateRequest)
+    public async Task<Result<CreateResponse<Guid>>> CreateOrUpdateVidjet(Guid userId, VidjetCreateOrUpdateRequest vidjetCreateOrUpdateRequest)
     {
         var account = await accountsRepository.GetByIdAsync(userId);
         if (account == null)
             return Result.NotFound<CreateResponse<Guid>>("Такого пользователя не существует");
         var vidjet = await vidjetsRepository.SearchVidjetsAsync(new VidjetsSearchRequest
         {
-            Domen = vidjetCreateRequest.Domen,
+            Domen = vidjetCreateOrUpdateRequest.Domen,
         });
         if (vidjet.Items.Count > 0)
             return Result.BadRequest<CreateResponse<Guid>>("Такой домен уже зарегистрирован в системе");
 
-        var res = mapper.Map<VidjetEntity>(vidjetCreateRequest);
+        var res = mapper.Map<VidjetEntity>(vidjetCreateOrUpdateRequest);
         res.Account = account;
         return Result.Ok(await vidjetsRepository.CreateOrUpdateAsync(res));
     }
@@ -112,6 +112,7 @@ public class VidjetsService : IVidjetsService
         {
             Token = accountsService.CreateToken(claims),
             ChatId = response.Value.Id,
+            Styles = vidjet.Styles,
         });
     }
 }

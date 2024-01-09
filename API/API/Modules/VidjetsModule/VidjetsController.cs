@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.Json.Nodes;
 using API.Extensions;
 using API.Infrastructure;
 using API.Modules.VidjetsModule.Models;
@@ -37,9 +38,9 @@ public class VidjetsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> CreateOrUpdateVidjet(VidjetCreateRequest vidjetCreateRequest)
+    public async Task<ActionResult> CreateOrUpdateVidjet(VidjetCreateOrUpdateRequest vidjetCreateOrUpdateRequest)
     {
-        var response = await vidjetsService.CreateOrUpdateVidjet(User.GetId(), vidjetCreateRequest);
+        var response = await vidjetsService.CreateOrUpdateVidjet(User.GetId(), vidjetCreateOrUpdateRequest);
 
         return response.ActionResult;
     }
