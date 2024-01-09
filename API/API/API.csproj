@@ -23,6 +23,12 @@
     <Compile Update="Modules\ChatsModule\Entities\ChatStatus.cs">
       <DependentUpon>ChatEntity.cs</DependentUpon>
     </Compile>
+    <Compile Update="Modules\ChatsModule\ApiDTO\CheckMessagesRequest.cs">
+      <DependentUpon>CheckMessages.cs</DependentUpon>
+    </Compile>
+    <Compile Update="Modules\ChatsModule\ApiDTO\CheckMessagesResponse.cs">
+      <DependentUpon>CheckMessages.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>
