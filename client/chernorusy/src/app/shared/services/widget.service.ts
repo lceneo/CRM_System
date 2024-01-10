@@ -1,6 +1,6 @@
 import {Injectable} from "@angular/core";
 import {config} from "../../../main";
-import type {Customization} from '../../../../../../script-builder/customization'
+import {Customization} from "../../modules/vidjet/services/vidjet.service";
 
 @Injectable({
   providedIn: 'root',

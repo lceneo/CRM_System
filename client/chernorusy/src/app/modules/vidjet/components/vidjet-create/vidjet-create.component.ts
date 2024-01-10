@@ -3,7 +3,6 @@ import {FormControl, Validators} from "@angular/forms";
 import {VidjetService} from "../../services/vidjet.service";
 import {tap} from "rxjs";
 import {AccordionPanelComponent} from "ngx-bootstrap/accordion";
-import {Customization} from "../../../../../../../../script-builder/customization";
 
 @Component({
   selector: 'app-vidjet-create',

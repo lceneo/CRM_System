@@ -1,4 +1,4 @@
-import {Customization} from "../../../../../../../../script-builder/customization";
+import {Customization} from "../../../../modules/vidjet/services/vidjet.service";
 
 export interface IVidjetPOSTRequestDTO {
   id?: string;

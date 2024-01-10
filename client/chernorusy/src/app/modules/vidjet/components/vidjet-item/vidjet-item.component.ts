@@ -8,10 +8,9 @@ import {
 import {IVidjet} from "../../../../shared/models/entities/Vidjet";
 import {BsModalRef, BsModalService} from "ngx-bootstrap/modal";
 import {FormControl} from "@angular/forms";
-import {VidjetService} from "../../services/vidjet.service";
+import {VidjetService, Customization} from "../../services/vidjet.service";
 import {debounceTime, Subject, tap} from "rxjs";
 import {WidgetService} from "../../../../shared/services/widget.service";
-import {Customization} from "../../../../../../../../script-builder/customization";
 import {cloneDeep, merge, isEqual} from "lodash";
 
 @Component({

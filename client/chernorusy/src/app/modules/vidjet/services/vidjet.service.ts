@@ -4,7 +4,6 @@ import {IVidjet} from "../../../shared/models/entities/Vidjet";
 import {IVidjetPOSTResponseDTO} from "../../../shared/models/DTO/response/VidjetPOSTResponseDTO";
 import {IVidjetPOSTRequestDTO} from "../../../shared/models/DTO/request/VidjetPOSTRequestDTO";
 import {tap} from "rxjs";
-import {Customization} from "../../../../../../../script-builder/customization";
 
 @Injectable({
   providedIn: 'root'
@@ -115,4 +114,55 @@ export class VidjetService extends EntityStateManager<IVidjet> {
       );
   }
 
+}
+
+
+
+export interface Customization {
+  position: {
+    X: CustomizationPosition<'left' | 'right'>,
+    Y: CustomizationPosition<'top' | 'bottom'>,
+  }
+  header: DefaultSection,
+  footer: DefaultSection,
+  content: DefaultSection,
+  userMsg: DefaultMessage,
+  mngMsg: DefaultMessage,
+  comeMsg: Omit<DefaultMessage, 'time'>,
+  online: {
+    color: {
+      online: string,
+      offline: string,
+    },
+    size: number,
+    show: boolean
+  }
+}
+
+export interface DefaultMessage extends DefaultSection {
+  content: Font & {
+    align: 'left' | 'center' | 'right'
+  },
+  time: Font & {
+    align: 'left' | 'center' | 'right'
+  },
+  side: 'left' | 'center' | 'right'
+}
+
+export interface DefaultSection {
+  bgc: string
+  padding: string
+}
+
+interface Font {
+  size: number,
+  type: 'em' | 'px' | 'rem'
+  color: string
+  lineHeight: number
+}
+
+interface CustomizationPosition<TSide extends 'left' | 'right' | 'top' | 'bottom'> {
+  side: TSide
+  move: number
+  moveType: 'px' | '%'
 }

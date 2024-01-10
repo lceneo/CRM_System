@@ -1,5 +1,11 @@
-import {HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel} from "@microsoft/signalr";
-import {HTTPS_PORT, SERVER_IP, SIGNALR_IP} from "../const";
+import {
+    HttpTransportType,
+    HubConnection,
+    HubConnectionBuilder,
+    HubConnectionState,
+    LogLevel
+} from "@microsoft/signalr";
+import {HTTPS_PORT, prefix, SERVER_IP, SIGNALR_IP} from "../const";
 import {widgetInit} from "../requests/widgetInit";
 import {STATE} from "../index";
 import {Message, messagesStore} from "../store/messages";
@@ -55,11 +61,9 @@ export class SocketService {
             if (msg) {
                 messagesStore.setMessage(new Message(data.message, new Date(data.dateTime), 'server', data.sender))
             }
-            console.log('data.files', data.files,);
+
             data.files?.map((file: any) => {
-                console.log('in data.files.map', file, file.fileKey);
                 const msg = new Message(file.fileName, new Date(data.dateTime), 'server', data.sender, file.fileKey)
-                console.log('after msg.fileKey = data.fileKey', msg);
                 messagesStore.setMessage(msg);
             })
             this.messageListeners = this.messageListeners.filter(f => f(data.message, new Date(data.dateTime)))
@@ -90,7 +94,16 @@ export class SocketService {
             })
             .then(() => socket = new SocketService({chatId: STATE.chatId!, token: STATE.token!}))
             .then(() => socket.hub.start())
-            .then(() => socket);
+            .then(() => socket)
+            .catch(err => {if (err.toString().includes('Status code \'401\'')) {
+                localStorage.removeItem(`${prefix}-chatId`);
+                localStorage.removeItem(`${prefix}-token`);
+                localStorage.removeItem(`${prefix}-messages`);
+
+                return new Promise<SocketService | null>(res =>
+                    setTimeout(() => res(this.New()), 5000)
+                )
+            } return null});
     }
 
     onMessage(func: MessageListener) {
@@ -148,7 +161,6 @@ export class SocketService {
     private getHub(url: string): HubConnection {
         const hub = new HubConnectionBuilder()
             .withUrl(url, {
-                skipNegotiation: true,
                 transport: HttpTransportType.WebSockets,
                 withCredentials: true,
                 accessTokenFactory(): string | Promise<string> {
@@ -164,7 +176,6 @@ export class SocketService {
         hub.onclose(() => console.info('SignalR connection closed'));
         hub.keepAliveIntervalInMilliseconds = 2500;
         hub.on('Error', console.error);
-
         window.addEventListener('beforeunload', () => {
             if (hub.state !== 'Disconnected' && hub.state !== 'Disconnecting') {
                 hub.stop()
