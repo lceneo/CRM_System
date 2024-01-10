@@ -19,6 +19,16 @@ export const messageViewStyles = `
         align-self: flex-start;
     }
     
+    .${prefix}-message-view-join {
+        height: unset;
+        
+    }
+    
+    .${prefix}-message-view-join .${prefix}-message-view-content {
+        line-height: 1em;
+        margin: 0;
+    }
+    
     .${prefix}-message-view-author {
         font-size: 0.5em;
         align-self: flex-start;
@@ -36,5 +46,6 @@ export const messageViewStyles = `
         align-self: flex-end;
         margin: 0;
         padding: 0;
+        width: 100%;
     }
 `

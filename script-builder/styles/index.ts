@@ -8,6 +8,9 @@ import {messageViewStyles} from "./message-view.styles";
 import {borderStyles} from "./border.styles";
 import {animations} from "./animations";
 import {loadingStyles} from "./loading.styles";
+import {activeStatusMessage} from "./active-status-message";
+import {iconStyles} from "./icon.styles";
+import {linkStyles} from "./link.styles";
 
 export const cssStyles = [
 	animations,
@@ -21,5 +24,8 @@ export const cssStyles = [
 	messageViewStyles,
 	borderStyles,
 	loadingStyles,
+	activeStatusMessage,
+	iconStyles,
+	linkStyles,
 ].join('\t');
 

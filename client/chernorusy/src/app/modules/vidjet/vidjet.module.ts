@@ -5,12 +5,18 @@ import {RouterModule, Routes} from "@angular/router";
 import {NgLetDirective} from "../../shared/directives/ng-let.directive";
 import { VidjetItemComponent } from './components/vidjet-item/vidjet-item.component';
 import {ModalModule} from "ngx-bootstrap/modal";
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { VidjetCreateComponent } from './components/vidjet-create/vidjet-create.component';
 import {AccordionModule} from "ngx-bootstrap/accordion";
 import {MatCardModule} from "@angular/material/card";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {TooltipModule} from "ngx-bootstrap/tooltip";
+import {CdkDrag, CdkDragHandle} from "@angular/cdk/drag-drop";
+import {NgxModalDraggableDirective} from "../../shared/directives/ngx-modal-draggable";
+import {WidgetService} from "../../shared/services/widget.service";
+import {MatSelectModule} from "@angular/material/select";
+import {MatRadioModule} from "@angular/material/radio";
+import {MatSliderModule} from "@angular/material/slider";
 
 
 const routes: Routes = [
@@ -18,10 +24,14 @@ const routes: Routes = [
 ]
 
 @NgModule({
+  providers: [
+    WidgetService,
+  ],
   declarations: [
     VidjetsListComponent,
     VidjetItemComponent,
-    VidjetCreateComponent
+    VidjetCreateComponent,
+    NgxModalDraggableDirective
   ],
   imports: [
     CommonModule,
@@ -32,7 +42,13 @@ const routes: Routes = [
     AccordionModule,
     MatCardModule,
     MatTooltipModule,
-    TooltipModule
+    TooltipModule,
+    CdkDrag,
+    CdkDragHandle,
+    MatSelectModule,
+    MatRadioModule,
+    FormsModule,
+    MatSliderModule,
   ]
 })
 export class VidjetModule { }

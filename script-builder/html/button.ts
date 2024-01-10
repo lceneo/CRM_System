@@ -7,7 +7,7 @@ export function createButton({ text, id, className, keepCircle, styles }: {
 	className?: string,
 	keepCircle?: boolean,
 	styles?: Partial<CSSStyleDeclaration>
-}): [HTMLButtonElement, () => void, (show: boolean) => void] {
+}): [HTMLButtonElement, () => void, (show: boolean) => void, (enable: boolean) => any] {
 	const button = document.createElement('button');
 
 	if (notNull(text)) {
@@ -40,7 +40,11 @@ export function createButton({ text, id, className, keepCircle, styles }: {
 		button.style.height = size + 'px';
 	}
 
-	return [button, () => document.removeChild(button), showButton];
+	const enable = (enable: boolean) => {
+		button.disabled = !enable;
+	}
+
+	return [button, () => document.removeChild(button), showButton, enable];
 }
 
 function setButtonStyles(style: CSSStyleDeclaration) {

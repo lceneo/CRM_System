@@ -3,6 +3,11 @@ import { createButton } from "./button";
 import { cls } from "../helpers/cls";
 import { createInput } from "./input";
 import { socket } from "../index";
+import {stylesStore} from "../store/styles";
+import {Customization} from "../customization";
+import {createLabel} from "./label";
+import {sendStatic} from "../requests/sendStatic";
+import {Message, messagesStore} from "../store/messages";
 
 export function createFooter({ text, id, className, styles, onSend }: {
 	text?: string,
@@ -38,11 +43,14 @@ export function createFooter({ text, id, className, styles, onSend }: {
 	})
 	if (onSend) {
 		sendButton.addEventListener('click', () => {
+			if (input.value.trim() === '') {
+				return;
+			}
 			onSend(input.value);
 			input.value = '';
 		});
 		input.addEventListener('keydown', (ev) => {
-			if (ev.key === 'Enter') {
+			if (ev.key === 'Enter' && input.value.trim() !== '') {
 				onSend(input.value);
 				input.value = '';
 			}
@@ -51,7 +59,48 @@ export function createFooter({ text, id, className, styles, onSend }: {
 
 	footer.appendChild(input);
 	footer.appendChild(sendButton);
+	const [fileInput] = createInput({
+		type: 'file',
+		id: cls('file-input'),
+		styles: {
+			display: 'none'
+		}
+	});
+	const [label] = createLabel({
+		icon: '&#128464;',
+		forId: cls('file-input'),
+		styles: {
+			color: 'white',
+			cursor: 'pointer',
+		}
+	})
+	footer.appendChild(fileInput);
+	footer.appendChild(label);
 
+	fileInput.addEventListener('change', async () => {
+		if (!fileInput.files?.length) {
+			return;
+		}
+		for (const file of fileInput.files) {
+			if (file.size > 6144 * 1024) {
+				alert('Максимальный размер файла - 5 МБ');
+				continue;
+			}
+			const formData = new FormData();
+			formData.append('file', file);
+			const fileKey = await sendStatic(formData)
+			if (!fileKey) {
+				return;
+			}
+			if (!socket) {
+				return;
+			}
+			const date = await socket.sendFile([fileKey]);
+			const message = new Message(file.name, date, 'client');
+			message.fileKey = fileKey;
+			messagesStore.setMessage(message);
+		}
+	})
 	const listeners: (() => void)[] = [];
 
 	if (notNull(text)) {
@@ -69,6 +118,10 @@ export function createFooter({ text, id, className, styles, onSend }: {
 	applyFooterStyles(style);
 	Object.assign(style, styles);
 
+	stylesStore.on('footer', (styles: Customization['footer']) => {
+		footer.style.backgroundColor = styles.bgc;
+		footer.style.padding = styles.padding;
+	})
 
 	const closeFooter = () => {
 		document.body.removeChild(footer)

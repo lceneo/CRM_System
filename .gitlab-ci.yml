@@ -1,0 +1,69 @@
+k8s_deploy_default:
+  stage: deploy
+  image: hub.66bit.ru/shared/stk8s:1.26.2
+  script:
+    - kubectl delete -f cube-deployment.yaml
+    - kubectl apply -f cube-database.yaml
+    - kubectl apply -f cube-deployment.yaml
+    - kubectl apply -f cube-persistent-deployment.yaml
+    - kubectl apply -f cube-networking.yaml
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+
+k8s_deploy_default_without_delete:
+  stage: deploy
+  image: hub.66bit.ru/shared/stk8s:1.26.2
+  script:
+    - kubectl apply -f cube-database.yaml
+    - kubectl apply -f cube-deployment.yaml
+    - kubectl apply -f cube-persistent-deployment.yaml
+    - kubectl apply -f cube-networking.yaml
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+
+k8s_deploy_rebuild_services:
+  stage: deploy
+  image: hub.66bit.ru/shared/stk8s:1.26.2
+  script:
+    - kubectl delete -f cube-deployment.yaml
+    - kubectl delete -f cube-persistent-deployment.yaml
+    - kubectl delete -f cube-networking.yaml
+    - kubectl apply -f cube-deployment.yaml
+    - kubectl apply -f cube-persistent-deployment.yaml
+    - kubectl apply -f cube-networking.yaml
+
+    - kubectl apply -f cube-database.yaml
+
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+
+k8s_deploy_rebuild_full:
+  stage: deploy
+  image: hub.66bit.ru/shared/stk8s:1.26.2
+  script:
+    - kubectl delete -f cube-deployment.yaml
+    - kubectl delete -f cube-persistent-deployment.yaml
+    - kubectl delete -f cube-database.yaml
+    - kubectl delete -f cube-networking.yaml
+    - kubectl apply -f cube-deployment.yaml
+    - kubectl apply -f cube-persistent-deployment.yaml
+    - kubectl apply -f cube-database.yaml
+    - kubectl apply -f cube-networking.yaml
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+
+k8s_fullInfo:
+  stage: deploy
+  image: hub.66bit.ru/shared/stk8s:1.26.2
+  script:
+    - kubectl describe pods -n application
+    - kubectl describe deployments -n application
+    - kubectl describe services -n application
+    - kubectl describe ingress -n application
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual

@@ -2,6 +2,9 @@ import { notNull } from "../helpers/notNull";
 import { cls } from "../helpers/cls";
 import { createDiv } from "../html/div";
 import { Message, messagesStore } from "../store/messages";
+import {stylesStore} from "../store/styles";
+import {Customization, DefaultMessage, DefaultSection, messageSideToAlignSelf} from "../customization";
+import {getStatic} from "../requests/getStatic";
 
 export function createMessageView({ id, className, styles, message, pending = false }: {
     id?: string,
@@ -10,10 +13,20 @@ export function createMessageView({ id, className, styles, message, pending = fa
     pending?: boolean
     styles?: Partial<CSSStyleDeclaration>
 }): [HTMLDivElement, () => void, (show: boolean) => void] {
+    const joinStyles = {
+        textAlign: 'center',
+        fontSize: '13px',
+        lineHeight: '2em',
+        backgroundColor: '#b29b57',
+        display: 'block',
+        height: undefined,
+        margin: '0',
+        borderRadius: '10px',
+    }
     const [messageView, closeMessage, showMessage] = createDiv({
         className: 'message-view',
-        styles: {
-            alignSelf: message.side === 'client' ? 'flex-end' : 'flex-start',
+        styles: message.side === 'join' ? joinStyles : {
+            alignSelf: message.side === 'client' ? 'flex-end' : message.side === 'server' ? 'flex-start' : undefined,
             display: 'flex',
             flexFlow: 'column',
             backgroundColor: 'lightblue',
@@ -25,14 +38,47 @@ export function createMessageView({ id, className, styles, message, pending = fa
     })
     messageView.classList.add(cls(`message-view-${message.side}`));
 
+    const author = `${message.side === 'server' ? `<p class="${cls('message-view-author')}">${message.name} ${message.surname}</p>` : ''}`
     const time = `<time class="${cls('message-view-time')}">${message.timeStamp?.getHours().toString().padStart(2, '0')}:${message.timeStamp?.getMinutes().toString().padStart(2, '0')}</time>`;
     const loading = `<p class="${cls('message-view-time')} ${cls('rotating')}">↺</p>`
 
     messageView.innerHTML = `
-        ${message.side === 'server' ? `<p class="${cls('message-view-author')}">${message.name} ${message.surName}</p>` : ''}
+        ${author}
         <p class="${cls('message-view-content')}">${message.content}</p>
         ${message.pending ? loading : time}
     `
+    if (message.side === 'join') {
+        messageView.innerHTML = `<p class="${cls('message-view-content')}">${message.content}</p>`
+    }
+    if (message.fileKey) {
+        messageView.innerHTML = author;
+        getStatic(message.fileKey)
+            .then(blob => {
+                const url = URL.createObjectURL(blob);
+                const extIs = (ext: string) => message.content.endsWith(ext);
+                const isImage = extIs('png') || extIs('jpg') || extIs('svg') || extIs('gif');
+                console.log(blob.type, isImage, message.content);
+                if (isImage) {
+                    const img = document.createElement('img');
+                    img.src = url
+                    messageView.innerHTML += img.outerHTML;
+                } else {
+                    const link = document.createElement('a');
+                    link.classList.add(cls('link'));
+                    const fileIcon = document.createElement('icon');
+                    fileIcon.classList.add(cls('icon'));
+                    const fileIconText = document.createTextNode('🗈');
+                    fileIcon.append(fileIconText);
+                    const linkName = document.createTextNode(message.content);
+                    link.appendChild(fileIcon);
+                    link.append(linkName);
+                    link.href = url;
+                    link.download = message.content;
+                    messageView.innerHTML += link.outerHTML;
+                }
+                messageView.innerHTML += time;
+            })
+    }
 
     const listeners: (() => void)[] = [];
 
@@ -49,7 +95,39 @@ export function createMessageView({ id, className, styles, message, pending = fa
     const style = messageView.style;
     Object.assign(style, styles);
 
-
+    let type: 'comeMsg' | 'mngMsg' | 'userMsg'
+    const listener = (s: Customization['userMsg' | 'mngMsg' | 'comeMsg']) => {
+        const contentS = messageView.querySelector<HTMLParagraphElement>(`.${cls('message-view-content')}`)?.style;
+        const timeS = messageView.querySelector<HTMLTimeElement>(`.${cls('message-view-time')}`)?.style;
+        mvs.padding = s.padding;
+        mvs.backgroundColor = s.bgc;
+        mvs.alignSelf = messageSideToAlignSelf[s.side];
+        if (contentS) {
+            contentS.textAlign = s.content.align;
+            contentS.fontSize = `${s.content.size}${s.content.type}`;
+            contentS.lineHeight = s.content.lineHeight.toString();
+            contentS.color = s.content.color;
+        }
+        if ('time' in s && timeS) {
+            timeS.textAlign = s.time.align;
+            timeS.fontSize = `${s.time.size}${s.time.type}`;
+            timeS.lineHeight = s.time.lineHeight.toString();
+            timeS.color = s.time.color;
+        }
+    }
+    const mvs = messageView.style;
+    switch (message.side) {
+        case "client":
+            type = 'userMsg';
+            break
+        case "join":
+            type = 'comeMsg';
+            break
+        case "server":
+            type = 'mngMsg';
+            break
+    }
+    stylesStore.on(type, listener)
 
     const closeDialog = () => {
         document.body.removeChild(messageView)

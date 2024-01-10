@@ -3,12 +3,16 @@ import { addEventListener } from "./helpers/addEventListener";
 import { createButton } from "./html/button";
 import { createDialog, PositionY } from "./html/dialog";
 import { useOnClickOutside } from "./helpers/useOnClickOutside";
+import {Customization} from "./customization";
 
-export function execute(connection: HubConnection, ip: string) {
+export function execute(connection: HubConnection, ip: string): [HTMLElement, (show: boolean)=> any] {
     const [button, removeButton, showButton] = createButton({
         text: '+',
         keepCircle: true,
         className: 'open-widget-button',
+        styles: {
+            zIndex: '10000',
+        }
     });
     const [dialog, removeDialog, showDialog] = createDialog({
         positionY: PositionY.LEFT,
@@ -16,26 +20,30 @@ export function execute(connection: HubConnection, ip: string) {
             button.disabled = false;
             showButton(true)
         },
-        className: 'chat-dialog-wrapper'
+        className: 'chat-dialog-wrapper',
+        styles: {
+            zIndex: '10000',
+        }
     });
     document.body.appendChild(button);
     showDialog(false);
     document.body.appendChild(dialog);
-    addEventListener(button, 'click', () => {
+    const onButtonClick = () => {
         button.disabled = true;
         showButton(false);
         showDialog(true);
-        /*setTimeout(() => {
-            const removeOutsideListener = useOnClickOutside(dialog, () => closeDialog())
-            const closeDialog = () => {
-                removeOutsideListener();
-                showDialog(false);
-                button.disabled = false;
-                showButton( true);
-            }
-            document.body.appendChild(dialog);
-        });*/
-    });
-}
+    }
+    addEventListener(button, 'click', onButtonClick);
 
+    const hide = (show: boolean) => {
+        if (!show) {
+            showButton(false);
+            showDialog(false);
+        } else {
+            showButton(true);
+            button.disabled = false;
+        }
+    }
+    return [button, hide]
+}
 

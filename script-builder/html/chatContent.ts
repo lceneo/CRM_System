@@ -4,6 +4,8 @@ import { createDiv } from "./div";
 import {messagesStore} from "../store/messages";
 import {createMessageView} from "../components/messageView";
 import {socket} from "../index";
+import {stylesStore} from "../store/styles";
+import {getIsCustomizing} from "../customization";
 
 export function createChatContent({ text, id, className, styles }: {
 	text?: string,
@@ -47,12 +49,19 @@ export function createChatContent({ text, id, className, styles }: {
 		}
 	})
 
+	messagesStore.items.forEach(message => {
+			const [msgView] = createMessageView({
+				message
+			})
+			divMessages.appendChild(msgView);
+		})
+
 	messagesStore.onItemsAdd((message) => {
 		const [msgView] = createMessageView({
 			message
 		})
 		divMessages.appendChild(msgView);
-		if (socket.waitingForMessageSuccess === 0) {
+		if (socket?.waitingForMessageSuccess === 0) {
 			divPending.replaceChildren();
 		}
 		divWrapper.scroll(0, divWrapper.scrollHeight)
@@ -80,7 +89,10 @@ export function createChatContent({ text, id, className, styles }: {
 	const style = divWrapper.style;
 	Object.assign(style, styles);
 
-
+	stylesStore.on('content', styles => {
+		divWrapper.style.backgroundColor = styles.bgc;
+		divWrapper.style.padding = styles.padding;
+	})
 
 	const closeDialog = () => {
 		document.body.removeChild(divWrapper)

@@ -6,7 +6,7 @@ export function createInput({ placeholder, id, className, styles, onInput, type 
 	id?: string,
 	className?: string,
 	onInput?: (ev: InputEvent) => void,
-	type?: 'number' | 'string'
+	type?: 'number' | 'string' | 'file'
 	styles?: Partial<CSSStyleDeclaration>
 }): [HTMLInputElement, () => void, (show: boolean) => void] {
 	const input = document.createElement('input')
