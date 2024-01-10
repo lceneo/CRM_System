@@ -62,31 +62,33 @@
       </mat-form-field>
     </div>
 
-    <mat-divider></mat-divider>
+    <ng-container *ngIf="myProfile()?.role === AccountRole.Manager">
+      <mat-divider></mat-divider>
 
-    <div class="formControl">
-      <mat-form-field>
-        <mat-label>Приветственное сообщение</mat-label>
-        <input
-          formControlName = "startMessage"
-          matInput
-        >
-      </mat-form-field>
-      <app-error-validation *ngIf="form.get('startMessage')?.invalid && form.get('startMessage')?.touched"
-                            [errors]="form.get('startMessage')?.errors"></app-error-validation>
-    </div>
+      <div class="formControl">
+        <mat-form-field>
+          <mat-label>Приветственное сообщение</mat-label>
+          <input
+            formControlName = "startMessage"
+            matInput
+          >
+        </mat-form-field>
+        <app-error-validation *ngIf="form.get('startMessage')?.invalid && form.get('startMessage')?.touched"
+                              [errors]="form.get('startMessage')?.errors"></app-error-validation>
+      </div>
 
-    <div class="formControl">
-      <mat-form-field>
-        <mat-label>Прощальное сообщение</mat-label>
-        <input
-          formControlName = "endMesssage"
-          matInput
-        >
-      </mat-form-field>
-      <app-error-validation *ngIf="form.get('endMesssage')?.invalid && form.get('endMesssage')?.touched"
-                            [errors]="form.get('endMesssage')?.errors"></app-error-validation>
-    </div>
+      <div class="formControl">
+        <mat-form-field>
+          <mat-label>Прощальное сообщение</mat-label>
+          <input
+            formControlName = "endMesssage"
+            matInput
+          >
+        </mat-form-field>
+        <app-error-validation *ngIf="form.get('endMesssage')?.invalid && form.get('endMesssage')?.touched"
+                              [errors]="form.get('endMesssage')?.errors"></app-error-validation>
+      </div>
+    </ng-container>
 
     <button
       *ngIf="mode === 'change' || mode === 'create'"
