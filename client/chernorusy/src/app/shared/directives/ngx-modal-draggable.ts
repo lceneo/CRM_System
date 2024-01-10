@@ -37,7 +37,7 @@ export class NgxModalDraggableDirective implements AfterViewInit {
     }
 
     this.modalElement = element;
-    this.modalElement.style.position = 'relative';
+    this.modalElement.style.position = 'absolute';
   }
 
   @HostListener('mousedown', ['$event'])
