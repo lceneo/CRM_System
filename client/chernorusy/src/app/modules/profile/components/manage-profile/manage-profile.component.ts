@@ -143,4 +143,6 @@ export class ManageProfileComponent implements OnInit{
         }
     })
   }
+
+  protected readonly AccountRole = AccountRole;
 }

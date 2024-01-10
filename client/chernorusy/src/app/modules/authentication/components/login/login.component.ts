@@ -49,7 +49,7 @@ export class LoginComponent {
           this.router.navigate(['success'], {
             state: {
               title: `Подтверждение email`,
-              body: `Для восстановления пароля проверьте почту <b>${this.form.get('email')?.value}</b> и перейдите по ссылке указанной в письме для установления пароля.`,
+              body: `Для восстановления пароля проверьте почту и перейдите по ссылке указанной в письме для установления пароля.`,
               imgName: 'envelope.png',
               innerHtml: true
             }
