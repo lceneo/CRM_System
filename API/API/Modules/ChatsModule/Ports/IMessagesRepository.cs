@@ -7,5 +7,5 @@ namespace API.Modules.ChatsModule.Ports;
 
 public interface IMessagesRepository : ICRUDRepository<MessageEntity>
 {
-    SearchResponseBaseDTO<MessageEntity> SearchAsync(Guid chatId, MessagesSearchRequest request);
+    SearchResponseBaseDTO<MessageEntity> Search(Guid chatId, MessagesSearchRequest request, bool asTracking = false);
 }

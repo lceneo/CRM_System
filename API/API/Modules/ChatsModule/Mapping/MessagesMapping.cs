@@ -9,6 +9,7 @@ public class MessagesMapping : Profile
 {
     public MessagesMapping()
     {
+        CreateMap<MessageEntity, MessageEntity>();
         CreateMap<MessageEntity, MessageInChatDTO>()
             .ForMember(dest => dest.Sender, opt => opt.MapFrom(src => src.Sender))
             .ForMember(dest => dest.Files, opt => opt.MapFrom(src => src.Files));

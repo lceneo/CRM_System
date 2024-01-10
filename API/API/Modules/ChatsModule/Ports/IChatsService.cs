@@ -26,7 +26,7 @@ public interface IChatsService
     
     Task<Result<bool>> ChangeChatStatus(Guid chatId, ChangeChatStatusRequest req);
 
-    Result<SearchResponseBaseDTO<MessageInChatDTO>> SearchMessages(Guid chatId, MessagesSearchRequest messagesSearchReq);
+    Result<SearchResponseBaseDTO<MessageOutDTO>> SearchMessages(Guid chatId, Guid userId, MessagesSearchRequest messagesSearchReq);
 
     Task<ChatEntity?> CreateChatWithUsers(Guid[] userIds);
 

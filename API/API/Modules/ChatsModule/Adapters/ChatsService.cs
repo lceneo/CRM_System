@@ -119,10 +119,9 @@ public class ChatsService : IChatsService
         var receivers = chat.Profiles;
         foreach (var receiver in receivers)
         {
-            var receiverId = receiver.Id.ToString();
             await chatHub.Clients
-                .Group(receiverId)
-                .SendAsync("Recieve", mapper.Map<MessageOutDTO>(messageEntity, opt => opt.Items["userId"] = receiverId));
+                .Group(receiver.Id.ToString())
+                .SendAsync("Recieve", mapper.Map<MessageOutDTO>(messageEntity, opt => opt.Items["userId"] = receiver.Id));
         }
 
         await LogMessage(messageEntity, chatId);
@@ -222,13 +221,14 @@ public class ChatsService : IChatsService
         return Result.NoContent<bool>();
     }
 
-    public Result<SearchResponseBaseDTO<MessageInChatDTO>> SearchMessages(Guid chatId,
+    public Result<SearchResponseBaseDTO<MessageOutDTO>> SearchMessages(Guid chatId,
+        Guid userId,
         MessagesSearchRequest messagesSearchReq)
     {
-        var result = messagesRepository.SearchAsync(chatId, messagesSearchReq);
-        return Result.Ok(new SearchResponseBaseDTO<MessageInChatDTO>
+        var result = messagesRepository.Search(chatId, messagesSearchReq);
+        return Result.Ok(new SearchResponseBaseDTO<MessageOutDTO>
         {
-            Items = mapper.Map<List<MessageInChatDTO>>(result.Items),
+            Items = mapper.Map<List<MessageOutDTO>>(result.Items, opt => opt.Items["userId"] = userId),
             TotalCount = result.TotalCount,
         });
     }
