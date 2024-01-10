@@ -94,11 +94,11 @@ public class ChatsController : ControllerBase
     }
 
     [HttpGet("{chatId:Guid}/Messages")]
-    public async Task<ActionResult<IEnumerable<MessageInChatDTO>>> SearchMessagesAsync(
+    public async Task<ActionResult<IEnumerable<MessageOutDTO>>> SearchMessagesAsync(
         [FromRoute] Guid chatId,
         [FromQuery] MessagesSearchRequest messagesSearchReq)
     {
-        var response = chatsService.SearchMessages(chatId, messagesSearchReq);
+        var response = chatsService.SearchMessages(chatId, User.GetId(), messagesSearchReq);
         return response.ActionResult;
     }
 }
