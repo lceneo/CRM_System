@@ -402,6 +402,14 @@
               (ngModelChange)="applyWidgetStyles.next()"
             >
 
+            <label for="mngMsgPosGroup">Положение сообщения</label>
+            <mat-radio-group id="mngMsgPosGroup" [(ngModel)]="widgetStyles.mngMsg.side"
+                             (ngModelChange)="applyWidgetStyles.next()">
+              <mat-radio-button value="left">Слева</mat-radio-button>
+              <mat-radio-button value="center">По центру</mat-radio-button>
+              <mat-radio-button value="right">Справа</mat-radio-button>
+            </mat-radio-group>
+
             <label class="form-label">Отступы</label>
             <div class="slider-container">
               <div class="slider top">
@@ -459,13 +467,6 @@
             <accordion>
               <accordion-group>
                 <h6 accordion-heading>Шрифт основного текста</h6>
-                <label for="mngMsgPosGroup">Положение сообщения</label>
-                <mat-radio-group id="mngMsgPosGroup" [(ngModel)]="widgetStyles.mngMsg.side"
-                                 (ngModelChange)="applyWidgetStyles.next()">
-                  <mat-radio-button value="left">Слева</mat-radio-button>
-                  <mat-radio-button value="center">По центру</mat-radio-button>
-                  <mat-radio-button value="right">Справа</mat-radio-button>
-                </mat-radio-group>
                 <label for="mngMsgTextPosGroup">Положение текста</label>
                 <mat-radio-group id="mngMsgTextPosGroup" [(ngModel)]="widgetStyles.mngMsg.content.align"
                                  (ngModelChange)="applyWidgetStyles.next()">
