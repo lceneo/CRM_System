@@ -7,5 +7,65 @@
   justify-content: space-between;
 }
 
+.slider-container {
+  min-height: 400px;
+  padding: 10px 0;
+  display: grid;
+  grid-template-areas: "t t t"
+                       "l c r"
+                       "b b b";
+}
+
+.slider {
+  display: flex;
+  justify-content: space-between;
+  width: 100px;
+
+  & input[type=number] {
+    min-width: 4em;
+  }
+
+  &.center {
+    grid-area: c;
+  }
+
+  &.top {
+    grid-area: t;
+    justify-self: center;
+    align-self: start;
+    transform: rotate(90deg);
+    & input[type=number] {
+      transform: rotate(-90deg);
+    }
+  }
+  &.right {
+    grid-area: r;
+    justify-self: end;
+    align-self: center;
+    transform: rotate(180deg);
+    & input[type=number] {
+      transform: rotate(-180deg);
+    }
+  }
+  &.bottom {
+    justify-self: center;
+    align-self: end;
+    grid-area: b;
+    transform: rotate(270deg);
+    & input[type=number] {
+      transform: rotate(-270deg);
+    }
+  }
+  &.left {
+    justify-self: start;
+    align-self: center;
+    grid-area: l;
+    transform: rotate(0deg);
+    & input[type=number] {
+      transform: rotate(-0deg);
+    }
+  }
+}
+
 
 

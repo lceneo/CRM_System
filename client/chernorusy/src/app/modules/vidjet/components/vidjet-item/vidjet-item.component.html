@@ -1,26 +1,25 @@
+<mat-card>
+  <mat-card-header class="header">
+    {{ vidjet.domen }}
+    <div class="btnContainer">
+      <button
+        style="margin-right: 5px"
+        class="btn btn-primary"
+        [matTooltip]="'Изменить'"
+        (click)="openModal(editModal)"
+      >
+        <i class="bi bi-pencil"></i>
+      </button>
 
-  <mat-card>
-    <mat-card-header class="header">
-      {{vidjet.domen}}
-      <div class="btnContainer">
-        <button
-          style="margin-right: 5px"
-          class="btn btn-primary"
-          [matTooltip]="'Изменить'"
-          (click)="openModal(editModal)"
-        >
-          <i class="bi bi-pencil"></i>
-        </button>
-
-        <button
-          [matTooltip]="'Удалить'"
-          class="btn btn-danger" (click)="openModal(deleteModal)"
-        >
-          <i class="bi bi-trash-fill"></i>
-        </button>
-      </div>
-    </mat-card-header>
-  </mat-card>
+      <button
+        [matTooltip]="'Удалить'"
+        class="btn btn-danger" (click)="openModal(deleteModal)"
+      >
+        <i class="bi bi-trash-fill"></i>
+      </button>
+    </div>
+  </mat-card-header>
+</mat-card>
 
 <ng-template #editModal>
   <div class="modal-header" ngxModalDraggable>
@@ -29,7 +28,7 @@
       type="button"
       class="btn-close close pull-right"
       aria-label="Close"
-      tooltip = 'Закрыть'
+      tooltip='Закрыть'
       (click)="modalRef?.hide()">
       <span aria-hidden="true" class="visually-hidden">&times;</span>
     </button>
@@ -46,8 +45,9 @@
     <button
       class="btn btn-primary enterBtn"
       [disabled]="saveDisabled"
-      (click) = "submitChanges()"
-    >Сохранить</button>
+      (click)="submitChanges()"
+    >Сохранить
+    </button>
     <br>
     <accordion>
       <accordion-group>
@@ -59,8 +59,61 @@
           [(ngModel)]="widgetStyles.header.bgc"
           (ngModelChange)="applyWidgetStyles.next()"
         >
-          <!--(input)="setWidgetStyle($event, 'header', 'bgc')"-->
 
+        <label for="headerPadding" class="form-label">Отступы</label>
+        <div class="slider-container">
+          <div class="slider top">
+            <input
+              id="headerPadding"
+              class="form-control"
+              type="number"
+              [ngModel]="getPadding(widgetStyles.header.padding, 'top')"
+              (ngModelChange)="widgetStyles.header.padding = newPadding(widgetStyles.header.padding, 'top', $event);applyWidgetStyles.next()"
+            >
+            <mat-slider min="0" max="20" step="1">
+              <input matSliderThumb [ngModel]="getPadding(widgetStyles.header.padding, 'top')"
+                     (ngModelChange)="widgetStyles.header.padding = newPadding(widgetStyles.header.padding, 'top', $event);applyWidgetStyles.next()">
+            </mat-slider>
+          </div>
+          <div class="slider center"></div>
+          <div class="slider right">
+            <input
+              class="form-control"
+              type="number"
+              [ngModel]="getPadding(widgetStyles.header.padding, 'right')"
+              (ngModelChange)="widgetStyles.header.padding = newPadding(widgetStyles.header.padding, 'right', $event);applyWidgetStyles.next()"
+            >
+            <mat-slider min="0" max="20" step="1">
+              <input matSliderThumb [ngModel]="getPadding(widgetStyles.header.padding, 'right')"
+                     (ngModelChange)="widgetStyles.header.padding = newPadding(widgetStyles.header.padding, 'right', $event);applyWidgetStyles.next()">
+            </mat-slider>
+          </div>
+          <div class="slider bottom">
+            <input
+              class="form-control"
+              type="number"
+              [ngModel]="getPadding(widgetStyles.header.padding, 'bottom')"
+              (ngModelChange)="widgetStyles.header.padding = newPadding(widgetStyles.header.padding, 'bottom', $event);applyWidgetStyles.next()"
+            >
+            <mat-slider min="0" max="20" step="1">
+              <input matSliderThumb [ngModel]="getPadding(widgetStyles.header.padding, 'bottom')"
+                     (ngModelChange)="widgetStyles.header.padding = newPadding(widgetStyles.header.padding, 'bottom', $event);applyWidgetStyles.next()">
+            </mat-slider>
+          </div>
+
+          <div class="slider left">
+            <input
+              class="form-control"
+              type="number"
+              [ngModel]="getPadding(widgetStyles.header.padding, 'left')"
+              (ngModelChange)="widgetStyles.header.padding = newPadding(widgetStyles.header.padding, 'left', $event);applyWidgetStyles.next()"
+            >
+            <mat-slider min="0" max="20" step="1">
+              <input matSliderThumb [ngModel]="getPadding(widgetStyles.header.padding, 'left')"
+                     (ngModelChange)="widgetStyles.header.padding = newPadding(widgetStyles.header.padding, 'left', $event);applyWidgetStyles.next()">
+            </mat-slider>
+          </div>
+        </div>
       </accordion-group>
       <accordion-group>
         <h4 class="pull-left" accordion-heading>Основной контент</h4>
@@ -71,6 +124,60 @@
           [(ngModel)]="widgetStyles.content.bgc"
           (ngModelChange)="applyWidgetStyles.next()"
         >
+
+        <label class="form-label">Отступы</label>
+        <div class="slider-container">
+          <div class="slider top">
+            <input
+              class="form-control"
+              type="number"
+              [ngModel]="getPadding(widgetStyles.content.padding, 'top')"
+              (ngModelChange)="widgetStyles.content.padding = newPadding(widgetStyles.content.padding, 'top', $event);applyWidgetStyles.next()"
+            >
+            <mat-slider min="0" max="20" step="1">
+              <input matSliderThumb [ngModel]="getPadding(widgetStyles.content.padding, 'top')"
+                     (ngModelChange)="widgetStyles.content.padding = newPadding(widgetStyles.content.padding, 'top', $event);applyWidgetStyles.next()">
+            </mat-slider>
+          </div>
+          <div class="slider center"></div>
+          <div class="slider right">
+            <input
+              class="form-control"
+              type="number"
+              [ngModel]="getPadding(widgetStyles.content.padding, 'right')"
+              (ngModelChange)="widgetStyles.content.padding = newPadding(widgetStyles.content.padding, 'right', $event);applyWidgetStyles.next()"
+            >
+            <mat-slider min="0" max="20" step="1">
+              <input matSliderThumb [ngModel]="getPadding(widgetStyles.content.padding, 'right')"
+                     (ngModelChange)="widgetStyles.content.padding = newPadding(widgetStyles.content.padding, 'right', $event);applyWidgetStyles.next()">
+            </mat-slider>
+          </div>
+          <div class="slider bottom">
+            <input
+              class="form-control"
+              type="number"
+              [ngModel]="getPadding(widgetStyles.content.padding, 'bottom')"
+              (ngModelChange)="widgetStyles.content.padding = newPadding(widgetStyles.content.padding, 'bottom', $event);applyWidgetStyles.next()"
+            >
+            <mat-slider min="0" max="20" step="1">
+              <input matSliderThumb [ngModel]="getPadding(widgetStyles.content.padding, 'bottom')"
+                     (ngModelChange)="widgetStyles.content.padding = newPadding(widgetStyles.content.padding, 'bottom', $event);applyWidgetStyles.next()">
+            </mat-slider>
+          </div>
+
+          <div class="slider left">
+            <input
+              class="form-control"
+              type="number"
+              [ngModel]="getPadding(widgetStyles.content.padding, 'left')"
+              (ngModelChange)="widgetStyles.content.padding = newPadding(widgetStyles.content.padding, 'left', $event);applyWidgetStyles.next()"
+            >
+            <mat-slider min="0" max="20" step="1">
+              <input matSliderThumb [ngModel]="getPadding(widgetStyles.content.padding, 'left')"
+                     (ngModelChange)="widgetStyles.content.padding = newPadding(widgetStyles.content.padding, 'left', $event);applyWidgetStyles.next()">
+            </mat-slider>
+          </div>
+        </div>
       </accordion-group>
       <accordion-group>
         <h4 class="pull-left" accordion-heading>Футер</h4>
@@ -81,6 +188,60 @@
           [(ngModel)]="widgetStyles.footer.bgc"
           (ngModelChange)="applyWidgetStyles.next()"
         >
+
+        <label class="form-label">Отступы</label>
+        <div class="slider-container">
+          <div class="slider top">
+            <input
+              class="form-control"
+              type="number"
+              [ngModel]="getPadding(widgetStyles.footer.padding, 'top')"
+              (ngModelChange)="widgetStyles.footer.padding = newPadding(widgetStyles.footer.padding, 'top', $event);applyWidgetStyles.next()"
+            >
+            <mat-slider min="0" max="20" step="1">
+              <input matSliderThumb [ngModel]="getPadding(widgetStyles.footer.padding, 'top')"
+                     (ngModelChange)="widgetStyles.footer.padding = newPadding(widgetStyles.footer.padding, 'top', $event);applyWidgetStyles.next()">
+            </mat-slider>
+          </div>
+          <div class="slider center"></div>
+          <div class="slider right">
+            <input
+              class="form-control"
+              type="number"
+              [ngModel]="getPadding(widgetStyles.footer.padding, 'right')"
+              (ngModelChange)="widgetStyles.footer.padding = newPadding(widgetStyles.footer.padding, 'right', $event);applyWidgetStyles.next()"
+            >
+            <mat-slider min="0" max="20" step="1">
+              <input matSliderThumb [ngModel]="getPadding(widgetStyles.footer.padding, 'right')"
+                     (ngModelChange)="widgetStyles.footer.padding = newPadding(widgetStyles.footer.padding, 'right', $event);applyWidgetStyles.next()">
+            </mat-slider>
+          </div>
+          <div class="slider bottom">
+            <input
+              class="form-control"
+              type="number"
+              [ngModel]="getPadding(widgetStyles.footer.padding, 'bottom')"
+              (ngModelChange)="widgetStyles.footer.padding = newPadding(widgetStyles.footer.padding, 'bottom', $event);applyWidgetStyles.next()"
+            >
+            <mat-slider min="0" max="20" step="1">
+              <input matSliderThumb [ngModel]="getPadding(widgetStyles.footer.padding, 'bottom')"
+                     (ngModelChange)="widgetStyles.footer.padding = newPadding(widgetStyles.footer.padding, 'bottom', $event);applyWidgetStyles.next()">
+            </mat-slider>
+          </div>
+
+          <div class="slider left">
+            <input
+              class="form-control"
+              type="number"
+              [ngModel]="getPadding(widgetStyles.footer.padding, 'left')"
+              (ngModelChange)="widgetStyles.footer.padding = newPadding(widgetStyles.footer.padding, 'left', $event);applyWidgetStyles.next()"
+            >
+            <mat-slider min="0" max="20" step="1">
+              <input matSliderThumb [ngModel]="getPadding(widgetStyles.footer.padding, 'left')"
+                     (ngModelChange)="widgetStyles.footer.padding = newPadding(widgetStyles.footer.padding, 'left', $event);applyWidgetStyles.next()">
+            </mat-slider>
+          </div>
+        </div>
       </accordion-group>
       <accordion-group>
         <h4 class="pull-left" accordion-heading>Сообщения</h4>
@@ -101,6 +262,135 @@
               <mat-radio-button value="center">По центру</mat-radio-button>
               <mat-radio-button value="right">Справа</mat-radio-button>
             </mat-radio-group>
+
+            <label class="form-label">Отступы</label>
+            <div class="slider-container">
+              <div class="slider top">
+                <input
+                  class="form-control"
+                  type="number"
+                  [ngModel]="getPadding(widgetStyles.userMsg.padding, 'top')"
+                  (ngModelChange)="widgetStyles.userMsg.padding = newPadding(widgetStyles.userMsg.padding, 'top', $event);applyWidgetStyles.next()"
+                >
+                <mat-slider min="0" max="20" step="1">
+                  <input matSliderThumb [ngModel]="getPadding(widgetStyles.userMsg.padding, 'top')"
+                         (ngModelChange)="widgetStyles.userMsg.padding = newPadding(widgetStyles.userMsg.padding, 'top', $event);applyWidgetStyles.next()">
+                </mat-slider>
+              </div>
+              <div class="slider center"></div>
+              <div class="slider right">
+                <input
+                  class="form-control"
+                  type="number"
+                  [ngModel]="getPadding(widgetStyles.userMsg.padding, 'right')"
+                  (ngModelChange)="widgetStyles.userMsg.padding = newPadding(widgetStyles.userMsg.padding, 'right', $event);applyWidgetStyles.next()"
+                >
+                <mat-slider min="0" max="20" step="1">
+                  <input matSliderThumb [ngModel]="getPadding(widgetStyles.userMsg.padding, 'right')"
+                         (ngModelChange)="widgetStyles.userMsg.padding = newPadding(widgetStyles.userMsg.padding, 'right', $event);applyWidgetStyles.next()">
+                </mat-slider>
+              </div>
+              <div class="slider bottom">
+                <input
+                  class="form-control"
+                  type="number"
+                  [ngModel]="getPadding(widgetStyles.userMsg.padding, 'bottom')"
+                  (ngModelChange)="widgetStyles.userMsg.padding = newPadding(widgetStyles.userMsg.padding, 'bottom', $event);applyWidgetStyles.next()"
+                >
+                <mat-slider min="0" max="20" step="1">
+                  <input matSliderThumb [ngModel]="getPadding(widgetStyles.userMsg.padding, 'bottom')"
+                         (ngModelChange)="widgetStyles.userMsg.padding = newPadding(widgetStyles.userMsg.padding, 'bottom', $event);applyWidgetStyles.next()">
+                </mat-slider>
+              </div>
+
+              <div class="slider left">
+                <input
+                  class="form-control"
+                  type="number"
+                  [ngModel]="getPadding(widgetStyles.userMsg.padding, 'left')"
+                  (ngModelChange)="widgetStyles.userMsg.padding = newPadding(widgetStyles.userMsg.padding, 'left', $event);applyWidgetStyles.next()"
+                >
+                <mat-slider min="0" max="20" step="1">
+                  <input matSliderThumb [ngModel]="getPadding(widgetStyles.userMsg.padding, 'left')"
+                         (ngModelChange)="widgetStyles.userMsg.padding = newPadding(widgetStyles.userMsg.padding, 'left', $event);applyWidgetStyles.next()">
+                </mat-slider>
+              </div>
+            </div>
+
+            <accordion>
+              <accordion-group>
+                <h6 accordion-heading>Шрифт основного текста</h6>
+                <label for="userMsgTextPosGroup">Положение текста</label>
+                <mat-radio-group id="userMsgTextPosGroup" [(ngModel)]="widgetStyles.userMsg.content.align"
+                                 (ngModelChange)="applyWidgetStyles.next()">
+                  <mat-radio-button value="left">Слева</mat-radio-button>
+                  <mat-radio-button value="center">По центру</mat-radio-button>
+                  <mat-radio-button value="right">Справа</mat-radio-button>
+                </mat-radio-group>
+                <label for="userMsgFontSize" class="form-label">Размер шрифта</label>
+                <input id="userMsgFontSize" type="number" min="0.1" max="30" step="0.1"
+                       [(ngModel)]="widgetStyles.userMsg.content.size"
+                       (ngModelChange)="widgetStyles.userMsg.content.type='px';applyWidgetStyles.next()">
+                <mat-slider min="0.1" max="30" step="0.1">
+                  <input matSliderThumb [(ngModel)]="widgetStyles.userMsg.content.size"
+                         (ngModelChange)="widgetStyles.userMsg.content.type='px';applyWidgetStyles.next()">
+                </mat-slider>
+
+                <label for="userMsgTextLineHeight" class="form-label">Высота строки</label>
+                <input id="userMsgTextLineHeight" type="number" min="0.1" max="3" step="0.1"
+                       [(ngModel)]="widgetStyles.userMsg.content.lineHeight"
+                       (ngModelChange)="applyWidgetStyles.next()">
+                <mat-slider min="0.1" max="3" step="0.1">
+                  <input matSliderThumb [(ngModel)]="widgetStyles.userMsg.content.lineHeight"
+                         (ngModelChange)="applyWidgetStyles.next()">
+                </mat-slider>
+
+                <label for="userMsgBgc" class="form-label">Цвет шрифта</label>
+                <input
+                  id="userMsgBgc"
+                  class="form-control"
+                  type="color"
+                  [(ngModel)]="widgetStyles.userMsg.content.color"
+                  (ngModelChange)="applyWidgetStyles.next()"
+                >
+              </accordion-group>
+              <accordion-group>
+                <h6 accordion-heading>Шрифт времени</h6>
+                <label for="userMsgTimePosGroup">Положение времени</label>
+                <mat-radio-group id="userMsgTimePosGroup" [(ngModel)]="widgetStyles.userMsg.time.align"
+                                 (ngModelChange)="applyWidgetStyles.next()">
+                  <mat-radio-button value="left">Слева</mat-radio-button>
+                  <mat-radio-button value="center">По центру</mat-radio-button>
+                  <mat-radio-button value="right">Справа</mat-radio-button>
+                </mat-radio-group>
+                <label for="userMsgTimeFontSize" class="form-label">Размер шрифта времени</label>
+                <input id="userMsgTimeFontSize" type="number" min="0.1" max="30" step="0.1"
+                       [(ngModel)]="widgetStyles.userMsg.time.size"
+                       (ngModelChange)="widgetStyles.userMsg.time.type='px';applyWidgetStyles.next()">
+                <mat-slider min="0.1" max="30" step="0.1">
+                  <input matSliderThumb [(ngModel)]="widgetStyles.userMsg.time.size"
+                         (ngModelChange)="widgetStyles.userMsg.time.type='px';applyWidgetStyles.next()">
+                </mat-slider>
+
+                <label for="userMsgTimeLineHeight" class="form-label">Высота строки шрифта времени</label>
+                <input id="userMsgTimeLineHeight" type="number" min="0.1" max="3" step="0.1"
+                       [(ngModel)]="widgetStyles.userMsg.time.lineHeight"
+                       (ngModelChange)="applyWidgetStyles.next()">
+                <mat-slider min="0.1" max="3" step="0.1">
+                  <input matSliderThumb [(ngModel)]="widgetStyles.userMsg.time.lineHeight"
+                         (ngModelChange)="applyWidgetStyles.next()">
+                </mat-slider>
+
+                <label for="userMsgTimeBgc" class="form-label">Цвет шрифта времени</label>
+                <input
+                  id="userMsgTimeBgc"
+                  class="form-control"
+                  type="color"
+                  [(ngModel)]="widgetStyles.userMsg.time.color"
+                  (ngModelChange)="applyWidgetStyles.next()"
+                >
+              </accordion-group>
+            </accordion>
           </accordion-group>
           <accordion-group>
             <h5 class="pull-left" accordion-heading>Сообщения от менеджера</h5>
@@ -111,13 +401,144 @@
               [(ngModel)]="widgetStyles.mngMsg.bgc"
               (ngModelChange)="applyWidgetStyles.next()"
             >
-            <label for="mngMsgPosGroup">Положение сообщения</label>
-            <mat-radio-group id="mngMsgPosGroup" [(ngModel)]="widgetStyles.mngMsg.side"
-                             (ngModelChange)="applyWidgetStyles.next()">
-              <mat-radio-button value="left">Слева</mat-radio-button>
-              <mat-radio-button value="center">По центру</mat-radio-button>
-              <mat-radio-button value="right">Справа</mat-radio-button>
-            </mat-radio-group>
+
+            <label class="form-label">Отступы</label>
+            <div class="slider-container">
+              <div class="slider top">
+                <input
+                  class="form-control"
+                  type="number"
+                  [ngModel]="getPadding(widgetStyles.mngMsg.padding, 'top')"
+                  (ngModelChange)="widgetStyles.mngMsg.padding = newPadding(widgetStyles.mngMsg.padding, 'top', $event);applyWidgetStyles.next()"
+                >
+                <mat-slider min="0" max="20" step="1">
+                  <input matSliderThumb [ngModel]="getPadding(widgetStyles.mngMsg.padding, 'top')"
+                         (ngModelChange)="widgetStyles.mngMsg.padding = newPadding(widgetStyles.mngMsg.padding, 'top', $event);applyWidgetStyles.next()">
+                </mat-slider>
+              </div>
+              <div class="slider center"></div>
+              <div class="slider right">
+                <input
+                  class="form-control"
+                  type="number"
+                  [ngModel]="getPadding(widgetStyles.mngMsg.padding, 'right')"
+                  (ngModelChange)="widgetStyles.mngMsg.padding = newPadding(widgetStyles.mngMsg.padding, 'right', $event);applyWidgetStyles.next()"
+                >
+                <mat-slider min="0" max="20" step="1">
+                  <input matSliderThumb [ngModel]="getPadding(widgetStyles.mngMsg.padding, 'right')"
+                         (ngModelChange)="widgetStyles.mngMsg.padding = newPadding(widgetStyles.mngMsg.padding, 'right', $event);applyWidgetStyles.next()">
+                </mat-slider>
+              </div>
+              <div class="slider bottom">
+                <input
+                  class="form-control"
+                  type="number"
+                  [ngModel]="getPadding(widgetStyles.mngMsg.padding, 'bottom')"
+                  (ngModelChange)="widgetStyles.mngMsg.padding = newPadding(widgetStyles.mngMsg.padding, 'bottom', $event);applyWidgetStyles.next()"
+                >
+                <mat-slider min="0" max="20" step="1">
+                  <input matSliderThumb [ngModel]="getPadding(widgetStyles.mngMsg.padding, 'bottom')"
+                         (ngModelChange)="widgetStyles.mngMsg.padding = newPadding(widgetStyles.mngMsg.padding, 'bottom', $event);applyWidgetStyles.next()">
+                </mat-slider>
+              </div>
+
+              <div class="slider left">
+                <input
+                  class="form-control"
+                  type="number"
+                  [ngModel]="getPadding(widgetStyles.mngMsg.padding, 'left')"
+                  (ngModelChange)="widgetStyles.mngMsg.padding = newPadding(widgetStyles.mngMsg.padding, 'left', $event);applyWidgetStyles.next()"
+                >
+                <mat-slider min="0" max="20" step="1">
+                  <input matSliderThumb [ngModel]="getPadding(widgetStyles.mngMsg.padding, 'left')"
+                         (ngModelChange)="widgetStyles.mngMsg.padding = newPadding(widgetStyles.mngMsg.padding, 'left', $event);applyWidgetStyles.next()">
+                </mat-slider>
+              </div>
+            </div>
+
+            <accordion>
+              <accordion-group>
+                <h6 accordion-heading>Шрифт основного текста</h6>
+                <label for="mngMsgPosGroup">Положение сообщения</label>
+                <mat-radio-group id="mngMsgPosGroup" [(ngModel)]="widgetStyles.mngMsg.side"
+                                 (ngModelChange)="applyWidgetStyles.next()">
+                  <mat-radio-button value="left">Слева</mat-radio-button>
+                  <mat-radio-button value="center">По центру</mat-radio-button>
+                  <mat-radio-button value="right">Справа</mat-radio-button>
+                </mat-radio-group>
+                <label for="mngMsgTextPosGroup">Положение текста</label>
+                <mat-radio-group id="mngMsgTextPosGroup" [(ngModel)]="widgetStyles.mngMsg.content.align"
+                                 (ngModelChange)="applyWidgetStyles.next()">
+                  <mat-radio-button value="left">Слева</mat-radio-button>
+                  <mat-radio-button value="center">По центру</mat-radio-button>
+                  <mat-radio-button value="right">Справа</mat-radio-button>
+                </mat-radio-group>
+
+                <label for="mngMsgFontSize" class="form-label">Размер шрифта</label>
+                <input id="mngMsgFontSize" type="number" min="0.1" max="30" step="0.1"
+                       [(ngModel)]="widgetStyles.mngMsg.content.size"
+                       (ngModelChange)="widgetStyles.mngMsg.content.type='px';applyWidgetStyles.next()">
+                <mat-slider min="0.1" max="30" step="0.1">
+                  <input matSliderThumb [(ngModel)]="widgetStyles.mngMsg.content.size"
+                         (ngModelChange)="widgetStyles.mngMsg.content.type='px';applyWidgetStyles.next()">
+                </mat-slider>
+
+                <label for="mngMsgLineHeight" class="form-label">Высота строки</label>
+                <input id="mngMsgLineHeight" type="number" min="0.1" max="3" step="0.1"
+                       [(ngModel)]="widgetStyles.mngMsg.content.lineHeight"
+                       (ngModelChange)="applyWidgetStyles.next()">
+                <mat-slider min="0.1" max="3" step="0.1">
+                  <input matSliderThumb [(ngModel)]="widgetStyles.mngMsg.content.lineHeight"
+                         (ngModelChange)="applyWidgetStyles.next()">
+                </mat-slider>
+
+                <label for="mngMsgTextBgc" class="form-label">Цвет шрифта</label>
+                <input
+                  id="mngMsgTextBgc"
+                  class="form-control"
+                  type="color"
+                  [(ngModel)]="widgetStyles.mngMsg.content.color"
+                  (ngModelChange)="applyWidgetStyles.next()"
+                >
+              </accordion-group>
+              <accordion-group>
+                <h6 accordion-heading>Шрифт времени</h6>
+                <label for="mngMsgTimePosGroup">Положение времени</label>
+                <mat-radio-group id="mngMsgTimePosGroup" [(ngModel)]="widgetStyles.mngMsg.time.align"
+                                 (ngModelChange)="applyWidgetStyles.next()">
+                  <mat-radio-button value="left">Слева</mat-radio-button>
+                  <mat-radio-button value="center">По центру</mat-radio-button>
+                  <mat-radio-button value="right">Справа</mat-radio-button>
+                </mat-radio-group>
+
+                <label for="mngMsgTimeFontSize" class="form-label">Размер шрифта времени</label>
+                <input id="mngMsgTimeFontSize" type="number" min="0.1" max="30" step="0.1"
+                       [(ngModel)]="widgetStyles.mngMsg.time.size"
+                       (ngModelChange)="widgetStyles.mngMsg.time.type='px';applyWidgetStyles.next()">
+                <mat-slider min="0.1" max="30" step="0.1">
+                  <input matSliderThumb [(ngModel)]="widgetStyles.mngMsg.time.size"
+                         (ngModelChange)="widgetStyles.mngMsg.time.type='px';applyWidgetStyles.next()">
+                </mat-slider>
+
+                <label for="mngMsgTimeLineHeight" class="form-label">Высота строки шрифта времени</label>
+                <input id="mngMsgTimeLineHeight" type="number" min="0.1" max="3" step="0.1"
+                       [(ngModel)]="widgetStyles.mngMsg.time.lineHeight"
+                       (ngModelChange)="applyWidgetStyles.next()">
+                <mat-slider min="0.1" max="3" step="0.1">
+                  <input matSliderThumb [(ngModel)]="widgetStyles.mngMsg.time.lineHeight"
+                         (ngModelChange)="applyWidgetStyles.next()">
+                </mat-slider>
+
+                <label for="mngMsgTimeBgc" class="form-label">Цвет шрифта времени</label>
+                <input
+                  id="mngMsgTimeBgc"
+                  class="form-control"
+                  type="color"
+                  [(ngModel)]="widgetStyles.mngMsg.time.color"
+                  (ngModelChange)="applyWidgetStyles.next()"
+                >
+              </accordion-group>
+            </accordion>
           </accordion-group>
           <accordion-group>
             <h5 class="pull-left" accordion-heading>Сообщения о входе</h5>
@@ -135,6 +556,99 @@
               <mat-radio-button value="center">По центру</mat-radio-button>
               <mat-radio-button value="right">Справа</mat-radio-button>
             </mat-radio-group>
+
+
+            <label for="headerPadding" class="form-label">Отступы</label>
+            <div class="slider-container">
+              <div class="slider top">
+                <input
+                  class="form-control"
+                  type="number"
+                  [ngModel]="getPadding(widgetStyles.comeMsg.padding, 'top')"
+                  (ngModelChange)="widgetStyles.comeMsg.padding = newPadding(widgetStyles.comeMsg.padding, 'top', $event);applyWidgetStyles.next()"
+                >
+                <mat-slider min="0" max="20" step="1">
+                  <input matSliderThumb [ngModel]="getPadding(widgetStyles.comeMsg.padding, 'top')"
+                         (ngModelChange)="widgetStyles.comeMsg.padding = newPadding(widgetStyles.comeMsg.padding, 'top', $event);applyWidgetStyles.next()">
+                </mat-slider>
+              </div>
+              <div class="slider center"></div>
+              <div class="slider right">
+                <input
+                  class="form-control"
+                  type="number"
+                  [ngModel]="getPadding(widgetStyles.comeMsg.padding, 'right')"
+                  (ngModelChange)="widgetStyles.comeMsg.padding = newPadding(widgetStyles.comeMsg.padding, 'right', $event);applyWidgetStyles.next()"
+                >
+                <mat-slider min="0" max="20" step="1">
+                  <input matSliderThumb [ngModel]="getPadding(widgetStyles.comeMsg.padding, 'right')"
+                         (ngModelChange)="widgetStyles.comeMsg.padding = newPadding(widgetStyles.comeMsg.padding, 'right', $event);applyWidgetStyles.next()">
+                </mat-slider>
+              </div>
+              <div class="slider bottom">
+                <input
+                  class="form-control"
+                  type="number"
+                  [ngModel]="getPadding(widgetStyles.comeMsg.padding, 'bottom')"
+                  (ngModelChange)="widgetStyles.comeMsg.padding = newPadding(widgetStyles.comeMsg.padding, 'bottom', $event);applyWidgetStyles.next()"
+                >
+                <mat-slider min="0" max="20" step="1">
+                  <input matSliderThumb [ngModel]="getPadding(widgetStyles.comeMsg.padding, 'bottom')"
+                         (ngModelChange)="widgetStyles.comeMsg.padding = newPadding(widgetStyles.comeMsg.padding, 'bottom', $event);applyWidgetStyles.next()">
+                </mat-slider>
+              </div>
+
+              <div class="slider left">
+                <input
+                  class="form-control"
+                  type="number"
+                  [ngModel]="getPadding(widgetStyles.comeMsg.padding, 'left')"
+                  (ngModelChange)="widgetStyles.comeMsg.padding = newPadding(widgetStyles.comeMsg.padding, 'left', $event);applyWidgetStyles.next()"
+                >
+                <mat-slider min="0" max="20" step="1">
+                  <input matSliderThumb [ngModel]="getPadding(widgetStyles.comeMsg.padding, 'left')"
+                         (ngModelChange)="widgetStyles.comeMsg.padding = newPadding(widgetStyles.comeMsg.padding, 'left', $event);applyWidgetStyles.next()">
+                </mat-slider>
+              </div>
+            </div>
+
+            <accordion>
+              <accordion-group>
+                <h6 accordion-heading>Шрифт основного текста</h6>
+                <label for="comeMsgTextPosGroup">Положение текста</label>
+                <mat-radio-group id="comeMsgTextPosGroup" [(ngModel)]="widgetStyles.comeMsg.content.align"
+                                 (ngModelChange)="applyWidgetStyles.next()">
+                  <mat-radio-button value="left">Слева</mat-radio-button>
+                  <mat-radio-button value="center">По центру</mat-radio-button>
+                  <mat-radio-button value="right">Справа</mat-radio-button>
+                </mat-radio-group>
+                <label for="joinMsgFontSize" class="form-label">Размер шрифта</label>
+                <input id="joinMsgFontSize" type="number" min="0.1" max="30" step="0.1"
+                       [(ngModel)]="widgetStyles.comeMsg.content.size"
+                       (ngModelChange)="widgetStyles.comeMsg.content.type='px';applyWidgetStyles.next()">
+                <mat-slider min="0.1" max="30" step="0.1">
+                  <input matSliderThumb [(ngModel)]="widgetStyles.comeMsg.content.size"
+                         (ngModelChange)="widgetStyles.comeMsg.content.type='px';applyWidgetStyles.next()">
+                </mat-slider>
+                <label for="comeMsgTimeLineHeight" class="form-label">Высота строки</label>
+                <input id="comeMsgTimeLineHeight" type="number" min="0.1" max="3" step="0.1"
+                       [(ngModel)]="widgetStyles.comeMsg.content.lineHeight"
+                       (ngModelChange)="applyWidgetStyles.next()">
+                <mat-slider min="0.1" max="3" step="0.1">
+                  <input matSliderThumb [(ngModel)]="widgetStyles.comeMsg.content.lineHeight"
+                         (ngModelChange)="applyWidgetStyles.next()">
+                </mat-slider>
+
+                <label for="comeMsgTextBgc" class="form-label">Цвет шрифта</label>
+                <input
+                  id="comeMsgTextBgc"
+                  class="form-control"
+                  type="color"
+                  [(ngModel)]="widgetStyles.comeMsg.content.color"
+                  (ngModelChange)="applyWidgetStyles.next()"
+                >
+              </accordion-group>
+            </accordion>
           </accordion-group>
         </accordion>
       </accordion-group>
@@ -142,29 +656,30 @@
   </div>
 </ng-template>
 
-
-  <ng-template #deleteModal>
-    <div class="modal-header">
-      <h4 class="modal-title pull-left">Удалить виджет?</h4>
+<ng-template #deleteModal>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">Удалить виджет?</h4>
+    <button
+      type="button"
+      class="btn-close close pull-right"
+      aria-label="Close"
+      tooltip='Закрыть'
+      (click)="modalRef?.hide()">
+      <span aria-hidden="true" class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="btnContainer">
       <button
-        type="button"
-        class="btn-close close pull-right"
-        aria-label="Close"
-        tooltip = 'Закрыть'
-        (click)="modalRef?.hide()">
-        <span aria-hidden="true" class="visually-hidden">&times;</span>
+        class="btn btn-danger"
+        (click)="deleteVidjet()"
+      >Да
+      </button>
+      <button
+        class="btn btn-success"
+        (click)="modalRef?.hide()"
+      >Нет
       </button>
     </div>
-    <div class="modal-body">
-      <div class="btnContainer">
-        <button
-          class="btn btn-danger"
-          (click) = "deleteVidjet()"
-        >Да</button>
-        <button
-          class="btn btn-success"
-          (click) = "modalRef?.hide()"
-        >Нет</button>
-      </div>
-    </div>
-  </ng-template>
+  </div>
+</ng-template>

@@ -34,6 +34,16 @@ export function execute(connection: HubConnection, ip: string): [HTMLElement, (s
         showDialog(true);
     }
     addEventListener(button, 'click', onButtonClick);
-    return [button, showButton]
+
+    const hide = (show: boolean) => {
+        if (!show) {
+            showButton(false);
+            showDialog(false);
+        } else {
+            showButton(true);
+            button.disabled = false;
+        }
+    }
+    return [button, hide]
 }
 

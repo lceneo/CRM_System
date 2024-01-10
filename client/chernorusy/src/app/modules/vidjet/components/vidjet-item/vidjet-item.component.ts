@@ -48,23 +48,59 @@ export class VidjetItemComponent implements OnInit {
     })
   }
 
-  setWidgetStyle(ev: any, ...keys: string[]) {
-    const value = ev.target ? ev.target.value : ev;
-    let elem: any = this.widgetStyles;
-    if (keys.length === 1) {
-      elem[keys[0]] = value;
-    }
-    for (let i = 0; i < keys.length - 1; i++) {
-      elem = elem[keys[i]];
-    }
-    elem[keys[keys.length - 1]] = value;
-    this.applyWidgetStyles.next();
-  }
-
   ngOnInit(): void {
     this.domainFormControl.setValue(this.vidjet.domen);
     this.widgetStylesInit = merge(this.vidjet.styles, this.vidjetS.defaultStyles);
     this.widgetStyles = cloneDeep(this.widgetStylesInit);
+  }
+
+  getPadding(s: string, type: 'top' | 'left' | 'bottom' | 'right') {
+    const index = this.getPaddingIndex(type);
+    const v = this.toFullPadding(s.split(' '))[index];
+    if (!v || !v.endsWith('px')) return 0;
+    return v.slice(0, v.length - 2);
+  }
+
+  newPadding(before: string, type: 'top' | 'left' | 'bottom' | 'right', value: number) {
+    const values = this.toFullPadding(before.split(' '));
+    const index = this.getPaddingIndex(type);
+    values[index] = value + 'px';
+    return values.join(' ');
+  }
+
+  private toFullPadding(p: string[]) {
+    if (p.length === 1) {
+      p.push(p[0]);
+      p.push(p[0]);
+      p.push(p[0]);
+    }
+    if (p.length === 2) {
+      p.push(p[0]);
+      p.push(p[0])
+    }
+    if (p.length === 3) {
+      p.push(p[1]);
+    }
+    return p;
+  }
+
+  private getPaddingIndex(type: 'left' | 'right' | 'top' | 'bottom'): number {
+    let index = 0;
+    switch(type) {
+      case "left":
+        index = 3;
+        break;
+      case "top":
+        index = 0;
+        break;
+      case "right":
+        index = 1;
+        break;
+      case "bottom":
+        index = 2;
+        break;
+    }
+    return index;
   }
 
   protected openModal(template: TemplateRef<void>) {

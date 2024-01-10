@@ -20,65 +20,65 @@ export class VidjetService extends EntityStateManager<IVidjet> {
   public readonly defaultStyles: Customization = {
     comeMsg: {
       bgc: 'orange',
-      padding: '5px',
+      padding: '5px 5px 5px 5px',
       side: 'center',
       content: {
         align: 'center',
-        size: 1,
-        type: 'rem',
+        size: 14,
+        type: 'px',
         color: 'black',
         lineHeight: 1
       },
     },
     mngMsg: {
       bgc: 'lightblue',
-      padding: '5px',
+      padding: '5px 5px 5px 5px',
       side: 'left',
       time: {
         align: 'right',
-        size: .5,
-        type: 'rem',
+        size: 7,
+        type: 'px',
         color: 'black',
         lineHeight: 1
       },
       content: {
         align: 'left',
-        size: 1,
-        type: 'rem',
+        size: 14,
+        type: 'px',
         color: 'black',
         lineHeight: 1
       },
     },
     userMsg: {
       bgc: 'lightgreen',
-      padding: '5px',
+      padding: '5px 5px 5px 5px',
       side: 'right',
       time: {
         align: 'right',
-        size: .5,
-        type: 'rem',
+        size: 7,
+        type: 'px',
         color: 'black',
         lineHeight: 1
       },
       content: {
         align: 'left',
-        size: 1,
-        type: 'rem',
+        size: 14,
+        type: 'px',
         color: 'black',
         lineHeight: 1
       },
     },
     content: {
       bgc: 'lightgrey',
-      padding: '5px',
+      padding: '5px 5px 5px 5px',
     },
     footer: {
       bgc: 'black',
-      padding: '5px',
+      padding: '5px 5px 5px 5px',
     },
     header: {
       bgc:'black',
-      padding: '5px',
+      padding: '5px 5px 5px 5px',
     },
     online: {color: {offline: "", online: ""}, show: false, size: 0},
     position: {X: {side: 'left', move: 0, moveType: 'px'}, Y: {side: 'bottom', move: 0, moveType: 'px'}},
@@ -94,7 +94,7 @@ export class VidjetService extends EntityStateManager<IVidjet> {
 
 
   public createOrUpdateVidjet(vidjet: IVidjetPOSTRequestDTO) {
-    return this.httpS.post<IVidjetPOSTResponseDTO>('/Vidjets', {...vidjet, styles: JSON.stringify(vidjet.styles)})
+    return this.httpS.post<IVidjetPOSTResponseDTO>('/Vidjets', vidjet)
       .pipe(
         tap((res) => {
           'id' in vidjet ? this.updateByID(vidjet.id as string, {domen: vidjet.domen})

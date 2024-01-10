@@ -19,7 +19,7 @@ export function createMessageView({ id, className, styles, message, pending = fa
         lineHeight: '2em',
         backgroundColor: '#b29b57',
         display: 'block',
-        height: '2em',
+        height: undefined,
         margin: '0',
         borderRadius: '10px',
     }
@@ -50,26 +50,19 @@ export function createMessageView({ id, className, styles, message, pending = fa
     if (message.side === 'join') {
         messageView.innerHTML = `<p class="${cls('message-view-content')}">${message.content}</p>`
     }
-    console.log('before message.fileKey');
-    console.log(message);
     if (message.fileKey) {
-        console.log('in message.fileKey')
-        console.log(message);
         messageView.innerHTML = author;
         getStatic(message.fileKey)
             .then(blob => {
-                console.log('in then(blob=>...')
                 const url = URL.createObjectURL(blob);
                 const extIs = (ext: string) => message.content.endsWith(ext);
                 const isImage = extIs('png') || extIs('jpg') || extIs('svg') || extIs('gif');
                 console.log(blob.type, isImage, message.content);
                 if (isImage) {
-                    console.log('in image');
                     const img = document.createElement('img');
                     img.src = url
                     messageView.innerHTML += img.outerHTML;
                 } else {
-                    console.log('int not image');
                     const link = document.createElement('a');
                     link.classList.add(cls('link'));
                     const fileIcon = document.createElement('icon');
