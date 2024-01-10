@@ -119,7 +119,10 @@ public class ChatsHub : Hub, IHub
     {
         var userId = Context.User.GetId();
         var profile = await profilesRepository.GetByIdAsync(userId);
-        var messages = await messagesRepository.GetByIdsAsync(request.MessageIds);
+        var messages = messagesRepository.Search(
+                request.ChatId,
+                new MessagesSearchRequest {MessageIds = request.MessageIds.ToHashSet()})
+            .Items;
         foreach (var message in messages)
         {
             var check = new CheckEntity {Message = message, Profile = profile};
@@ -127,10 +130,11 @@ public class ChatsHub : Hub, IHub
                 message.Checks = new HashSet<CheckEntity> {check};
             else
                 message.Checks.Add(check);
-            await messagesRepository.UpdateAsync(message);
         }
+        await messagesRepository.SaveChangesAsync();
+        
         var chat = await chatsRepository.GetByIdAsync(messages.First().Chat.Id);
-        var reponse = new CheckMessagesResponse
+        var response = new CheckMessagesResponse
         {
             Checker = mapper.Map<ProfileOutShortDTO>(profile),
             ChatId = chat.Id,
@@ -144,14 +148,14 @@ public class ChatsHub : Hub, IHub
                 try
                 {
                     await Clients.Group(user.Id.ToString())
-                        .SendAsync("Check", reponse);
+                        .SendAsync("Check", response);
                 }
                 catch{}
             }
         }
         else
         {
-            await Managers.SendAsync("Check", reponse);
+            await Managers.SendAsync("Check", response);
         }
     }
 

@@ -15,10 +15,13 @@ public class MessagesRepository : CRUDRepository<MessageEntity>, IMessagesReposi
     {
     }
 
-    public SearchResponseBaseDTO<MessageEntity> SearchAsync(Guid chatId, MessagesSearchRequest request)
+    public SearchResponseBaseDTO<MessageEntity> Search(Guid chatId, MessagesSearchRequest request, bool asTracking = false)
     {
-        var query = Set
-            .AsNoTracking()
+        var query = Set.AsQueryable();
+        if (!asTracking)
+            query = query.AsNoTracking();
+        
+        query = Set
             .Include(m => m.Sender)
             .Include(m => m.Files)
             .Include(m => m.Checks)
