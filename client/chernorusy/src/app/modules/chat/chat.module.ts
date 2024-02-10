@@ -23,6 +23,7 @@ import {FileSizePipe} from "./pipes/file-size.pipe";
 import {ModalModule} from "ngx-bootstrap/modal";
 import { ImageFullscreenComponent } from './components/image-fullscreen/image-fullscreen.component';
 import {MatDialogModule} from "@angular/material/dialog";
+import {UnreadChatsPipe} from "./pipes/unread-chats.pipe";
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: MainChatPageComponent }
@@ -37,26 +38,27 @@ const routes: Routes = [
     ChatMembersComponent,
     ImageFullscreenComponent
   ],
-  imports: [
-    CommonModule,
-    RouterModule.forChild(routes),
-    TabsModule,
-    NgLetDirective,
-    FormsModule,
-    TextareaResizeDirective,
-    GetChatTypePipe,
-    TooltipModule,
-    MatTooltipModule,
-    MatProgressSpinnerModule,
-    MatButtonModule,
-    MatIconModule,
-    MatMenuModule,
-    MatBadgeModule,
-    ReactiveFormsModule,
-    MatChipsModule,
-    NgOptimizedImage,
-    FileSizePipe,
-    MatDialogModule
-  ]
+    imports: [
+        CommonModule,
+        RouterModule.forChild(routes),
+        TabsModule,
+        NgLetDirective,
+        FormsModule,
+        TextareaResizeDirective,
+        GetChatTypePipe,
+        TooltipModule,
+        MatTooltipModule,
+        MatProgressSpinnerModule,
+        MatButtonModule,
+        MatIconModule,
+        MatMenuModule,
+        MatBadgeModule,
+        ReactiveFormsModule,
+        MatChipsModule,
+        NgOptimizedImage,
+        FileSizePipe,
+        MatDialogModule,
+        UnreadChatsPipe
+    ]
 })
 export class ChatModule { }

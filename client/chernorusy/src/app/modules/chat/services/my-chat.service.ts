@@ -18,7 +18,8 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
 
   protected override initMethod = '/Chats/My';
   private allChats = this.getEntitiesAsync();
-
+  private sortFn = () => this.sortByPredicate((fChat, sChat) =>
+    new Date(sChat.lastMessage?.dateTime ?? 0).getTime() - new Date(fChat.lastMessage?.dateTime ?? 0).getTime());
   constructor(
     private messageS: MessageService,
     private messageMapper: MessageMapperService,
@@ -29,7 +30,7 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
 
 
   protected override initial() {
-    this.initStore();
+    this.initStore(this.sortFn);
     this.registrateSocketHandlers();
   }
 
@@ -81,8 +82,7 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
         this.getChatByID(msgReceive.chatId)
           .subscribe(newChat => {
             this.upsertEntities([newChat]);
-            this.sortByPredicate((fChat, sChat) =>
-              new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
+            this.sortFn();
           });
       }
 
@@ -97,8 +97,7 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
               sender: {...msgReceive.sender}
             }
           });
-        this.sortByPredicate((fChat, sChat) =>
-          new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
+        this.sortFn();
       }
     }
 
@@ -110,8 +109,7 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
         this.getChatByID(msgSuccess.chatId)
           .subscribe(chat => {
             this.upsertEntities([chat]);
-            this.sortByPredicate((fChat, sChat) =>
-              new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
+            this.sortFn();
           });
       } else {
         this.updateByID(msgInChat.chatId,
@@ -124,8 +122,7 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
               sender: {...msgInChat.sender}
             }
           });
-        this.sortByPredicate((fChat, sChat) =>
-          new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
+        this.sortFn();
       }
     }
 

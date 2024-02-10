@@ -2,7 +2,6 @@ import {ChangeDetectionStrategy, Component, Input, TemplateRef, ViewChild} from 
 import {IMessageInChat} from "../../../../shared/models/entities/MessageInChat";
 import {MessageType} from "../../../../shared/models/enums/MessageType";
 import {MatDialog} from "@angular/material/dialog";
-import {BsModalRef, BsModalService} from "ngx-bootstrap/modal";
 import {ImageFullscreenComponent} from "../image-fullscreen/image-fullscreen.component";
 
 @Component({

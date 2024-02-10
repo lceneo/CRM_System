@@ -5,12 +5,29 @@
 
   <tabset *ngIf = "profile(); else noProfileTemplate">
 
-    <tab heading="Входящие" #tabInbox="tab">
+    <tab #tabInbox="tab"
+    >
+      <ng-template tabHeading>
+        <span
+          *ngLet="('Inbox' | unreadChats)() as unreadChatsNumber"
+              [matBadge]="unreadChatsNumber"
+              [matBadgeHidden] = "!unreadChatsNumber"
+              [matBadgeSize]="'small'"
+        >Входящие</span>
+      </ng-template>
       <app-messages-list
         [tabType]="'Inbox'"></app-messages-list>
     </tab>
 
-    <tab heading="Мои" #tabMine="tab">
+    <tab #tabMine="tab">
+      <ng-template tabHeading>
+        <span
+          *ngLet="('Mine' | unreadChats)() as unreadChatsNumber"
+          [matBadge]="unreadChatsNumber"
+          [matBadgeHidden] = "!unreadChatsNumber"
+          [matBadgeSize]="'small'"
+        >Мои</span>
+      </ng-template>
       <app-messages-list
         [selectedChatID]="selectedTab?.heading === 'Мои' ? (selectedTab?.chat?.id ?? undefined) : undefined"
         [tabType]="'Mine'"></app-messages-list>

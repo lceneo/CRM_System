@@ -14,14 +14,16 @@ export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
 
   protected override initMethod = '/Chats/Free';
   private pendingJoinIDs: string[] = [];
+  private sortFn = () => this.sortByPredicate((fChat, sChat) =>
+    new Date(sChat.lastMessage?.dateTime ?? 0).getTime() - new Date(fChat.lastMessage?.dateTime ?? 0).getTime());
   protected override initial() {
-    this.initStore();
+    this.initStore(this.sortFn);
     this.registrateSocketHandlers();
   }
 
   private registrateSocketHandlers() {
     const updateFreeChatsFn = () => {
-      this.initStore();
+      this.initStore(this.sortFn);
     }
 
     const receiveFn = (msgReceive: IMessageReceive) => {
@@ -35,8 +37,11 @@ export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
               files: msgReceive.files,
               dateTime: msgReceive.dateTime,
               sender: {...msgReceive.sender}
-            }
+            },
+            unreadMessagesCount: existingChat.unreadMessagesCount + 1
           });
+
+      this.sortFn();
     }
 
     const activeStatusFn = (statusUpdate: IUserConnectionStatus) => {

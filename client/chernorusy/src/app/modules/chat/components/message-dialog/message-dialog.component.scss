@@ -10,6 +10,7 @@
   padding-top: 10px;
   &__messages {
     display: flex;
+    position: relative;
     overflow-y: auto;
     flex-direction: column;
     padding-right: 3.5rem;

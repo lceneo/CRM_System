@@ -43,7 +43,7 @@ export class EntityStateManager<T extends {id: string}> {
   }
 
 
-  protected initStore() {
+  protected initStore(fnCallback?: (...args: any[]) => any) {
     this.httpS.get<T[]>(this.initMethod)
       .pipe(
         map((entities) => this.mapFn ? this.mapFn(entities) : entities),
@@ -63,7 +63,13 @@ export class EntityStateManager<T extends {id: string}> {
           return throwError(() => new Error());
         })
       )
-      .subscribe();
+      .subscribe(
+        {
+          complete: () => {
+            fnCallback && fnCallback();
+          }
+        }
+      );
   }
   public upsertEntities(entities: T[]) {
     const entitiesArr: T[] = [];
