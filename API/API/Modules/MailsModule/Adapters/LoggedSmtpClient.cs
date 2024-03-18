@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Net.Mail;
 using API.Infrastructure;
+using API.Modules.LogsModule;
 using API.Modules.MailsModule.Entities;
 using API.Modules.MailsModule.Ports;
 
@@ -10,8 +11,11 @@ public class LoggedSmtpClient : ILoggedSmtpClient
 {
     private readonly SmtpClient smtpClient;
     private readonly IMailMessagesRepository mailMessagesRepository;
+    private readonly ILog log;
 
-    public LoggedSmtpClient(IMailMessagesRepository mailMessagesRepository)
+    public LoggedSmtpClient(
+        IMailMessagesRepository mailMessagesRepository,
+        ILog log)
     {
         this.mailMessagesRepository = mailMessagesRepository;
         this.smtpClient = ConfigureSmtpClient();
@@ -39,6 +43,10 @@ public class LoggedSmtpClient : ILoggedSmtpClient
 
         client.SendCompleted += (e, a) =>
         {
+            if (a.Error != null)
+            {
+                // log.Error(a.Error.Message);
+            }
             mailMessagesRepository.CreateAsync(new MailMessageEntity
             {
                 Time = DateTime.Now,
