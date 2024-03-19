@@ -38,4 +38,5 @@ public class DataContext : DbContext
     public DbSet<MessageEntity> Messages => Set<MessageEntity>();
     public DbSet<VidjetEntity> Vidjets => Set<VidjetEntity>();
     public DbSet<FileEntity> Files => Set<FileEntity>();
+    public DbSet<CheckEntity> Checks => Set<CheckEntity>();
 }

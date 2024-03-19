@@ -121,7 +121,8 @@ public class ChatsHub : Hub, IHub
         var profile = await profilesRepository.GetByIdAsync(userId);
         var messages = messagesRepository.Search(
                 request.ChatId,
-                new MessagesSearchRequest {MessageIds = request.MessageIds.ToHashSet()})
+                new MessagesSearchRequest {MessageIds = request.MessageIds.ToHashSet()},
+                true)
             .Items;
         foreach (var message in messages)
         {
