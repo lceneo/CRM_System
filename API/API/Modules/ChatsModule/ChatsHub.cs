@@ -6,6 +6,7 @@ using API.Modules.ChatsModule.ApiDTO;
 using API.Modules.ChatsModule.DTO;
 using API.Modules.ChatsModule.Entities;
 using API.Modules.ChatsModule.Ports;
+using API.Modules.LogsModule;
 using API.Modules.ProfilesModule.DTO;
 using API.Modules.ProfilesModule.Entities;
 using API.Modules.ProfilesModule.Ports;
@@ -29,6 +30,7 @@ public class ChatsHub : Hub, IHub
     private readonly IChatsRepository chatsRepository;
     private readonly IProfilesRepository profilesRepository;
     private readonly IMapper mapper;
+    private readonly ILog log;
 
     public ChatsHub(
         HubConnectionsProvider connectionsProvider,
@@ -36,7 +38,8 @@ public class ChatsHub : Hub, IHub
         IMessagesRepository messagesRepository,
         IChatsRepository chatsRepository,
         IProfilesRepository profilesRepository,
-        IMapper mapper)
+        IMapper mapper,
+        ILog log)
     {
         this.connectionsProvider = connectionsProvider;
         this.chatsService = chatsService;
@@ -44,6 +47,7 @@ public class ChatsHub : Hub, IHub
         this.chatsRepository = chatsRepository;
         this.profilesRepository = profilesRepository;
         this.mapper = mapper;
+        this.log = log;
     }
 
     public async Task Send(SendMessageRequest request)
@@ -60,7 +64,7 @@ public class ChatsHub : Hub, IHub
 
         var chat = response.Value.chat;
         var othersInGroup = chat.Profiles.Where(p => p.Id != senderId);
-        if (othersInGroup.Count() > 0)
+        if (othersInGroup.Any())
         {
             foreach (var user in othersInGroup)
             {
@@ -158,6 +162,20 @@ public class ChatsHub : Hub, IHub
         {
             await Managers.SendAsync("Check", response);
         }
+    }
+
+    public async Task Rate(RateManagerRequest request)
+    {
+        var userId = Context.User.GetId();
+        var chat = await chatsRepository.GetByIdAsync(request.ChatId);
+        if (chat == null)
+        {
+            await log.Error($"Hub. Didnt found chat: {request.ChatId}");
+            return;
+        }
+
+        var manager = chat.Profiles.FirstOrDefault(e => e.Account.Role == AccountRole.Manager);
+        
     }
 
     public override Task OnConnectedAsync()
