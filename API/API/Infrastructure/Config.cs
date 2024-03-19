@@ -3,7 +3,7 @@
 public class Config
 {
     public const string MailBoxLogin = @"chernorusy@mail.ru";
-    public const string MailBoxPassword = @"KGw9Q2bmFZpyptJ4xfKZ";
+    public const string MailBoxPassword = @"n2UwqhFqjj7W7jz5t5cR"; // Реальный пароль 66bit-chern
     public const string Host = "request.stk8s.66bit.ru";
     public const string JwtSecurityKey = "Token with 16 ch";
     public static string PathToStatic = Directory.GetCurrentDirectory() + @"/Static";

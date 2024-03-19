@@ -49,14 +49,12 @@ export function createChatContent({ text, id, className, styles }: {
 		}
 	})
 
-	if (getIsCustomizing()) {
-		messagesStore.items.forEach(message => {
+	messagesStore.items.forEach(message => {
 			const [msgView] = createMessageView({
 				message
 			})
 			divMessages.appendChild(msgView);
 		})
-	}
 
 	messagesStore.onItemsAdd((message) => {
 		const [msgView] = createMessageView({
@@ -75,13 +73,6 @@ export function createChatContent({ text, id, className, styles }: {
 		divPending.append(...messages.map(m => createMessageView({message: m})[0]))
 		divWrapper.scroll(0, divWrapper.scrollHeight);
 	});
-	socket?.onActiveStatus((connected) => {
-		/*const text = `Менеджер ${connected ? "зашел в чат" : "вышел из чата"}`
-		const p = document.createElement('p');
-		p.textContent = text;
-		p.className = cls('active-status-message');
-		divMessages.appendChild(p)*/
-	})
 
 	const listeners: (() => void)[] = [];
 

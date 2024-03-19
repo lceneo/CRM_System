@@ -10,5 +10,6 @@ export const openChatButtonStyles = `
         position: fixed;
         right: 5%;
         bottom: 5%;
+        z-index: 10000;
 	}
 `

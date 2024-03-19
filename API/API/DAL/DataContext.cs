@@ -19,7 +19,7 @@ public class DataContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder options)
     {
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-        options.UseNpgsql(Environment.GetEnvironmentVariable("DATABASE_CONNECTION"),
+        options.UseNpgsql(config.GetConnectionString("DefaultConnection"),
             builder => { builder.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null); });
     }
 
@@ -38,4 +38,5 @@ public class DataContext : DbContext
     public DbSet<MessageEntity> Messages => Set<MessageEntity>();
     public DbSet<VidjetEntity> Vidjets => Set<VidjetEntity>();
     public DbSet<FileEntity> Files => Set<FileEntity>();
+    public DbSet<CheckEntity> Checks => Set<CheckEntity>();
 }

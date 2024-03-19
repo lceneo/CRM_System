@@ -9,8 +9,13 @@ import {stylesStore} from "./store/styles";
 
 export let socket: SocketService | null;
 (async () => {
-    socket = await SocketService.New();
-    console.log('socket implanted')
+    const s = await SocketService.New();
+    if (!s) {
+        console.warn('socket error');
+    } else {
+        socket = s;
+        console.log('socket implanted')
+    }
 })()
 
 export interface GlobalState {

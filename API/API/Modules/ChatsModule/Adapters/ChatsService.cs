@@ -218,6 +218,14 @@ public class ChatsService : IChatsService
 
         chat.Status = req.Status;
         await chatsRepository.UpdateAsync(chat);
+        await log.Info($"chat: {chat.Id} was archived");
+        if (req.Status == ChatStatus.Archived)
+        {
+            foreach (var receiver in chat.Profiles)
+            {
+                await SendSystemMessage(chat.Id, "Чат архивирован менеджером");
+            }
+        }
         return Result.NoContent<bool>();
     }
 

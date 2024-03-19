@@ -21,7 +21,7 @@ export class VidjetCreateComponent {
   ) {}
 
   protected createVidjet() {
-    this.vidjetS.createOrUpdateVidjet({domen: this.domainFormControl.value?.trim() as string})
+    this.vidjetS.createOrUpdateVidjet({domen: this.domainFormControl.value?.trim() as string, styles: this.vidjetS.defaultStyles})
       .pipe(
         tap(() => {
           if (this.accordionPanel.isOpen) { this.accordionPanel.toggleOpen(); this.cdr.detectChanges(); }
