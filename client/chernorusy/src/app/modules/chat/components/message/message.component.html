@@ -26,7 +26,7 @@
 
 <ng-template #fileInMessage let-file>
   <ng-container *ngIf="file.fileType.includes('image'); else downloadFileTemplate">
-    <img #img [src]="file.dataUrl" [width]="(img.naturalWidth < 300 && img.naturalWidth !== 0) ? img.naturalWidth :
+    <img #img class="img" [src]="file.dataUrl" [width]="(img.naturalWidth < 300 && img.naturalWidth !== 0) ? img.naturalWidth :
      300" [height]="(img.naturalHeight < 300 && img.naturalHeight !== 0) ? img.naturalHeight : 300"
          (click) = "openImage(file.dataUrl)"
     >

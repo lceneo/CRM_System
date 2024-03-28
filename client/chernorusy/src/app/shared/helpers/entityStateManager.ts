@@ -21,7 +21,7 @@ export class EntityStateManager<T extends {id: string}> {
 
   protected httpS = inject(HttpService);
   protected socketS = inject(SocketService);
-  private destroyRef = inject(DestroyRef);
+  protected destroyRef = inject(DestroyRef);
   constructor() {
     setTimeout(() => {
         if (this.socketS.isConnected()) {
