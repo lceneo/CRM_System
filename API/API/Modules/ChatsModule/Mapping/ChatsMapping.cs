@@ -15,6 +15,7 @@ public class ChatsMapping : Profile
             .ForMember(dest => dest.Name, opt => opt.MapFrom(GetChatName))
             .ForMember(dest => dest.Profiles, opt => opt.MapFrom(src => src.Profiles))
             .ForMember(dest => dest.UnreadMessagesCount, opt => opt.MapFrom(MapUnreadsCount));
+        CreateMap<ChatEntity, ChatShortDTO>();
     }
 
     private string GetChatName(ChatEntity src, ChatOutDTO dest, string _, ResolutionContext context)

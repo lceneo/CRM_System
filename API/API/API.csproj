@@ -31,8 +31,4 @@
     </Compile>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Modules\RatesModule\" />
-  </ItemGroup>
-
 </Project>
