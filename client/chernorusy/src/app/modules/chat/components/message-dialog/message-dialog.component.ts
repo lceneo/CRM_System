@@ -227,7 +227,7 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
 
   protected joinChat() {
     // не обновляем стор, т.к там рисив будет
-    this.freeChatS.joinChat(this.chatID!)
+    this.freeChatS.joinChat$(this.chatID!)
       .pipe(
         tap(() => {
           const startMsg = this.profileS.profile()?.startMessage;

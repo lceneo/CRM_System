@@ -2,7 +2,6 @@ import {computed, Injectable} from '@angular/core';
 import {IChatResponseDTO} from "../../../shared/models/DTO/response/ChatResponseDTO";
 import {EntityStateManager} from "../../../shared/helpers/entityStateManager";
 import {IMessageReceive} from "../../../shared/models/entities/MessageReceive";
-import {IMessageSuccess} from "../../../shared/models/entities/MessageSuccess";
 import {MessageMapperService} from "../../../shared/helpers/mappers/message.mapper.service";
 import {MessageService} from "./message.service";
 import {tap} from "rxjs";
@@ -10,6 +9,8 @@ import {FreeChatService} from "./free-chat.service";
 import {ChatStatus} from "../../../shared/models/enums/ChatStatus";
 import {IUserConnectionStatus} from "../../../shared/models/entities/UserConnectionStatus";
 import {ActiveStatus} from "../../../shared/models/enums/ActiveStatus";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {IMessageInChat} from "../../../shared/models/entities/MessageInChat";
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,6 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
 
   constructor(
     private messageS: MessageService,
-    private messageMapper: MessageMapperService,
     private freeChatS: FreeChatService
   ) {
     super();
@@ -30,6 +30,7 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
 
   protected override initial() {
     this.initStore();
+    this.listenForNewMessages();
     this.registrateSocketHandlers();
   }
 
@@ -72,7 +73,7 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
       );
   }
 
-  private registrateSocketHandlers() {
+  private listenForNewMessages() {
     const receiveFn = (msgReceive: IMessageReceive) => {
       const existingChat = this.getEntitiesSync().find(chat => chat.id === msgReceive.chatId);
       const notInFreeChats = !this.freeChatS.getByID(msgReceive.chatId) || this.freeChatS.isPendingJoin(msgReceive.chatId);
@@ -102,9 +103,8 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
       }
     }
 
-    const successFn = (msgSuccess: IMessageSuccess) => {
-      const msgInChat = this.messageMapper.msgSuccessToMsgInChat(msgSuccess, this.messageS.getMessageDataByRequestNumber(msgSuccess.requestNumber));
-      const existingChat = this.getEntitiesSync().find(chat => chat.id === msgInChat.chatId);
+    const successFn = (msgSuccess: IMessageInChat) => {
+      const existingChat = this.getEntitiesSync().find(chat => chat.id === msgSuccess.chatId);
 
       if (!existingChat) {
         this.getChatByID(msgSuccess.chatId)
@@ -114,14 +114,14 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
               new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
           });
       } else {
-        this.updateByID(msgInChat.chatId,
+        this.updateByID(msgSuccess.chatId,
           {
             lastMessage: {
               ...existingChat.lastMessage,
-              message: msgInChat.message,
-              files: msgInChat.files,
-              dateTime: msgInChat.dateTime,
-              sender: {...msgInChat.sender}
+              message: msgSuccess.message,
+              files: msgSuccess.files,
+              dateTime: msgSuccess.dateTime,
+              sender: {...msgSuccess.sender}
             }
           });
         this.sortByPredicate((fChat, sChat) =>
@@ -129,6 +129,18 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
       }
     }
 
+    this.messageS.receivedMessages$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(msgReceive => receiveFn(msgReceive));
+
+    this.messageS.successMessages$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      ).subscribe(msgSuccess => successFn(msgSuccess));
+  }
+  private registrateSocketHandlers() {
     const activeStatusFn = (statusUpdate: IUserConnectionStatus) => {
       const chatsWithUser = this.getEntitiesSync()
         .filter(freeChat => freeChat.profiles.some(p => p.id === statusUpdate.userId));
@@ -142,9 +154,6 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
         });
       })
     }
-
-    this.socketS.listenMethod('Recieve', receiveFn);
-    this.socketS.listenMethod('Success', successFn);
     this.socketS.listenMethod('ActiveStatus', activeStatusFn);
   }
 }
