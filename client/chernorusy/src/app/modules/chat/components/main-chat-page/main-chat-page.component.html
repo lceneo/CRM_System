@@ -5,14 +5,21 @@
 
   <tabset *ngIf = "profile(); else noProfileTemplate">
 
-    <tab heading="Входящие" #tabInbox="tab">
-      <app-messages-list
-        [tabType]="'Inbox'"></app-messages-list>
+    <tab heading="Входящие" #tabInbox="tab"
+         (selectTab)="inboxMessagesList.activateTab();"
+         (deselect)="deselectTab(tabInbox)">
+      <app-messages-list #inboxMessagesList
+        [tabType]="'Inbox'"
+        (selectedChatIDChange)="changeSelectedChat($event, tabInbox.heading!)"
+      ></app-messages-list>
     </tab>
 
-    <tab heading="Мои" #tabMine="tab">
-      <app-messages-list
+    <tab heading="Мои" #tabMine="tab"
+         (selectTab)="myMessagesList.activateTab();"
+         (deselect)="deselectTab(tabMine)">
+      <app-messages-list #myMessagesList
         [selectedChatID]="selectedTab?.heading === 'Мои' ? (selectedTab?.chat?.id ?? undefined) : undefined"
+        (selectedChatIDChange)="changeSelectedChat($event, tabMine.heading!)"
         [tabType]="'Mine'"></app-messages-list>
     </tab>
 

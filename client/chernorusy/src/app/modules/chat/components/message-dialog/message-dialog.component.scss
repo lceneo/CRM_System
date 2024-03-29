@@ -145,8 +145,10 @@
 
 .smileIcon {
   align-self: end;
+  overflow: visible;
   ::ng-deep svg {
     fill: grey !important;
+    width: 24px;
   }
 }
 

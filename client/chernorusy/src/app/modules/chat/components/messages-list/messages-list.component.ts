@@ -1,9 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component, effect,
-  ElementRef, Injector,
+  ElementRef, EventEmitter, Injector,
   Input, OnChanges,
-  OnInit,
+  OnInit, Output,
   Signal, SimpleChanges,
   ViewChild
 } from '@angular/core';
@@ -21,6 +21,7 @@ import {FreeChatService} from "../../services/free-chat.service";
 export class MessagesListComponent implements OnChanges, OnInit {
   @Input({required: true}) tabType!: TabType;
   @Input() selectedChatID?: string;
+  @Output() selectedChatIDChange = new EventEmitter<string | undefined>();
 
   @ViewChild(MessageDialogComponent, {static: true}) dialog!: MessageDialogComponent;
   @ViewChild('dialog', {static: true}) dialogWrapper!: ElementRef<HTMLElement>;
@@ -60,6 +61,10 @@ export class MessagesListComponent implements OnChanges, OnInit {
         }
     }
 
+    public activateTab() {
+      this.selectedChatIDChange.emit(this.selectedChatID);
+    }
+
 
   protected openDialogMessage(chatID: string, fromOtherTab = false) {
     if (this.selectedChatID === chatID && !fromOtherTab) {
@@ -68,11 +73,13 @@ export class MessagesListComponent implements OnChanges, OnInit {
     }
     this.dialog.resetMsgValue();
     this.selectedChatID = chatID;
+    this.selectedChatIDChange.emit(chatID);
     this.dialogWrapper.nativeElement.classList.remove('chats__hidden');
   }
 
   public closeChat() {
     this.selectedChatID = undefined;
+    this.selectedChatIDChange.next(undefined);
     this.dialogWrapper.nativeElement.classList.add('chats__hidden');
     this.dialog.resetMsgValue();
   }
