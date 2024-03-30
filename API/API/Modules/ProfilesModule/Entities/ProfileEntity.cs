@@ -2,6 +2,7 @@
 using API.DAL;
 using API.Modules.AccountsModule.Models;
 using API.Modules.ChatsModule.Entities;
+using API.Modules.CrmModule.Entities;
 using API.Modules.RatingModule.Entities;
 using API.Modules.StaticModule.Entities;
 
@@ -21,4 +22,7 @@ public class ProfileEntity : IEntity
     public string? EndMesssage { get; set; }
     public HashSet<CheckEntity> Checks { get; set; }
     public HashSet<RatingEntity> Rates { get; set; }
+    public HashSet<TaskEntity> Tasks { get; set; }
+    public HashSet<TaskCommentEntity> TaskComments { get; set; }
+    public HashSet<TaskActionEntity> TaskActions { get; set; }
 }

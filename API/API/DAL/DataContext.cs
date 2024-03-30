@@ -1,5 +1,6 @@
 using API.Modules.AccountsModule.Models;
 using API.Modules.ChatsModule.Entities;
+using API.Modules.CrmModule.Entities;
 using API.Modules.ProfilesModule.Entities;
 using API.Modules.RatingModule.Entities;
 using API.Modules.StaticModule.Entities;
@@ -41,4 +42,7 @@ public class DataContext : DbContext
     public DbSet<FileEntity> Files => Set<FileEntity>();
     public DbSet<CheckEntity> Checks => Set<CheckEntity>();
     public DbSet<RatingEntity> Rates => Set<RatingEntity>();
+    public DbSet<TaskEntity> Tasks => Set<TaskEntity>();
+    public DbSet<TaskActionEntity> TaskActions => Set<TaskActionEntity>();
+    public DbSet<TaskCommentEntity> TaskComments => Set<TaskCommentEntity>();
 }
