@@ -21,8 +21,28 @@ public class CrmController : ControllerBase
     }
 
     /// <summary>
-    /// Создаёт/Редактирует задачу
+    /// Создаёт/Редактирует задачу.
     /// </summary>
+    /// <remarks>
+    /// Если передан `Id` - пытается редактировать существующее
+    /// Если нет - создаёт новую
+    ///
+    /// Редактирование - копирует все поля из запроса, если они не `null`
+    /// 
+    /// `AssignedTo` - на кого назначена задача.
+    /// Чтобы убрать назначенного нужно передать Guid.Empty (00000000-0000-0000-0000-000000000000)
+    /// 
+    /// `State` - Состояние задачи, enum.
+    /// Значения:
+    ///  {
+    ///     New,
+    ///     Pause,
+    ///     InProgress,
+    ///     Done,
+    ///    Archived,
+    /// }
+    /// 
+    /// </remarks>
     /// <returns></returns>
     [HttpPost("Tasks")]
     public async Task<ActionResult<CreateResponse<Guid>>> CreateOrUpdateTask([FromBody]CreateOrUpdateTaskRequest request)
@@ -31,6 +51,14 @@ public class CrmController : ControllerBase
         return result.ActionResult;
     }
 
+    /// <summary>
+    /// Поиск по задачам
+    /// </summary>
+    /// <remarks>
+    /// Creation - инфа о создании
+    /// LastEdition - инфа о последнем редактировании
+    /// </remarks>
+    /// <returns></returns>
     [HttpPost("Tasks/Search")]
     public async Task<ActionResult<SearchResponseBaseDTO<TaskDTO>>> SearchTasks([FromBody]SearchTasksRequest request)
     {
