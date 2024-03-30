@@ -1,3 +1,4 @@
+using System.Reflection;
 using API.DAL;
 using API.Infrastructure;
 using API.Infrastructure.Middlewares;
@@ -9,7 +10,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(opt =>
+{
+    var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    opt.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+});
 
 // Add Cookie Auth.
 StartupBuilder.ConfigureAuthorization(builder.Services, builder.Configuration);

@@ -26,9 +26,11 @@ public class RatingController : ControllerBase
     }
 
     /// <summary>
-    /// !!! Используется в ХАБЕ. Для виджета
-    /// Оценить менеджера в чате. 
+    /// Для ХАБА. Оценить менеджера в чате. 
     /// </summary>
+    /// <remarks>
+    /// Чтобы пользователь мог поставить оценку менеджеру
+    /// </remarks>
     /// <param name="model"></param>
     /// <returns></returns>
     [HttpPost("")]
@@ -39,7 +41,7 @@ public class RatingController : ControllerBase
     }
 
     /// <summary>
-    /// Возвращает список Оценок с подробностями
+    /// Список Оценок по Менеджеру
     /// </summary>
     /// <param name="managerId"></param>
     /// <returns></returns>
@@ -58,6 +60,9 @@ public class RatingController : ControllerBase
     /// <summary>
     /// Даёт статистику по менеджерам. 
     /// </summary>
+    /// <remarks>
+    /// Средняя оценка, Сколько всего оценок
+    /// </remarks>
     /// <param name="searchReq"></param>
     /// <returns></returns>
     [HttpPost("Statistics")]
