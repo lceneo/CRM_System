@@ -1,6 +1,7 @@
 ﻿using API.Extensions;
 using API.Infrastructure;
 using API.Infrastructure.BaseApiDTOs;
+using API.Infrastructure.Extensions;
 using API.Modules.ChatsModule.ApiDTO;
 using API.Modules.ChatsModule.DTO;
 using API.Modules.ChatsModule.Entities;
@@ -73,16 +74,44 @@ public class ChatsService : IChatsService
         var messageEntity = new MessageEntity
         {
             Message = request.Message,
-            Files = files,
             Type = MessageType.Text,
             Chat = chat,
             Sender = chat.Profiles.First(p => p.Id == senderId),
             DateTime = DateTime.Now,
+            Files = files ?? new HashSet<FileEntity>(),
+            Checks = new HashSet<CheckEntity>(),
         };
         await messagesRepository.CreateAsync(messageEntity);
 
         await LogMessage(messageEntity, chat.Id);
         return Result.Ok((chat, messageEntity));
+    }
+
+    public async Task<Result<CheckMessagesResponse>> CheckMessages(CheckMessagesRequest request, Guid initiatorId)
+    {
+        var profile = await profilesRepository.GetByIdAsync(initiatorId);
+        var messages = messagesRepository.Search(
+                request.ChatId,
+                new MessagesSearchRequest {MessageIds = request.MessageIds.ToHashSet()},
+                true)
+            .Items;
+        foreach (var message in messages)
+        {
+            var check = new CheckEntity {Message = message, Profile = profile};
+            if (message.Checks == null)
+                message.Checks = new HashSet<CheckEntity> {check};
+            else
+                message.Checks.Add(check);
+        }
+        await messagesRepository.SaveChangesAsync();
+
+        await log.Info($"Check messages in chat: {request.ChatId} by user: {initiatorId}");
+        return Result.Ok(new CheckMessagesResponse
+        {
+            Checker = mapper.Map<ProfileOutShortDTO>(profile),
+            ChatId = request.ChatId,
+            MessageIds = request.MessageIds,
+        });
     }
 
     public async Task<Result<SearchResponseBaseDTO<ChatOutDTO>>> SearchChats(Guid userId, ChatsSearchRequest req)
@@ -121,7 +150,7 @@ public class ChatsService : IChatsService
         {
             await chatHub.Clients
                 .Group(receiver.Id.ToString())
-                .SendAsync("Recieve", mapper.Map<MessageOutDTO>(messageEntity, opt => opt.Items["userId"] = receiver.Id));
+                .SendAsync("Recieve", mapper.MapMessage(messageEntity, receiver.Id));
         }
 
         await LogMessage(messageEntity, chatId);
@@ -236,7 +265,7 @@ public class ChatsService : IChatsService
         var result = messagesRepository.Search(chatId, messagesSearchReq);
         return Result.Ok(new SearchResponseBaseDTO<MessageOutDTO>
         {
-            Items = mapper.Map<List<MessageOutDTO>>(result.Items, opt => opt.Items["userId"] = userId),
+            Items = mapper.MapMessages(result.Items, userId),
             TotalCount = result.TotalCount,
         });
     }

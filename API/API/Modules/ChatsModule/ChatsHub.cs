@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using API.Extensions;
 using API.Infrastructure;
+using API.Infrastructure.Extensions;
 using API.Modules.AccountsModule.Entities;
 using API.Modules.ChatsModule.ApiDTO;
 using API.Modules.ChatsModule.DTO;
@@ -77,7 +78,7 @@ public class ChatsHub : Hub, IHub
                 {
                     await Clients
                         .Group(user.Id.ToString())
-                        .SendAsync("Recieve", mapper.Map<MessageOutDTO>(response.Value.message, opt => opt.Items["userId"] = user.Id));
+                        .SendAsync("Recieve", mapper.MapMessage(response.Value.message, user.Id));
                 }
                 catch{}
             }
@@ -85,7 +86,7 @@ public class ChatsHub : Hub, IHub
         else
         {
             await Managers
-                .SendAsync("Recieve", mapper.Map<MessageOutDTO>(response.Value.message, opt => opt.Items["userId"] = Guid.Empty));
+                .SendAsync("Recieve", mapper.MapMessage(response.Value.message, Guid.Empty));
         }
 
         await Clients.Caller.SendAsync("Success", new SendMessageResponse
@@ -127,29 +128,18 @@ public class ChatsHub : Hub, IHub
     public async Task Check(CheckMessagesRequest request)
     {
         var userId = Context.User.GetId();
-        var profile = await profilesRepository.GetByIdAsync(userId);
-        var messages = messagesRepository.Search(
-                request.ChatId,
-                new MessagesSearchRequest {MessageIds = request.MessageIds.ToHashSet()},
-                true)
-            .Items;
-        foreach (var message in messages)
+        var chat = await chatsRepository.GetByIdAsync(request.ChatId);
+        if (chat == null)
         {
-            var check = new CheckEntity {Message = message, Profile = profile};
-            if (message.Checks == null)
-                message.Checks = new HashSet<CheckEntity> {check};
-            else
-                message.Checks.Add(check);
+            await log.Error($"Hub. Не найден чат: {request.ChatId}");
+            return;
         }
-        await messagesRepository.SaveChangesAsync();
         
-        var chat = await chatsRepository.GetByIdAsync(messages.First().Chat.Id);
-        var response = new CheckMessagesResponse
+        var response = await chatsService.CheckMessages(request, userId);
+        if (!response.IsSuccess)
         {
-            Checker = mapper.Map<ProfileOutShortDTO>(profile),
-            ChatId = chat.Id,
-            MessageIds = request.MessageIds,
-        };
+            await log.Error($"Hub. {response.Error}");
+        }
         var othersInGroup = chat.Profiles.Where(p => p.Id != userId);
         if (othersInGroup.Any())
         {
