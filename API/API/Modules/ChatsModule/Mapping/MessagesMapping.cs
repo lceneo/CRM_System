@@ -31,10 +31,10 @@ public class MessagesMapping : Profile
             curUser = (Guid) curUserObj;
         
         return src.Checks?
-                .Where(e => curUser == null || e.Id != curUser)
+                .Where(e => curUser == null || e.Profile.Id != curUser)
                 .Select(e => new ProfileOutShortDTO
                 {
-                    Id = e.Id,
+                    Id = e.Profile.Id,
                     Name = e.Profile.Name,
                     Surname = e.Profile.Surname,
                 });
