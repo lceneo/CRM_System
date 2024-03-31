@@ -9,7 +9,7 @@ import {
   signal,
   Signal
 } from '@angular/core';
-import {IProfileOutShort} from "../../../../shared/models/entities/ProfileOutShort";
+import {IProfileOutShort} from "../../../profile/entities/ProfileOutShort";
 import {FreeChatService} from "../../services/free-chat.service";
 import {MyChatService} from "../../services/my-chat.service";
 

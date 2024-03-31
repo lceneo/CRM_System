@@ -1,4 +1,4 @@
-import {AccountRole} from "../../enums/AccountRole";
+import {AccountRole} from "../../../profile/enums/AccountRole";
 
 export interface IRegistrationRequestDTO {
   login: string;

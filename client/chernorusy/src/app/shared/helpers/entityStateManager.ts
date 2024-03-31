@@ -4,7 +4,7 @@ import {HttpService} from "../services/http.service";
 import {catchError, map, tap, throwError} from "rxjs";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {SocketService} from "../services/socket.service";
-import {IChatResponseDTO} from "../models/DTO/response/ChatResponseDTO";
+import {IChatResponseDTO} from "../../modules/chat/helpers/entities/ChatResponseDTO";
 
 @Injectable({providedIn: "any"})
 export class EntityStateManager<T extends {id: string}> {
@@ -111,6 +111,10 @@ export class EntityStateManager<T extends {id: string}> {
     return this.entityState().entities.find(entity => entity.id === id);
   }
 
+  public getByIDAsync(id: string) {
+    return computed(() => this.entityState().entities.find(entity => entity.id === id));
+  }
+
   public getEntitiesSync() {
     return this.entityState().entities;
   }
@@ -121,12 +125,5 @@ export class EntityStateManager<T extends {id: string}> {
 
   public getEntitiesAsync() {
     return computed(() => this.entityState().entities);
-  }
-
-  protected sortByPredicate(sortFn: (f: T, s: T) => number) {
-    this.updateState({
-      ...this.entityState,
-      entities: this.entityState().entities.sort(sortFn)
-    });
   }
 }

@@ -1,7 +1,7 @@
 import {Injectable, isDevMode} from '@angular/core';
 import {HubConnection, HubConnectionBuilder, HubConnectionState} from "@microsoft/signalr";
 import {config} from "../../../main";
-import {ISendMessageRequest} from "../models/DTO/request/SendMessageRequest";
+import {ISendMessageRequest} from "../../modules/chat/helpers/DTO/request/SendMessageRequest";
 import {Subject, take} from "rxjs";
 
 @Injectable({

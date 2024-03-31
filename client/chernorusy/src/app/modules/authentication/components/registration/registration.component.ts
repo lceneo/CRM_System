@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {AccountRole} from "../../../../shared/models/enums/AccountRole";
+import {AccountRole} from "../../../profile/enums/AccountRole";
 import {AuthorizationService} from "../../../../shared/services/authorization.service";
-import {IRegistrationRequestDTO} from "../../../../shared/models/DTO/request/RegistrationRequestDTO";
+import {IRegistrationRequestDTO} from "../../DTO/request/RegistrationRequestDTO";
 import {MyValidatorsService} from "../../../../shared/services/my-validators.service";
 import {Router} from "@angular/router";
 import {tap} from "rxjs";

@@ -5,7 +5,7 @@ import {
   OnInit,
   TemplateRef
 } from '@angular/core';
-import {IVidjet} from "../../../../shared/models/entities/Vidjet";
+import {IVidjet} from "../../entities/Vidjet";
 import {BsModalRef, BsModalService} from "ngx-bootstrap/modal";
 import {FormControl} from "@angular/forms";
 import {VidjetService, Customization} from "../../services/vidjet.service";

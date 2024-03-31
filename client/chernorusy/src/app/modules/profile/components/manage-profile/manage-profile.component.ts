@@ -3,12 +3,12 @@ import {ActivatedRoute, ActivatedRouteSnapshot, Router} from "@angular/router";
 import {BehaviorSubject, debounceTime, map, Observable, of, switchMap, take, tap} from "rxjs";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {ProfileService} from "../../../../shared/services/profile.service";
-import {IProfileCreateRequestDTO} from "../../../../shared/models/DTO/request/ProfileCreateRequestDTO";
-import {IProfileResponseDTO} from "../../../../shared/models/DTO/response/ProfileResponseDTO";
+import {IProfileCreateRequestDTO} from "../../DTO/request/ProfileCreateRequestDTO";
+import {IProfileResponseDTO} from "../../DTO/response/ProfileResponseDTO";
 import {AuthorizationService} from "../../../../shared/services/authorization.service";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {MyValidatorsService} from "../../../../shared/services/my-validators.service";
-import {AccountRole} from "../../../../shared/models/enums/AccountRole";
+import {AccountRole} from "../../enums/AccountRole";
 
 @Component({
   selector: 'app-manage-profile',
