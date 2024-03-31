@@ -5,20 +5,38 @@
 
   <tabset *ngIf = "profile(); else noProfileTemplate">
 
-    <tab heading="Входящие" #tabInbox="tab"
+    <tab #tabInbox="tab"
          (selectTab)="inboxMessagesList.activateTab();"
-         (deselect)="deselectTab(tabInbox)">
-      <app-messages-list #inboxMessagesList
-        [tabType]="'Inbox'"
-        (selectedChatIDChange)="changeSelectedChat($event, tabInbox.heading!)"
-      ></app-messages-list>
+         (deselect)="deselectTab(tabInbox)"
+    >
+      <ng-template tabHeading>
+        <span
+          *ngLet="('Inbox' | unreadChats)() as unreadChatsNumber"
+              [matBadge]="unreadChatsNumber"
+              [matBadgeHidden] = "!unreadChatsNumber"
+              [matBadgeSize]="'small'"
+        >Входящие</span>
+      </ng-template>
+      <app-messages-list
+        #inboxMessagesList
+        [tabType]="'Inbox'"></app-messages-list>
     </tab>
 
-    <tab heading="Мои" #tabMine="tab"
+    <tab #tabMine="tab"
          (selectTab)="myMessagesList.activateTab();"
-         (deselect)="deselectTab(tabMine)">
-      <app-messages-list #myMessagesList
-        [selectedChatID]="selectedTab?.heading === 'Мои' ? (selectedTab?.chat?.id ?? undefined) : undefined"
+         (deselect)="deselectTab(tabMine)"
+    >
+      <ng-template tabHeading>
+        <span
+          *ngLet="('Mine' | unreadChats)() as unreadChatsNumber"
+          [matBadge]="unreadChatsNumber"
+          [matBadgeHidden] = "!unreadChatsNumber"
+          [matBadgeSize]="'small'"
+        >Мои</span>
+      </ng-template>
+      <app-messages-list
+        #myMessagesList
+        [selectedChatID]="selectedTab?.heading === 'Mine' ? (selectedTab?.chat?.id ?? undefined) : undefined"
         (selectedChatIDChange)="changeSelectedChat($event, tabMine.heading!)"
         [tabType]="'Mine'"></app-messages-list>
     </tab>

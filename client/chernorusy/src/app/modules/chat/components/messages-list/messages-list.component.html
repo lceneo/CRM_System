@@ -12,13 +12,25 @@
             <li
               class="chats__item card"
               [ngClass]="{
-               'chats__item-selected': selectedChatID && selectedChatID === chat.id
+               'chats__item-selected': selectedChatID && selectedChatID === chat.id,
+               'chats__item-unreadMsg': chat.unreadMessagesCount && selectedChatID !== chat.id
               }"
               *ngFor="let chat of chats"
               (click) = "openDialogMessage(chat.id)">
               <section>
-                <h3>{{chat.name}}</h3>
-                <p class="chats__item-text">{{chat?.lastMessage?.message}}</p>
+                <div class="wrapperChat">
+                  <div class="wrapperChat2">
+                    <h3>{{chat.name}}</h3>
+                    <p class="chats__item-text">{{chat?.lastMessage?.message}}</p>
+                  </div>
+                  <button mat-mini-fab
+                          *ngIf="chat.unreadMessagesCount"
+                          class="unreadMsg"
+                          [style.align-self]="'center'"
+                  >
+                    {{chat.unreadMessagesCount}}
+                  </button>
+                </div>
                 <span
                   class="chats__item-date"
                   [style.color]="selectedChatID && selectedChatID === chat.id ? 'unset' : 'grey'"

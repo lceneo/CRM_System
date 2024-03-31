@@ -61,13 +61,15 @@
                 'membersOpened': membersSectionOpened
              }"
     >
-      <ul class="chat__messages" #msgList>
+      <ul class="chat__messages" #msgList
+      (scroll)="scrollMessagesHandler($event)">
         <li *ngFor="let message of messages()"
+            [id]="message.id"
             class="chat__message card"
             [ngClass]="{
               'chat__myMsg': message.sender && message.mine,
               'chat__companionMsg':  message.sender && !message.mine,
-              'chat__systemMsg': !message.sender && message.type === MessageType.System
+              'chat__systemMsg': message.type === MessageType.System
             }"
         >
           <app-message [message]="message"></app-message>
