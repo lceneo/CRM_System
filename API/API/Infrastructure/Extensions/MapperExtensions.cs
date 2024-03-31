@@ -15,4 +15,14 @@ public static class MapperExtensions
     {
         return mapper.Map<List<MessageOutDTO>>(messages, opt => opt.Items["userId"] = userId);
     }
+    
+    public static ChatOutDTO MapChat(this IMapper mapper, ChatEntity chat, Guid userId)
+    {
+        return mapper.Map<ChatOutDTO>(chat, opt => opt.Items["userId"] = userId);
+    }
+
+    public static IEnumerable<ChatOutDTO> MapChats(this IMapper mapper, IEnumerable<ChatEntity> chats, Guid userId)
+    {
+        return mapper.Map<IEnumerable<ChatOutDTO>>(chats, opt => opt.Items["userId"] = userId);
+    }
 }

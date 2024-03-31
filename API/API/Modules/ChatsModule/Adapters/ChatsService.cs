@@ -121,8 +121,7 @@ public class ChatsService : IChatsService
         {
             TotalCount = searchResp.TotalCount,
             Items = searchResp.Items
-                .Select(c => mapper.Map<ChatOutDTO>(c, 
-                    opt => opt.Items["userId"] = userId))
+                .Select(c => mapper.MapChat(c, userId))
                 .ToList(),
         });
     }
@@ -215,18 +214,18 @@ public class ChatsService : IChatsService
         return Result.NoContent<bool>();
     }
 
-    public async Task<Result<IEnumerable<ChatOutDTO>>> GetFreeChats()
+    public async Task<Result<IEnumerable<ChatOutDTO>>> GetFreeChats(Guid userId)
     {
         var chats = await chatsRepository.GetFreeChats();
 
-        return Result.Ok(mapper.Map<IEnumerable<ChatOutDTO>>(chats));
+        return Result.Ok(mapper.MapChats(chats, userId));
     }
 
     public async Task<Result<IEnumerable<ChatOutDTO>>> GetChatsByUser(Guid userId)
     {
         var chats = await chatsRepository.GetAllByUser(userId);
 
-        return Result.Ok(mapper.Map<IEnumerable<ChatOutDTO>>(chats, opt => opt.Items["userId"] = userId));
+        return Result.Ok(mapper.MapChats(chats, userId));
     }
 
     public async Task<Result<ChatOutDTO>> GetChatByIdAsync(Guid userId, Guid chatId)
@@ -234,7 +233,7 @@ public class ChatsService : IChatsService
         var chat = await chatsRepository.GetByIdAsync(chatId);
         return chat == null
             ? Result.NotFound<ChatOutDTO>("Чат с таким Id не найден")
-            : Result.Ok(mapper.Map<ChatOutDTO>(chat, opt => opt.Items["userId"] = userId));
+            : Result.Ok(mapper.MapChat(chat, userId));
     }
 
     public async Task<Result<bool>> ChangeChatStatus(Guid chatId, ChangeChatStatusRequest req)
