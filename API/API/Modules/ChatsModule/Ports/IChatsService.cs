@@ -20,7 +20,7 @@ public interface IChatsService
     Task<Result<IEnumerable<ProfileOutDTO>>> JoinChatAsync(Guid chatId, Guid userId);
     Task<Result<bool>> LeaveChatAsync(Guid chatId, Guid userId);
 
-    Task<Result<IEnumerable<ChatOutDTO>>> GetFreeChats();
+    Task<Result<IEnumerable<ChatOutDTO>>> GetFreeChats(Guid userId);
 
     Task<Result<IEnumerable<ChatOutDTO>>> GetChatsByUser(Guid userId);
 

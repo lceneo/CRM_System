@@ -30,7 +30,7 @@ public class ChatsController : ControllerBase
     [HttpGet("Free")]
     public async Task<ActionResult<IEnumerable<ChatOutDTO>>> GetFreeChats()
     {
-        var response = await chatsService.GetFreeChats();
+        var response = await chatsService.GetFreeChats(User.GetId());
         return response.ActionResult;
     }
 
