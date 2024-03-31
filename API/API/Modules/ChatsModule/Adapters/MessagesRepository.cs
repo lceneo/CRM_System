@@ -15,17 +15,19 @@ public class MessagesRepository : CRUDRepository<MessageEntity>, IMessagesReposi
     {
     }
 
+    private IQueryable<MessageEntity> IncludedSet => Set
+        .Include(m => m.Sender)
+        .Include(m => m.Files)
+        .Include(m => m.Checks).ThenInclude(c => c.Profile)
+        .AsQueryable();
+
     public SearchResponseBaseDTO<MessageEntity> Search(Guid chatId, MessagesSearchRequest request, bool asTracking = false)
     {
-        var query = Set.AsQueryable();
+        var query = IncludedSet;
         if (!asTracking)
             query = query.AsNoTracking();
         
-        query = Set
-            .Include(m => m.Sender)
-            .Include(m => m.Files)
-            .Include(m => m.Checks)
-            .Where(m => m.Chat.Id == chatId);
+        query = query.Where(m => m.Chat.Id == chatId);
 
         if (request.MessageIds != null)
             query = query.Where(m => request.MessageIds.Contains(m.Id));
