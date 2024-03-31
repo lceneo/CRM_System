@@ -46,6 +46,10 @@ export class MessageService {
       );
   }
 
+  public async readMessages(chatID: string, messagesIDs: string[]) {
+    return await this.socketS.sendMessage('Check', { chatID: chatID, messageIds: messagesIDs });
+  }
+
   public sendMessage(userOrChatID: string, messageData: IPendingMessage) {
     this.pendingMessages[this.requestNumber] = { message: messageData.message, files: messageData.files };
     const sendMsgObj: ISendMessageRequest = {
@@ -70,10 +74,6 @@ export class MessageService {
 
     this.socketS.listenMethod('Recieve', receiveFn);
     this.socketS.listenMethod('Success', successFn);
-  }
-
-  public getMessageDataByRequestNumber(requestNumber: number) {
-    return this.pendingMessages[requestNumber];
   }
 }
 

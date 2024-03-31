@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {IMessageReceive} from "../../models/entities/MessageReceive";
 import {IMessageInChat} from "../../models/entities/MessageInChat";
 import {AuthorizationService} from "../../services/authorization.service";
 import {IMessageSuccess} from "../../models/entities/MessageSuccess";
 import {ProfileService} from "../../services/profile.service";
 import {IPendingMessage} from "../../../modules/chat/services/message.service";
+import {MessageType} from "../../models/enums/MessageType";
 
 @Injectable({
   providedIn: 'root'
@@ -19,11 +20,13 @@ export class MessageMapperService {
    msgReceiveToMsgInChat(messReceive: IMessageReceive): IMessageInChat {
    return  {
       ...messReceive,
-      mine: this.authorizationS.userID === messReceive.sender.id
+      checkers: [],
+      mine: messReceive.type !== MessageType.System && this.authorizationS.userID === messReceive.sender.id
     };
   }
 
   msgSuccessToMsgInChat(messSuccess: IMessageSuccess, msgData: IPendingMessage): IMessageInChat {
+    const senderID = this.authorizationS.userID ?? this.profileS.profile()?.id as string;
     return {
       ...messSuccess,
       id: messSuccess.messageId,
@@ -32,9 +35,12 @@ export class MessageMapperService {
       dateTime: messSuccess.timeStamp,
       mine: true,
       sender: {
-        id: this.authorizationS.userID ?? this.profileS.profile()?.id as string,
+        id: senderID,
         name: this.profileS.profile()?.name as string
-      }
+      },
+      checkers: [
+        { id: senderID, name: this.profileS.profile()?.name as string, surname: this.profileS.profile()?.surname as string }
+      ]
     };
   }
 

@@ -12,4 +12,5 @@ export interface IMessageInChat {
   files: IFileInMessage[];
   type: MessageType;
   dateTime: string;
+  checkers: Omit<IProfileOutShort, 'isConnected'>[];
 }

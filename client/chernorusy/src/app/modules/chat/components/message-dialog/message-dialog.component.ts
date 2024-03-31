@@ -1,7 +1,8 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy, ChangeDetectorRef,
   Component, DestroyRef,
-  ElementRef, EventEmitter,
+  ElementRef, EventEmitter, HostListener,
   Input,
   OnChanges,
   OnDestroy, OnInit,
@@ -80,6 +81,7 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
     private cdr: ChangeDetectorRef
   ) {}
 
+
   ngOnChanges(): void {
     if ('chatID in changes' && this.chatID) {
       this.initNewChat();
@@ -92,15 +94,19 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
     (this.smileMenu as any).closed = this.configureMenuClose(this.smileMenu.close);
   }
 
+
   private initNewChat() {
     if (!this.chatID) { return; }
 
     this.destroy$.next(); // уничтожаем предыдущую подписку
     this.loadingChat$.next(true);
 
-    this.getExistingMessagesInChat()
+    this.getExistingMessagesInChat$()
       .pipe(
-        tap(() => { this.loadingChat$.next(false); this.scrollToTheBottom(); }),
+        tap(() => {
+          this.loadingChat$.next(false);
+          this.scrollToTheBottom(true);
+        }),
         switchMap(() => merge(this.messageS.receivedMessages$, this.messageS.successMessages$)),
         filter(msg => msg.chatId === this.chatID),
         mergeMap(msg => !msg.files.length ? of(msg) : forkJoin(msg.files.map(file =>
@@ -121,7 +127,7 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
     });
   }
 
-  private getExistingMessagesInChat() {
+  private getExistingMessagesInChat$() {
     return this.messageS.getMessages$(this.chatID!)
       .pipe(
         map(msgs => msgs.items),
@@ -145,11 +151,14 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
   }
 
 
-  private scrollToTheBottom() {
-    setTimeout(() => this.msgListElementRef?.nativeElement.scrollTo({
+  private scrollToTheBottom(triggerEvent = false) {
+    setTimeout(() => {
+      this.msgListElementRef?.nativeElement.scrollTo({
       top: this.msgListElementRef.nativeElement.scrollHeight,
       behavior: 'instant'
-    }));
+    });
+      if (triggerEvent) { this.msgListElementRef.nativeElement.dispatchEvent(new Event('scroll')); }
+    });
   }
 
 
@@ -233,10 +242,10 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
           const startMsg = this.profileS.profile()?.startMessage;
           if (startMsg) {
             this.sendMsg$(startMsg)?.pipe(
-                tap(() => this.mainChat.changeTab('Мои', this.chat))
+                tap(() => this.mainChat.changeTab('Mine', this.chat))
               ).subscribe();
           } else {
-            this.mainChat.changeTab('Мои', this.chat);
+            this.mainChat.changeTab('Mine', this.chat);
           }
         })
       )
@@ -344,6 +353,39 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
       .subscribe(([v1, isOnElement]) => {
         if (smileMenuTriggerer.menuOpen && !isOnElement) { smileMenuTriggerer.closeMenu(); }
       });
+  }
+
+
+  scrollMessagesHandler(scrollEv: Event) {
+    const msgListElem = this.msgListElementRef.nativeElement;
+    const boundariesOfList = [msgListElem.scrollTop, msgListElem.scrollTop + msgListElem.clientHeight];
+    const allMessages: NodeListOf<HTMLLIElement> = msgListElem.querySelectorAll('.chat__message');
+    const messagesOnScreen: HTMLLIElement[] = [];
+    allMessages.forEach(message => {
+      const boundariesOfMessage = [message.offsetTop, message.offsetTop + message.clientHeight];
+
+      if ((boundariesOfMessage[0] < boundariesOfList[0] && boundariesOfMessage[1] < boundariesOfList[0]) ||
+        (boundariesOfMessage[0] > boundariesOfList[1] && boundariesOfMessage[1] > boundariesOfList[1])) { return; }
+      else {
+        messagesOnScreen.push(message);
+      }
+    });
+
+    //отправляем Check только по тем сообщениям, которые ещё не прочитаны
+    this.viewMessages(
+      messagesOnScreen.map(msgElem => msgElem.id)
+        .filter(id => {
+          const msgInChat = this.messages().find(msg => msg.id === id);
+          if (!msgInChat) { return false; }
+          const isCheckedByUser = !!(msgInChat.checkers
+            .find(checker => checker.id === this.profileS.profile()?.id));
+          return !isCheckedByUser;
+      }
+    ));
+  }
+
+  private viewMessages(messagesToView: string[]) {
+   this.messageS.readMessages(this.chatID!, messagesToView);
   }
 
   ngOnDestroy(): void {

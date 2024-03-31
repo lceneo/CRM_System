@@ -26,6 +26,9 @@
       background-color: #1c6ae1;
       color: #FFF;
     }
+    &-unreadMsg {
+      background-color: #f1f1f1cc;
+    }
     &-text {
       overflow: hidden;
       text-overflow: ellipsis;
@@ -55,3 +58,22 @@
   grid-template-columns: 1fr 2fr;
 }
 
+.wrapperChat {
+  display: flex;
+  justify-content: space-between;
+}
+
+.wrapperChat2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.unreadMsg {
+  align-self: center;
+  background-color: #99a2ad;
+  color: white;
+  height: 20px;
+  width: 20px;
+  pointer-events: none;
+}

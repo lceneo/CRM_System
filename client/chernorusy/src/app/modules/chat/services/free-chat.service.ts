@@ -4,7 +4,6 @@ import {IChatResponseDTO} from "../../../shared/models/DTO/response/ChatResponse
 import {IMessageReceive} from "../../../shared/models/entities/MessageReceive";
 import {tap} from "rxjs";
 import {IUserConnectionStatus} from "../../../shared/models/entities/UserConnectionStatus";
-import {IProfileOutShort} from "../../../shared/models/entities/ProfileOutShort";
 import {ActiveStatus} from "../../../shared/models/enums/ActiveStatus";
 import {MessageService} from "./message.service";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
@@ -16,10 +15,11 @@ export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
 
   protected override initMethod = '/Chats/Free';
   private pendingJoinIDs: string[] = [];
-
+  private sortFn = () => this.sortByPredicate((fChat, sChat) =>
+    new Date(sChat.lastMessage?.dateTime ?? 0).getTime() - new Date(fChat.lastMessage?.dateTime ?? 0).getTime());
   private messageS = inject(MessageService);
   protected override initial() {
-    this.initStore();
+    this.initStore(this.sortFn);
     this.listenForNewMessages();
     this.registrateSocketHandlers();
   }
@@ -36,7 +36,8 @@ export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
             files: msgReceive.files,
             dateTime: msgReceive.dateTime,
             sender: {...msgReceive.sender}
-          }
+          },
+          unreadMessagesCount: existingChat.unreadMessagesCount + 1
         });
     }
 
@@ -47,7 +48,7 @@ export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
   }
   private registrateSocketHandlers() {
     const updateFreeChatsFn = () => {
-      this.initStore();
+      this.initStore(this.sortFn);
     }
 
 
