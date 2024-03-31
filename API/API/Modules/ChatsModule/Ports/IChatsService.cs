@@ -13,6 +13,8 @@ public interface IChatsService
         Guid senderId,
         SendMessageRequest request);
 
+    Task<Result<CheckMessagesResponse>> CheckMessages(CheckMessagesRequest request, Guid initiator);
+
     Task<Result<SearchResponseBaseDTO<ChatOutDTO>>> SearchChats(Guid userId, ChatsSearchRequest req);
 
     Task<Result<IEnumerable<ProfileOutDTO>>> JoinChatAsync(Guid chatId, Guid userId);
