@@ -1,4 +1,4 @@
-import {Customization} from "../../../modules/vidjet/services/vidjet.service";
+import {Customization} from "../services/vidjet.service";
 
 export interface IVidjet {
   id: string;

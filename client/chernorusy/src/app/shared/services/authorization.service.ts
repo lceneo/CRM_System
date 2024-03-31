@@ -1,13 +1,13 @@
 import {Injectable} from '@angular/core';
 import {HttpService} from "./http.service";
 import {BehaviorSubject, catchError, of, tap} from "rxjs";
-import {ILoginResponseDTO} from "../models/DTO/response/LoginResponseDTO";
-import {ILoginRequestDTO} from "../models/DTO/request/LoginRequestDTO";
-import {IRegistrationRequestDTO} from "../models/DTO/request/RegistrationRequestDTO";
-import {ICreatePasswordRequestDTO} from "../models/DTO/request/CreatePasswordRequestDTO";
-import {IChangePasswordRequestDTO} from "../models/DTO/request/ChangePasswordRequstDTO";
-import {IRecoverPasswordRequestDTO} from "../models/DTO/request/RecoverPasswordRequestDTO";
-import {AccountRole} from "../models/enums/AccountRole";
+import {ILoginResponseDTO} from "../../modules/authentication/DTO/response/LoginResponseDTO";
+import {ILoginRequestDTO} from "../../modules/authentication/DTO/request/LoginRequestDTO";
+import {IRegistrationRequestDTO} from "../../modules/authentication/DTO/request/RegistrationRequestDTO";
+import {ICreatePasswordRequestDTO} from "../../modules/authentication/DTO/request/CreatePasswordRequestDTO";
+import {IChangePasswordRequestDTO} from "../../modules/authentication/DTO/request/ChangePasswordRequstDTO";
+import {IRecoverPasswordRequestDTO} from "../../modules/authentication/DTO/request/RecoverPasswordRequestDTO";
+import {AccountRole} from "../../modules/profile/enums/AccountRole";
 import {SocketService} from "./socket.service";
 import {CustomErrorHandlerService} from "./custom-error-handler.service";
 

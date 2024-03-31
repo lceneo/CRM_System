@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {IFileInMessage} from "../../models/entities/FileInMessage";
+import {IFileInMessage} from "../../../modules/chat/helpers/entities/FileInMessage";
 import {HttpService} from "../../services/http.service";
 import {map, Observable, switchMap} from "rxjs";
 import mime from 'mime'

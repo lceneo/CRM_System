@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpService} from "./http.service";
-import {IFilePOSTResponseDTO} from "../models/DTO/response/FilePOSTResponseDTO";
-import {defer, from, Observable, switchMap} from "rxjs";
+import {IFilePOSTResponseDTO} from "../../modules/chat/helpers/DTO/response/FilePOSTResponseDTO";
 
 @Injectable({
   providedIn: 'root'

@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, Component, Input, TemplateRef, ViewChild} from '@angular/core';
-import {IMessageInChat} from "../../../../shared/models/entities/MessageInChat";
-import {MessageType} from "../../../../shared/models/enums/MessageType";
+import {IMessageInChat} from "../../helpers/entities/MessageInChat";
+import {MessageType} from "../../helpers/enums/MessageType";
 import {MatDialog} from "@angular/material/dialog";
 import {ImageFullscreenComponent} from "../image-fullscreen/image-fullscreen.component";
 

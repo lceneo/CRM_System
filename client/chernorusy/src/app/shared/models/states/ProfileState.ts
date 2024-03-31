@@ -1,4 +1,4 @@
-import {IProfileResponseDTO} from "../DTO/response/ProfileResponseDTO";
+import {IProfileResponseDTO} from "../../../modules/profile/DTO/response/ProfileResponseDTO";
 
 export interface IProfileState{
   profile: IProfileResponseDTO | null;

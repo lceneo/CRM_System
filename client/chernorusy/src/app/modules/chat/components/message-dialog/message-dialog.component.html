@@ -7,26 +7,26 @@
 
   <button mat-icon-button
    *ngIf="chatType !== 'Archive' && chatType !== 'Inbox'"
-   [matTooltip]="chat?.status === ChatStatus.Blocked ? 'Разблокировать' : 'Заблокировать'"
+   [matTooltip]="chat?.()?.status === ChatStatus.Blocked ? 'Разблокировать' : 'Заблокировать'"
    [ngClass]="{
-    unblockBtn: chat?.status === ChatStatus.Blocked
+    unblockBtn: chat?.()?.status === ChatStatus.Blocked
    }"
    class="blockBtn"
    (click) = "toggleBlockStatus()"
   >
-    <mat-icon>{{chat?.status === ChatStatus.Blocked ? 'remove_circle' : 'block'}}</mat-icon>
+    <mat-icon>{{chat?.()?.status === ChatStatus.Blocked ? 'remove_circle' : 'block'}}</mat-icon>
   </button>
 
   <button mat-icon-button
           *ngIf="chatType !== 'Inbox' && chatType !== 'Block'"
-          [matTooltip]="chat?.status === ChatStatus.Archive ? 'Разархивировать' : 'В архив'"
+          [matTooltip]="chat?.()?.status === ChatStatus.Archive ? 'Разархивировать' : 'В архив'"
           [ngClass]="{
-          unblockBtn: chat?.status === ChatStatus.Blocked
+          unblockBtn: chat?.()?.status === ChatStatus.Blocked
    }"
           class="archiveBtn"
           (click) = "toggleArchiveStatus()"
   >
-    <mat-icon>{{chat?.status === ChatStatus.Archive ? 'unarchive' : 'archive'}}</mat-icon>
+    <mat-icon>{{chat?.()?.status === ChatStatus.Archive ? 'unarchive' : 'archive'}}</mat-icon>
   </button>
 
   <button

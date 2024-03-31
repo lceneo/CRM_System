@@ -6,39 +6,39 @@ import {
   Input,
   OnChanges,
   OnDestroy, OnInit,
-  Renderer2,
+  Renderer2, Signal,
   signal,
   ViewChild
 } from '@angular/core';
 import {MessageService} from "../../services/message.service";
-import {IMessageInChat} from "../../../../shared/models/entities/MessageInChat";
+import {IMessageInChat} from "../../helpers/entities/MessageInChat";
 import {
-  BehaviorSubject, debounceTime,
   defer, delay,
   filter, forkJoin,
   from, fromEvent,
   map,
   merge, mergeMap,
-  Observable, of, startWith,
+  Observable, of,
   Subject, Subscription,
-  switchMap, take,
+  switchMap,
   takeUntil,
   tap, withLatestFrom
 } from "rxjs";
 import {FreeChatService} from "../../services/free-chat.service";
 import {MyChatService} from "../../services/my-chat.service";
-import {MessageType} from "../../../../shared/models/enums/MessageType";
+import {MessageType} from "../../helpers/enums/MessageType";
 import {MessagesListComponent, TabType} from "../messages-list/messages-list.component";
-import {ChatStatus} from "../../../../shared/models/enums/ChatStatus";
+import {ChatStatus} from "../../helpers/enums/ChatStatus";
 import {MainChatPageComponent} from "../main-chat-page/main-chat-page.component";
 import {StaticService} from "../../../../shared/services/static.service";
-import {IChatResponseDTO} from "../../../../shared/models/DTO/response/ChatResponseDTO";
+import {IChatResponseDTO} from "../../helpers/entities/ChatResponseDTO";
 import {OverlayContainer} from "@angular/cdk/overlay";
 import {MatMenu, MatMenuTrigger} from "@angular/material/menu";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {MatIcon} from "@angular/material/icon";
 import {ProfileService} from "../../../../shared/services/profile.service";
 import {FileMapperService} from "../../../../shared/helpers/mappers/file.mapper.service";
+import {IProfileResponseDTO} from "../../../profile/DTO/response/ProfileResponseDTO";
 
 @Component({
   selector: 'app-message-dialog',
@@ -60,10 +60,12 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
   protected msgValue = '';
   protected currentFiles: File[] = [];
   private maxFilesCount = 1;
-  protected chat?: IChatResponseDTO;
+  protected chat?: Signal<IChatResponseDTO>;
 
   protected messages = signal<IMessageInChat[]>([]);
   protected loadingChat$ = new Subject<boolean>();
+
+  private chatS?: MyChatService | FreeChatService;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -85,7 +87,13 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
   ngOnChanges(): void {
     if ('chatID in changes' && this.chatID) {
       this.initNewChat();
-      this.chat = this.chatType === 'Inbox' ? this.freeChatS.getByID(this.chatID) : this.myChatS.getByID(this.chatID);
+      if (this.chatType === 'Inbox') {
+        this.chat = this.freeChatS.getByIDAsync(this.chatID) as Signal<IChatResponseDTO>;
+        this.chatS = this.freeChatS;
+      } else {
+        this.chat = this.myChatS.getByIDAsync(this.chatID) as Signal<IChatResponseDTO>;
+        this.chatS = this.myChatS;
+      }
     }
   }
 
@@ -105,7 +113,8 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
       .pipe(
         tap(() => {
           this.loadingChat$.next(false);
-          this.scrollToTheBottom(true);
+          if (!this.chat!().unreadMessagesCount) { this.scrollToTheBottom(); }
+          else { this.triggerScrollForMessagesOnScreen(); }
         }),
         switchMap(() => merge(this.messageS.receivedMessages$, this.messageS.successMessages$)),
         filter(msg => msg.chatId === this.chatID),
@@ -123,7 +132,12 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
           new Date(f.dateTime).getTime() - new Date(s.dateTime).getTime())
       );
 
-      if (msg.mine) { this.scrollToTheBottom(); }
+      if (msg.mine) {
+        this.scrollToTheBottom();
+        this.checkAllUncheckedMessages();
+      } else {
+        this.triggerScrollForMessagesOnScreen();
+      }
     });
   }
 
@@ -157,9 +171,14 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
       top: this.msgListElementRef.nativeElement.scrollHeight,
       behavior: 'instant'
     });
-      if (triggerEvent) { this.msgListElementRef.nativeElement.dispatchEvent(new Event('scroll')); }
     });
   }
+
+  //нужно для того, чтобы читать новые сообщения, если скролла всё ещё нет
+  private triggerScrollForMessagesOnScreen() {
+    setTimeout(() => this.msgListElementRef.nativeElement.dispatchEvent(new Event('scroll')));
+  }
+
 
 
   protected sendMsg(msgText?: string) {
@@ -236,17 +255,19 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
 
   protected joinChat() {
     // не обновляем стор, т.к там рисив будет
+    const chat = this.chat!();
     this.freeChatS.joinChat$(this.chatID!)
       .pipe(
         tap(() => {
           const startMsg = this.profileS.profile()?.startMessage;
           if (startMsg) {
             this.sendMsg$(startMsg)?.pipe(
-                tap(() => this.mainChat.changeTab('Mine', this.chat))
-              ).subscribe();
+                tap(() => this.mainChat.changeTab('Mine', chat)
+              )).subscribe();
           } else {
-            this.mainChat.changeTab('Mine', this.chat);
+            this.mainChat.changeTab('Mine', chat);
           }
+          this.chatS = this.myChatS;
         })
       )
       .subscribe();
@@ -269,7 +290,7 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   protected toggleBlockStatus() {
-    const newStatus = this.chat?.status === ChatStatus.Active ? ChatStatus.Blocked : ChatStatus.Active;
+    const newStatus = this.chat?.().status === ChatStatus.Active ? ChatStatus.Blocked : ChatStatus.Active;
     this.myChatS.changeChatStatus(this.chatID!, newStatus)
       .pipe(
         tap(() => this.closeDialog())
@@ -278,7 +299,7 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   protected toggleArchiveStatus() {
-    const newStatus = this.chat?.status === ChatStatus.Archive ? ChatStatus.Active : ChatStatus.Archive;
+    const newStatus = this.chat?.().status === ChatStatus.Archive ? ChatStatus.Active : ChatStatus.Archive;
     this.myChatS.changeChatStatus(this.chatID!, newStatus)
       .pipe(
         tap(() => this.closeDialog())
@@ -384,8 +405,28 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
     ));
   }
 
+  private checkAllUncheckedMessages() {
+    return this.viewMessages(
+      this.messages()
+        .filter(msg => msg.checkers.every(checker => checker.id !== this.profileS.profile()?.id))
+        .map(msg => msg.id)
+    );
+  }
   private viewMessages(messagesToView: string[]) {
-   this.messageS.readMessages(this.chatID!, messagesToView);
+    if (!this.chatID  || !messagesToView.length) { return; }
+
+    const profile = this.profileS.profile() as IProfileResponseDTO;
+    this.messages.update(msgs =>
+        msgs.map(msg => !messagesToView.includes(msg.id) ?
+          msg :
+          {...msg,
+          checkers: [...msg.checkers, {id: profile.id, name: profile.name, surname: profile.surname}]}
+        ));
+
+    const currentUnreadCount = this.chatS!.getByID(this.chatID!)!.unreadMessagesCount;
+    this.chatS?.updateByID(this.chatID!, {unreadMessagesCount: currentUnreadCount - messagesToView.length});
+
+    return this.messageS.readMessages(this.chatID!, messagesToView);
   }
 
   ngOnDestroy(): void {

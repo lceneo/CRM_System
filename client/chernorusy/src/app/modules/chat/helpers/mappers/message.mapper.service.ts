@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
-import {IMessageReceive} from "../../models/entities/MessageReceive";
-import {IMessageInChat} from "../../models/entities/MessageInChat";
-import {AuthorizationService} from "../../services/authorization.service";
-import {IMessageSuccess} from "../../models/entities/MessageSuccess";
-import {ProfileService} from "../../services/profile.service";
-import {IPendingMessage} from "../../../modules/chat/services/message.service";
-import {MessageType} from "../../models/enums/MessageType";
+import {IMessageReceive} from "../entities/MessageReceive";
+import {IMessageInChat} from "../entities/MessageInChat";
+import {AuthorizationService} from "../../../../shared/services/authorization.service";
+import {IMessageSuccess} from "../entities/MessageSuccess";
+import {ProfileService} from "../../../../shared/services/profile.service";
+import {IPendingMessage} from "../../services/message.service";
+import {MessageType} from "../enums/MessageType";
 
 @Injectable({
   providedIn: 'root'

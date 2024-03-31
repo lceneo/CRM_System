@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, ViewChild} from '@angular/core';
-import {AccountRole} from "../../../../shared/models/enums/AccountRole";
+import {AccountRole} from "../../../profile/enums/AccountRole";
 import {AuthorizationService} from "../../../../shared/services/authorization.service";
-import {IChatResponseDTO} from "../../../../shared/models/DTO/response/ChatResponseDTO";
+import {IChatResponseDTO} from "../../helpers/entities/ChatResponseDTO";
 import {TabDirective, TabsetComponent} from "ngx-bootstrap/tabs";
 import {ProfileService} from "../../../../shared/services/profile.service";
 import {MessageService} from "../../services/message.service";
