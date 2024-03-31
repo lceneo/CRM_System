@@ -20,7 +20,6 @@ import {MatBadgeModule} from "@angular/material/badge";
 import { ChatMembersComponent } from './components/chat-members/chat-members.component';
 import {MatChipsModule} from "@angular/material/chips";
 import {FileSizePipe} from "./pipes/file-size.pipe";
-import {ModalModule} from "ngx-bootstrap/modal";
 import { ImageFullscreenComponent } from './components/image-fullscreen/image-fullscreen.component';
 import {MatDialogModule} from "@angular/material/dialog";
 import {UnreadChatsPipe} from "./pipes/unread-chats.pipe";

@@ -69,7 +69,7 @@
             [ngClass]="{
               'chat__myMsg': message.sender && message.mine,
               'chat__companionMsg':  message.sender && !message.mine,
-              'chat__systemMsg': !message.sender && message.type === MessageType.System
+              'chat__systemMsg': message.type === MessageType.System
             }"
         >
           <app-message [message]="message"></app-message>

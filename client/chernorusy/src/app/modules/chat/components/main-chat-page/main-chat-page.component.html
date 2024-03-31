@@ -18,6 +18,7 @@
         >Входящие</span>
       </ng-template>
       <app-messages-list
+        #inboxMessagesList
         [tabType]="'Inbox'"></app-messages-list>
     </tab>
 
@@ -34,7 +35,8 @@
         >Мои</span>
       </ng-template>
       <app-messages-list
-        [selectedChatID]="selectedTab?.heading === 'Мои' ? (selectedTab?.chat?.id ?? undefined) : undefined"
+        #myMessagesList
+        [selectedChatID]="selectedTab?.heading === 'Mine' ? (selectedTab?.chat?.id ?? undefined) : undefined"
         (selectedChatIDChange)="changeSelectedChat($event, tabMine.heading!)"
         [tabType]="'Mine'"></app-messages-list>
     </tab>

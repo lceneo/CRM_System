@@ -101,7 +101,7 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
     this.destroy$.next(); // уничтожаем предыдущую подписку
     this.loadingChat$.next(true);
 
-    this.getExistingMessagesInChat()
+    this.getExistingMessagesInChat$()
       .pipe(
         tap(() => {
           this.loadingChat$.next(false);
@@ -127,7 +127,7 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
     });
   }
 
-  private getExistingMessagesInChat() {
+  private getExistingMessagesInChat$() {
     return this.messageS.getMessages$(this.chatID!)
       .pipe(
         map(msgs => msgs.items),
@@ -242,10 +242,10 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
           const startMsg = this.profileS.profile()?.startMessage;
           if (startMsg) {
             this.sendMsg$(startMsg)?.pipe(
-                tap(() => this.mainChat.changeTab('Мои', this.chat))
+                tap(() => this.mainChat.changeTab('Mine', this.chat))
               ).subscribe();
           } else {
-            this.mainChat.changeTab('Мои', this.chat);
+            this.mainChat.changeTab('Mine', this.chat);
           }
         })
       )
@@ -371,7 +371,17 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
       }
     });
 
-    this.viewMessages(messagesOnScreen.map(msgElem => msgElem.id));
+    //отправляем Check только по тем сообщениям, которые ещё не прочитаны
+    this.viewMessages(
+      messagesOnScreen.map(msgElem => msgElem.id)
+        .filter(id => {
+          const msgInChat = this.messages().find(msg => msg.id === id);
+          if (!msgInChat) { return false; }
+          const isCheckedByUser = !!(msgInChat.checkers
+            .find(checker => checker.id === this.profileS.profile()?.id));
+          return !isCheckedByUser;
+      }
+    ));
   }
 
   private viewMessages(messagesToView: string[]) {

@@ -75,10 +75,6 @@ export class MessageService {
     this.socketS.listenMethod('Recieve', receiveFn);
     this.socketS.listenMethod('Success', successFn);
   }
-
-  public getMessageDataByRequestNumber(requestNumber: number) {
-    return this.pendingMessages[requestNumber];
-  }
 }
 
 export interface IPendingMessage {
