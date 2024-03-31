@@ -14,4 +14,5 @@ export interface IChatResponseDTO {
     dateTime: string;
   },
   status: ChatStatus
+  unreadMessagesCount: number;
 }

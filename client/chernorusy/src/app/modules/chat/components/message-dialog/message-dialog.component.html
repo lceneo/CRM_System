@@ -61,8 +61,10 @@
                 'membersOpened': membersSectionOpened
              }"
     >
-      <ul class="chat__messages" #msgList>
+      <ul class="chat__messages" #msgList
+      (scroll)="scrollMessagesHandler($event)">
         <li *ngFor="let message of messages()"
+            [id]="message.id"
             class="chat__message card"
             [ngClass]="{
               'chat__myMsg': message.sender && message.mine,
