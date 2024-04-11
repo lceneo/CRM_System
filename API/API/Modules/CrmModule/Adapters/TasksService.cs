@@ -1,4 +1,5 @@
-﻿using API.Infrastructure;
+﻿using System.Text.Json;
+using API.Infrastructure;
 using API.Infrastructure.BaseApiDTOs;
 using API.Modules.CrmModule.DTO;
 using API.Modules.CrmModule.Entities;
@@ -38,8 +39,6 @@ public class TasksService : ITasksService
             if (task == null)
                 return Result.NotFound<CreateResponse<Guid>>("Такой задачи не существует");
         }
-
-        
         
 
         var isCreated = request.Id == null;
@@ -75,14 +74,21 @@ public class TasksService : ITasksService
         });
     }
 
-    public async Task<Result<SearchResponseBaseDTO<TaskDTO>>> Search(SearchTasksRequest request)
+    public async Task<Result<SearchResponseBaseDTO<TaskDTO>>> SearchTasks(SearchTasksRequest request)
     {
         var result = await tasksRepository.Search(request);
 
+        await log.Info($"Found {result.TotalCount} tasks by request: {JsonSerializer.Serialize(request)}");
         return Result.Ok(new SearchResponseBaseDTO<TaskDTO>
         {
             Items = mapper.Map<List<TaskDTO>>(result.Items),
             TotalCount = result.TotalCount,
         });
+    }
+
+    public async Task<Result<bool>> DeleteTask(Guid taskId)
+    {
+        await tasksRepository.DeleteAsync(taskId);
+        return Result.Ok(true);
     }
 }

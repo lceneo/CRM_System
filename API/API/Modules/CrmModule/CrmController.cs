@@ -62,7 +62,18 @@ public class CrmController : ControllerBase
     [HttpPost("Tasks/Search")]
     public async Task<ActionResult<SearchResponseBaseDTO<TaskDTO>>> SearchTasks([FromBody]SearchTasksRequest request)
     {
-        var result = await crmService.Search(request);
+        var result = await crmService.SearchTasks(request);
         return result.ActionResult;
+    }
+
+    /// <summary>
+    /// Удаляет задачу
+    /// </summary>
+    /// <returns></returns>
+    [HttpDelete("Tasks/{taskId:Guid}")]
+    public async Task<ActionResult> DeleteTask([FromRoute]Guid taskId)
+    {
+        await crmService.DeleteTask(taskId);
+        return NoContent();
     }
 }
