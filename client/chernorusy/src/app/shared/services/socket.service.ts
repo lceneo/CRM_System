@@ -1,7 +1,7 @@
 import {Injectable, isDevMode} from '@angular/core';
 import {HubConnection, HubConnectionBuilder, HubConnectionState} from "@microsoft/signalr";
 import {config} from "../../../main";
-import {ISendMessageRequest} from "../models/DTO/request/SendMessageRequest";
+import {ISendMessageRequest} from "../../modules/chat/helpers/DTO/request/SendMessageRequest";
 import {Subject, take} from "rxjs";
 
 @Injectable({
@@ -44,8 +44,8 @@ export class SocketService {
   public isConnected() {
     return this.hubConnection && this.hubConnection.state === HubConnectionState.Connected;
   }
-  public sendMessage(methodName: string, message: ISendMessageRequest) {
-    if (this.hubConnection.state === HubConnectionState.Connected) { return this.hubConnection.send(methodName, message); }
+  public sendMessage(methodName: string, ...args: any[]) {
+    if (this.hubConnection.state === HubConnectionState.Connected) { return this.hubConnection.send(methodName, ...args); }
     return Promise.reject('Не удалось отправить сообщение');
   }
 

@@ -1,11 +1,10 @@
-import {inject, Injectable} from '@angular/core';
+import {computed, inject, Injectable} from '@angular/core';
 import {EntityStateManager} from "../../../shared/helpers/entityStateManager";
-import {IChatResponseDTO} from "../../../shared/models/DTO/response/ChatResponseDTO";
-import {IMessageReceive} from "../../../shared/models/entities/MessageReceive";
+import {IChatResponseDTO} from "../helpers/entities/ChatResponseDTO";
+import {IMessageReceive} from "../helpers/entities/MessageReceive";
 import {tap} from "rxjs";
-import {IUserConnectionStatus} from "../../../shared/models/entities/UserConnectionStatus";
-import {IProfileOutShort} from "../../../shared/models/entities/ProfileOutShort";
-import {ActiveStatus} from "../../../shared/models/enums/ActiveStatus";
+import {IUserConnectionStatus} from "../helpers/entities/UserConnectionStatus";
+import {ActiveStatus} from "../helpers/enums/ActiveStatus";
 import {MessageService} from "./message.service";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
@@ -16,12 +15,25 @@ export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
 
   protected override initMethod = '/Chats/Free';
   private pendingJoinIDs: string[] = [];
-
   private messageS = inject(MessageService);
   protected override initial() {
     this.initStore();
     this.listenForNewMessages();
     this.registrateSocketHandlers();
+  }
+
+
+  override getEntitiesAsync() {
+    const entitiesAsyncOriginalSignal = super.getEntitiesAsync();
+    return computed(() => entitiesAsyncOriginalSignal()
+      .sort((fChat, sChat) =>
+        new Date(sChat.lastMessage?.dateTime ?? 0).getTime() - new Date(fChat.lastMessage?.dateTime ?? 0).getTime()));
+  }
+
+  override getEntitiesSync() {
+    return super.getEntitiesSync()
+      .sort((fChat, sChat) =>
+        new Date(sChat.lastMessage?.dateTime ?? 0).getTime() - new Date(fChat.lastMessage?.dateTime ?? 0).getTime());
   }
 
   private listenForNewMessages() {
@@ -36,7 +48,8 @@ export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
             files: msgReceive.files,
             dateTime: msgReceive.dateTime,
             sender: {...msgReceive.sender}
-          }
+          },
+          unreadMessagesCount: existingChat.unreadMessagesCount + 1
         });
     }
 

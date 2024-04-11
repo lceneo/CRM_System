@@ -1,5 +1,6 @@
 ﻿using API.Extensions;
 using API.Infrastructure.BaseApiDTOs;
+using API.Infrastructure.Extensions;
 using API.Modules.AccountsModule.Entities;
 using API.Modules.ChatsModule.ApiDTO;
 using API.Modules.ChatsModule.DTO;
@@ -29,7 +30,7 @@ public class ChatsController : ControllerBase
     [HttpGet("Free")]
     public async Task<ActionResult<IEnumerable<ChatOutDTO>>> GetFreeChats()
     {
-        var response = await chatsService.GetFreeChats();
+        var response = await chatsService.GetFreeChats(User.GetId());
         return response.ActionResult;
     }
 
@@ -90,7 +91,7 @@ public class ChatsController : ControllerBase
             return BadRequest(response.Error);
 
         var message = response.Value.message;
-        return Ok(mapper.Map<MessageOutDTO>(message, opt => opt.Items["userId"] = senderId));
+        return Ok(mapper.MapMessage(message, senderId));
     }
 
     [HttpGet("{chatId:Guid}/Messages")]
@@ -100,5 +101,19 @@ public class ChatsController : ControllerBase
     {
         var response = chatsService.SearchMessages(chatId, User.GetId(), messagesSearchReq);
         return response.ActionResult;
+    }
+
+    [HttpPost("{chatId:Guid}/Messages/Check")]
+    public async Task<ActionResult<CheckMessagesResponse>> CheckMessages(
+        [FromRoute]Guid chatId,
+        [FromBody]IEnumerable<Guid> messageIds)
+    {
+        var req = new CheckMessagesRequest
+        {
+            ChatId = chatId,
+            MessageIds = messageIds,
+        };
+        var result = await chatsService.CheckMessages(req, User.GetId());
+        return result.ActionResult;
     }
 }

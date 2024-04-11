@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {EntityStateManager} from "../../../shared/helpers/entityStateManager";
-import {IVidjet} from "../../../shared/models/entities/Vidjet";
-import {IVidjetPOSTResponseDTO} from "../../../shared/models/DTO/response/VidjetPOSTResponseDTO";
-import {IVidjetPOSTRequestDTO} from "../../../shared/models/DTO/request/VidjetPOSTRequestDTO";
+import {IVidjet} from "../entities/Vidjet";
+import {IVidjetPOSTResponseDTO} from "../DTO/response/VidjetPOSTResponseDTO";
+import {IVidjetPOSTRequestDTO} from "../DTO/request/VidjetPOSTRequestDTO";
 import {tap} from "rxjs";
 
 @Injectable({

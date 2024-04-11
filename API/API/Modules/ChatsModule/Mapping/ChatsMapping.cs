@@ -44,8 +44,9 @@ public class ChatsMapping : Profile
         
         return src
             .Messages
+            .Where(m => m.Sender?.Id != userId || m.Sender == null)
             .Count(m => m.Checks == null 
                         || userId == null
-                        || m.Checks.All(c => c.Id != userId));
+                        || m.Checks.All(c => c.Profile.Id != userId));
     }
 }

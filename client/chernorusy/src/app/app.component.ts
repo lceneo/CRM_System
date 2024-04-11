@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {AuthorizationService} from "./shared/services/authorization.service";
 import {Router} from "@angular/router";
 import {ProfileService} from "./shared/services/profile.service";
-import {AccountRole} from "./shared/models/enums/AccountRole";
+import {AccountRole} from "./modules/profile/enums/AccountRole";
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

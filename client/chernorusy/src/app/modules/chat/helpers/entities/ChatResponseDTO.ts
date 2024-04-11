@@ -1,6 +1,6 @@
-import {IProfileOutShort} from "../../entities/ProfileOutShort";
-import {ChatStatus} from "../../enums/ChatStatus";
-import {IFileInMessage} from "../../entities/FileInMessage";
+import {IProfileOutShort} from "../../../profile/entities/ProfileOutShort";
+import {ChatStatus} from "../enums/ChatStatus";
+import {IFileInMessage} from "./FileInMessage";
 
 export interface IChatResponseDTO {
   id: string;
@@ -14,4 +14,5 @@ export interface IChatResponseDTO {
     dateTime: string;
   },
   status: ChatStatus
+  unreadMessagesCount: number;
 }

@@ -1,16 +1,16 @@
 import {Injectable} from '@angular/core';
 import {SocketService} from "../../../shared/services/socket.service";
 import {HttpService} from "../../../shared/services/http.service";
-import {IMessageInChat} from "../../../shared/models/entities/MessageInChat";
-import {IMessageInChatResponseDTO} from "../../../shared/models/DTO/request/MessageInChatResponseDTO";
+import {IMessageInChat} from "../helpers/entities/MessageInChat";
+import {IMessageInChatResponseDTO} from "../helpers/DTO/request/MessageInChatResponseDTO";
 import {map, Subject } from "rxjs";
-import {IMessageReceive} from "../../../shared/models/entities/MessageReceive";
-import {IMessageSuccess} from "../../../shared/models/entities/MessageSuccess";
-import {MessageMapperService} from "../../../shared/helpers/mappers/message.mapper.service";
+import {IMessageReceive} from "../helpers/entities/MessageReceive";
+import {IMessageSuccess} from "../helpers/entities/MessageSuccess";
+import {MessageMapperService} from "../helpers/mappers/message.mapper.service";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {MAX_INT} from "../../../shared/helpers/constants/constants";
-import {ISendMessageRequest} from "../../../shared/models/DTO/request/SendMessageRequest";
-import {IFileInMessage} from "../../../shared/models/entities/FileInMessage";
+import {ISendMessageRequest} from "../helpers/DTO/request/SendMessageRequest";
+import {IFileInMessage} from "../helpers/entities/FileInMessage";
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +46,10 @@ export class MessageService {
       );
   }
 
+  public async readMessages(chatID: string, messagesIDs: string[]) {
+    return await this.socketS.sendMessage('Check', { chatID: chatID, messageIds: messagesIDs });
+  }
+
   public sendMessage(userOrChatID: string, messageData: IPendingMessage) {
     this.pendingMessages[this.requestNumber] = { message: messageData.message, files: messageData.files };
     const sendMsgObj: ISendMessageRequest = {
@@ -70,10 +74,6 @@ export class MessageService {
 
     this.socketS.listenMethod('Recieve', receiveFn);
     this.socketS.listenMethod('Success', successFn);
-  }
-
-  public getMessageDataByRequestNumber(requestNumber: number) {
-    return this.pendingMessages[requestNumber];
   }
 }
 

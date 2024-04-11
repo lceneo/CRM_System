@@ -1,4 +1,4 @@
-import {IProfileOutShort} from "./ProfileOutShort";
+import {IProfileOutShort} from "../../../profile/entities/ProfileOutShort";
 import {MessageType} from "../enums/MessageType";
 import {IFileInMessage} from "./FileInMessage";
 

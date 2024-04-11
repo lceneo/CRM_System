@@ -16,58 +16,45 @@ public class ChatsRepository : CRURepository<ChatEntity>, IChatsRepository
     {
     }
 
+    private IQueryable<ChatEntity> IncludedSet => Set
+        .Include(c => c.Profiles).ThenInclude(p => p.Account)
+        .Include(c => c.Messages).ThenInclude(m => m.Sender)
+        .Include(c => c.Messages).ThenInclude(m => m.Files)
+        .Include(c => c.Messages).ThenInclude(m => m.Checks).ThenInclude(c => c.Profile)
+        .AsQueryable();
+
     public async Task<List<ChatEntity>> GetFreeChats()
     {
-        return await Set
+        return await IncludedSet
             .AsNoTracking()
-            .Include(c => c.Profiles).ThenInclude(p => p.Account)
-            .Include(c => c.Messages).ThenInclude(m => m.Sender)
-            .Include(c => c.Messages).ThenInclude(m => m.Files)
-            .Include(c => c.Messages).ThenInclude(m => m.Checks)
             .Where(c => c.Profiles.Count == 1)
             .ToListAsync();
     }
 
     public async Task<ChatEntity?> GetByIdAsync(Guid id)
     {
-        return await Set
-            .Include(c => c.Profiles).ThenInclude(p => p.Account)
-            .Include(c => c.Messages).ThenInclude(m => m.Sender)
-            .Include(c => c.Messages).ThenInclude(m => m.Files)
-            .Include(c => c.Messages).ThenInclude(m => m.Checks)
+        return await IncludedSet
             .FirstOrDefaultAsync(c => c.Id == id);
     }
 
     public async Task<List<ChatEntity>> GetAllByUser(Guid userId)
     {
-        return await Set
-            .Include(c => c.Profiles).ThenInclude(p => p.Account)
-            .Include(c => c.Messages).ThenInclude(m => m.Sender)
-            .Include(c => c.Messages).ThenInclude(m => m.Files)
-            .Include(c => c.Messages).ThenInclude(m => m.Checks)
+        return await IncludedSet
             .Where(c => c.Profiles.Any(p => p.Id == userId))
             .ToListAsync();
     }
 
     public async Task<ChatEntity?> GetByUsers(HashSet<Guid> userIds)
     {
-        return await Set
-            .Include(c => c.Profiles).ThenInclude(p => p.Account)
-            .Include(c => c.Messages).ThenInclude(m => m.Sender)
-            .Include(c => c.Messages).ThenInclude(m => m.Files)
-            .Include(c => c.Messages).ThenInclude(m => m.Checks)
+        return await IncludedSet
             .FirstOrDefaultAsync(c => c.Profiles.Count == userIds.Count
                                       && c.Profiles.All(p => userIds.Contains(p.Id)));
     }
 
     public async Task<SearchResponseBaseDTO<ChatEntity>> SearchChatsAsync(ChatsSearchRequest req, bool asNoTracking = false)
     {
-        var query = Set
-            .Include(c => c.Profiles)
-            .Include(c => c.Messages).ThenInclude(m => m.Sender)
-            .Include(c => c.Messages).ThenInclude(m => m.Files)
-            .Include(c => c.Messages).ThenInclude(m => m.Checks)
-            .AsQueryable();
+        var query = IncludedSet;
+        
         if (asNoTracking)
             query = query.AsNoTracking();
         if (req.Ids?.Any() is true)

@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, Component, DestroyRef, EventEmitter, Input, OnI
 import {AuthorizationService} from "../../../../shared/services/authorization.service";
 import {tap} from "rxjs";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {IChangePasswordRequestDTO} from "../../../../shared/models/DTO/request/ChangePasswordRequstDTO";
+import {IChangePasswordRequestDTO} from "../../../authentication/DTO/request/ChangePasswordRequstDTO";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {MyValidatorsService} from "../../../../shared/services/my-validators.service";
 import {ActivatedRoute, Router} from "@angular/router";

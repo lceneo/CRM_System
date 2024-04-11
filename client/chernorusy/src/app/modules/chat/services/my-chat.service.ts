@@ -1,16 +1,15 @@
 import {computed, Injectable} from '@angular/core';
-import {IChatResponseDTO} from "../../../shared/models/DTO/response/ChatResponseDTO";
+import {IChatResponseDTO} from "../helpers/entities/ChatResponseDTO";
 import {EntityStateManager} from "../../../shared/helpers/entityStateManager";
-import {IMessageReceive} from "../../../shared/models/entities/MessageReceive";
-import {MessageMapperService} from "../../../shared/helpers/mappers/message.mapper.service";
+import {IMessageReceive} from "../helpers/entities/MessageReceive";
 import {MessageService} from "./message.service";
 import {tap} from "rxjs";
 import {FreeChatService} from "./free-chat.service";
-import {ChatStatus} from "../../../shared/models/enums/ChatStatus";
-import {IUserConnectionStatus} from "../../../shared/models/entities/UserConnectionStatus";
-import {ActiveStatus} from "../../../shared/models/enums/ActiveStatus";
+import {ChatStatus} from "../helpers/enums/ChatStatus";
+import {IUserConnectionStatus} from "../helpers/entities/UserConnectionStatus";
+import {ActiveStatus} from "../helpers/enums/ActiveStatus";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {IMessageInChat} from "../../../shared/models/entities/MessageInChat";
+import {IMessageInChat} from "../helpers/entities/MessageInChat";
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +18,9 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
 
   protected override initMethod = '/Chats/My';
   private allChats = this.getEntitiesAsync();
-
+  private allChatsSorted = computed(() => this.allChats()
+    .sort((fChat, sChat) =>
+      new Date(sChat.lastMessage?.dateTime ?? 0).getTime() - new Date(fChat.lastMessage?.dateTime ?? 0).getTime()));
   constructor(
     private messageS: MessageService,
     private freeChatS: FreeChatService
@@ -36,21 +37,21 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
 
   public getActiveChatsAsync() {
     return computed(() => {
-      return this.allChats()
+      return this.allChatsSorted()
         .filter(chat => chat.status === ChatStatus.Active)
     });
   }
 
   public getBlockedChatsAsync() {
     return computed(() => {
-      return this.allChats()
+      return this.allChatsSorted()
         .filter(chat => chat.status === ChatStatus.Blocked)
     });
   }
 
   public getArchiveChatsAsync() {
     return computed(() => {
-      return this.allChats()
+      return this.allChatsSorted()
         .filter(chat => chat.status === ChatStatus.Archive)
     });
   }
@@ -82,8 +83,6 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
         this.getChatByID(msgReceive.chatId)
           .subscribe(newChat => {
             this.upsertEntities([newChat]);
-            this.sortByPredicate((fChat, sChat) =>
-              new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
           });
       }
 
@@ -96,10 +95,9 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
               files: msgReceive.files,
               dateTime: msgReceive.dateTime,
               sender: {...msgReceive.sender}
-            }
+            },
+            unreadMessagesCount: existingChat.unreadMessagesCount + 1
           });
-        this.sortByPredicate((fChat, sChat) =>
-          new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
       }
     }
 
@@ -110,8 +108,6 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
         this.getChatByID(msgSuccess.chatId)
           .subscribe(chat => {
             this.upsertEntities([chat]);
-            this.sortByPredicate((fChat, sChat) =>
-              new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
           });
       } else {
         this.updateByID(msgSuccess.chatId,
@@ -124,8 +120,6 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
               sender: {...msgSuccess.sender}
             }
           });
-        this.sortByPredicate((fChat, sChat) =>
-          new Date(sChat.lastMessage.dateTime).getTime() - new Date(fChat.lastMessage.dateTime).getTime());
       }
     }
 
@@ -140,6 +134,7 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
         takeUntilDestroyed(this.destroyRef)
       ).subscribe(msgSuccess => successFn(msgSuccess));
   }
+
   private registrateSocketHandlers() {
     const activeStatusFn = (statusUpdate: IUserConnectionStatus) => {
       const chatsWithUser = this.getEntitiesSync()

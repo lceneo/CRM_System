@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {IChatResponseDTO} from "../../../shared/models/DTO/response/ChatResponseDTO";
+import {IChatResponseDTO} from "../helpers/entities/ChatResponseDTO";
 import {MyChatService} from "../services/my-chat.service";
 import {FreeChatService} from "../services/free-chat.service";
 

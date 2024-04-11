@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, ViewChild} from '@angular/core';
-import {AccountRole} from "../../../../shared/models/enums/AccountRole";
+import {AccountRole} from "../../../profile/enums/AccountRole";
 import {AuthorizationService} from "../../../../shared/services/authorization.service";
-import {IChatResponseDTO} from "../../../../shared/models/DTO/response/ChatResponseDTO";
+import {IChatResponseDTO} from "../../helpers/entities/ChatResponseDTO";
 import {TabDirective, TabsetComponent} from "ngx-bootstrap/tabs";
 import {ProfileService} from "../../../../shared/services/profile.service";
 import {MessageService} from "../../services/message.service";
@@ -9,6 +9,7 @@ import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {filter} from "rxjs";
 import {FreeChatService} from "../../services/free-chat.service";
 import {MyChatService} from "../../services/my-chat.service";
+import {TabType} from "../messages-list/messages-list.component";
 
 @Component({
   selector: 'app-main-chat-page',
@@ -19,13 +20,12 @@ import {MyChatService} from "../../services/my-chat.service";
 export class MainChatPageComponent implements OnInit {
 
   @ViewChild(TabsetComponent) tabSetComponent?: TabsetComponent;
+  @ViewChild('tabMine') tabMine?: TabDirective;
 
   protected selectedTab?: ISelectedTab;
   constructor(
     private authS: AuthorizationService,
     private profileS: ProfileService,
-    private myChatS: MyChatService,
-    private freeChatS: FreeChatService,
     private messageS: MessageService,
     private destroyRef: DestroyRef,
     private cdr: ChangeDetectorRef
@@ -36,10 +36,14 @@ export class MainChatPageComponent implements OnInit {
   ngOnInit(): void {
     this.listenForNewMessages();
   }
-  public changeTab(tabHeading: string, selectedChat?: IChatResponseDTO) {
+  public changeTab(tabHeading: TabType, selectedChat?: IChatResponseDTO) {
     if (selectedChat) { this.changeSelectedChat(selectedChat.id, tabHeading); }
 
-    const tabToOpen = this.tabSetComponent?.tabs.find(tab => tab.heading === tabHeading);
+    let tabToOpen: TabDirective | undefined;
+    switch (tabHeading) {
+      case 'Mine':
+        tabToOpen = this.tabMine;
+    }
     if (tabToOpen) {
       tabToOpen.active = true;
       this.selectedTab = {
@@ -50,9 +54,6 @@ export class MainChatPageComponent implements OnInit {
     }
   }
 
-  protected selectTab(tab: TabDirective) {
-    const a = tab;
-  }
   protected deselectTab(tab: TabDirective) {
     if (this.selectedChat?.tabHeading === tab.heading) { this.changeSelectedChat(undefined); }
   }
@@ -79,7 +80,7 @@ export class MainChatPageComponent implements OnInit {
 
 
 interface ISelectedTab {
-  heading: string;
+  heading: TabType;
   chat?: IChatResponseDTO;
 }
 

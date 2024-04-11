@@ -1,7 +1,8 @@
-import {IProfileOutShort} from "./ProfileOutShort";
+import {IProfileOutShort} from "../../../profile/entities/ProfileOutShort";
 import {MessageType} from "../enums/MessageType";
 import {FileType} from "./FileType";
 import {IFileInMessage} from "./FileInMessage";
+import {ICheckerInfo} from "./CheckerInfo";
 
 export interface IMessageInChat {
   id: string;
@@ -12,4 +13,5 @@ export interface IMessageInChat {
   files: IFileInMessage[];
   type: MessageType;
   dateTime: string;
+  checkers: ICheckerInfo[];
 }

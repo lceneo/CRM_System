@@ -26,15 +26,10 @@ public class MessagesMapping : Profile
         IEnumerable<ProfileOutShortDTO>? _,
         ResolutionContext context)
     {
-        Guid? curUser = null;
-        if (context.Items.TryGetValue("userId", out var curUserObj))
-            curUser = (Guid) curUserObj;
-        
         return src.Checks?
-                .Where(e => curUser == null || e.Id != curUser)
                 .Select(e => new ProfileOutShortDTO
                 {
-                    Id = e.Id,
+                    Id = e.Profile.Id,
                     Name = e.Profile.Name,
                     Surname = e.Profile.Surname,
                 });
