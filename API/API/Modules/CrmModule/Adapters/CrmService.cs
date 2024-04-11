@@ -18,6 +18,9 @@ public class CrmService : ICrmService
     public async Task<Result<CreateResponse<Guid>>> CreateOrUpdateTask(CreateOrUpdateTaskRequest request, Guid initiatedBy)
         => await tasksService.CreateOrUpdateTask(request, initiatedBy);
     
-    public async Task<Result<SearchResponseBaseDTO<TaskDTO>>> Search(SearchTasksRequest request)
-        => await tasksService.Search(request);
+    public async Task<Result<SearchResponseBaseDTO<TaskDTO>>> SearchTasks(SearchTasksRequest request)
+        => await tasksService.SearchTasks(request);
+
+    public async Task<Result<bool>> DeleteTask(Guid taskId)
+        => await tasksService.DeleteTask(taskId);
 }
