@@ -1,8 +1,9 @@
 ﻿using API.Extensions;
 using API.Infrastructure.BaseApiDTOs;
-using API.Modules.CrmModule.DTO;
-using API.Modules.CrmModule.Models;
-using API.Modules.CrmModule.Ports;
+using API.Modules.CrmModule.Comments.Requests;
+using API.Modules.CrmModule.Crm;
+using API.Modules.CrmModule.Tasks.DTO;
+using API.Modules.CrmModule.Tasks.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,10 +15,12 @@ namespace API.Modules.CrmModule;
 public class CrmController : ControllerBase
 {
     private readonly ICrmService crmService;
+    private readonly ICrmHubNotifier hub;
 
-    public CrmController(ICrmService crmService)
+    public CrmController(ICrmService crmService, ICrmHubNotifier hub)
     {
         this.crmService = crmService;
+        this.hub = hub;
     }
 
     /// <summary>
@@ -48,6 +51,7 @@ public class CrmController : ControllerBase
     public async Task<ActionResult<CreateResponse<Guid>>> CreateOrUpdateTask([FromBody]CreateOrUpdateTaskRequest request)
     {
         var result = await crmService.CreateOrUpdateTask(request, User.GetId());
+        await hub.NotifyChanges();
         return result.ActionResult;
     }
 
@@ -55,8 +59,9 @@ public class CrmController : ControllerBase
     /// Поиск по задачам
     /// </summary>
     /// <remarks>
-    /// Creation - инфа о создании
-    /// LastEdition - инфа о последнем редактировании
+    /// <para>`Creation` - инфа о создании</para>
+    /// <para>`LastEdition` - инфа о последнем редактировании</para>
+    /// <para>Комментарии отсортированы по дате</para>
     /// </remarks>
     /// <returns></returns>
     [HttpPost("Tasks/Search")]
@@ -74,6 +79,41 @@ public class CrmController : ControllerBase
     public async Task<ActionResult> DeleteTask([FromRoute]Guid taskId)
     {
         await crmService.DeleteTask(taskId);
+        await hub.NotifyChanges();
+        return NoContent();
+    }
+
+
+    /// <summary>
+    /// Добавить/изменить коммент у задачи. 
+    /// </summary>
+    /// <remarks>
+    /// Описание полей в модельке(снизу)
+    /// 
+    /// Название модели запроса - <see cref="CreateOrUpdateTaskCommentRequest"/>
+    /// </remarks>
+    /// <returns></returns>
+    [HttpPost("Tasks/{taskId:Guid}/Comments")]
+    public async Task<ActionResult<CreateResponse<Guid>>> CreateOrUpdateTaskComment(
+        [FromRoute] Guid taskId,
+        [FromBody] CreateOrUpdateTaskCommentRequest request)
+    {
+        var result = await crmService.CreateOrUpdateTaskComment(taskId, request, User.GetId());
+        await hub.NotifyChanges(taskId);
+        return result.ActionResult;
+    }
+    
+    /// <summary>
+    /// Удалить коммент
+    /// </summary>
+    /// <returns></returns>
+    [HttpPost("Tasks/{taskId:Guid}/Comments/{commentId:Guid}")]
+    public async Task<ActionResult> DeleteTaskComment(
+        [FromRoute] Guid taskId,
+        [FromRoute] Guid commentId)
+    {
+        await crmService.DeleteTaskComment(taskId, commentId);
+        await hub.NotifyChanges(taskId);
         return NoContent();
     }
 }

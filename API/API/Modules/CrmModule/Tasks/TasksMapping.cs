@@ -1,9 +1,9 @@
-﻿using API.Modules.CrmModule.DTO;
-using API.Modules.CrmModule.Entities;
-using API.Modules.CrmModule.Models;
+﻿using API.Modules.CrmModule.Tasks.DTO;
+using API.Modules.CrmModule.Tasks.Entities;
+using API.Modules.CrmModule.Tasks.Requests;
 using AutoMapper;
 
-namespace API.Modules.CrmModule.Mapping;
+namespace API.Modules.CrmModule.Tasks;
 
 public class TasksMapping : Profile
 {
@@ -15,9 +15,7 @@ public class TasksMapping : Profile
             .ForMember(dest => dest.Descrption, opt => opt.MapFrom((src, dest) => src.Descrption ?? dest.Descrption))
             .ForMember(dest => dest.Title, opt => opt.MapFrom((src, dest) => src.Title ?? dest.Title));
         CreateMap<TaskActionEntity, TaskActionDTO>()
-            .ForMember(dest => dest.Initiator, opt => opt.MapFrom(src => src.Initiator));
-        CreateMap<TaskCommentEntity, TaskCommentDTO>()
-            .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.Author));
+            .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User));
         CreateMap<TaskEntity, TaskDTO>()
             .ForMember(dest => dest.AssignedTo, opt => opt.MapFrom(src => src.AssignedTo))
             .ForMember(dest => dest.Creation, opt => opt.MapFrom(src => src.Actions.First()))

@@ -1,5 +1,5 @@
 ﻿using API.DAL.Repository;
-using API.Modules.AccountsModule.Models;
+using API.Modules.AccountsModule.Entities;
 
 namespace API.Modules.AccountsModule.Ports;
 

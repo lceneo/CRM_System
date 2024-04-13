@@ -51,10 +51,13 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntit
         await SaveChangesAsync();
     }
 
-    public async Task<CreateResponse<Guid>> CreateOrUpdateAsync(TEntity entity)
+    public async Task<CreateResponse<Guid>> CreateOrUpdateAsync(TEntity entity) => await CreateOrUpdateAsync(entity, null);
+    public async Task<CreateResponse<Guid>> CreateOrUpdateAsync(TEntity entity, IQueryable<TEntity>? includedSet)
     {
         var isCreated = false;
-        var cur = await Set.FindAsync(entity.Id);
+        var cur = includedSet != null 
+            ? await includedSet.FirstOrDefaultAsync(e => e.Id == entity.Id)
+            : await Set.FindAsync(entity.Id);
         if (cur == null)
         {
             await Set.AddAsync(entity);

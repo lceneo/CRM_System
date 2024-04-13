@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using API.DAL;
+using API.Modules.CrmModule.Comments;
 using API.Modules.ProfilesModule.Entities;
 
-namespace API.Modules.CrmModule.Entities;
+namespace API.Modules.CrmModule.Tasks.Entities;
 
 public class TaskEntity : IEntity
 {

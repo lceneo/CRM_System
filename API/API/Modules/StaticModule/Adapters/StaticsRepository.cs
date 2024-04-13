@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices.ComTypes;
-using API.DAL;
+﻿using API.DAL;
 using API.DAL.Repository;
 using API.Modules.StaticModule.Entities;
 using API.Modules.StaticModule.Ports;

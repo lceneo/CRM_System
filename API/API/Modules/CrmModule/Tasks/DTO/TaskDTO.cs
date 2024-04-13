@@ -1,7 +1,8 @@
-﻿using API.Modules.CrmModule.Entities;
+﻿using API.Modules.CrmModule.Comments.DTO;
+using API.Modules.CrmModule.Tasks.Entities;
 using API.Modules.ProfilesModule.DTO;
 
-namespace API.Modules.CrmModule.DTO;
+namespace API.Modules.CrmModule.Tasks.DTO;
 
 public class TaskDTO
 {
@@ -12,5 +13,5 @@ public class TaskDTO
     public string Descrption { get; set; }
     public TaskActionDTO Creation { get; set; }
     public TaskActionDTO LastEdition { get; set; }
-    public IEnumerable<TaskCommentEntity> Comments { get; set; }
+    public IEnumerable<TaskCommentDTO> Comments { get; set; }
 }

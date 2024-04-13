@@ -1,14 +1,17 @@
 ﻿using API.DAL;
 using API.DAL.Repository;
 using API.Infrastructure.BaseApiDTOs;
-using API.Modules.CrmModule.Entities;
-using API.Modules.CrmModule.Models;
-using API.Modules.CrmModule.Ports;
+using API.Modules.CrmModule.Tasks.Entities;
+using API.Modules.CrmModule.Tasks.Requests;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 
-namespace API.Modules.CrmModule.Adapters;
+namespace API.Modules.CrmModule.Tasks;
+
+public interface ITasksRepository : ICRUDRepository<TaskEntity>
+{
+    public Task<SearchResponseBaseDTO<TaskEntity>> Search(SearchTasksRequest request, bool asNoTracking = false);
+}
 
 public class TasksRepository : CRUDRepository<TaskEntity>, ITasksRepository
 {
@@ -18,7 +21,7 @@ public class TasksRepository : CRUDRepository<TaskEntity>, ITasksRepository
     
     private IQueryable<TaskEntity> IncludedSet => Set
         .Include(e => e.AssignedTo)
-        .Include(e => e.Actions).ThenInclude(a => a.Initiator)
+        .Include(e => e.Actions).ThenInclude(a => a.User)
         .Include(e => e.Comments).ThenInclude(c => c.Author)
         .AsQueryable();
 

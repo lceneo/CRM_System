@@ -1,6 +1,6 @@
-﻿using API.Modules.CrmModule.Entities;
+﻿using API.Modules.CrmModule.Tasks.Entities;
 
-namespace API.Modules.CrmModule.Models;
+namespace API.Modules.CrmModule.Tasks.Requests;
 
 public class CreateOrUpdateTaskRequest
 {

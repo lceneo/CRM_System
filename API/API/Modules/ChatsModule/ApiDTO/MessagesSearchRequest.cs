@@ -1,6 +1,6 @@
 ﻿using API.Modules.ChatsModule.Entities;
 
-namespace API.Modules.ChatsModule.DTO;
+namespace API.Modules.ChatsModule.ApiDTO;
 
 public class MessagesSearchRequest
 {
