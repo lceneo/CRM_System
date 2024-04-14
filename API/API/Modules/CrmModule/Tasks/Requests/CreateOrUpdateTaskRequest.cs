@@ -1,6 +1,6 @@
-﻿using API.Modules.CrmModule.Entities;
+﻿using API.Modules.CrmModule.Tasks.Entities;
 
-namespace API.Modules.CrmModule.Models;
+namespace API.Modules.CrmModule.Tasks.Requests;
 
 public class CreateOrUpdateTaskRequest
 {
@@ -9,4 +9,5 @@ public class CreateOrUpdateTaskRequest
     public TaskState? State { get; set; }
     public string? Title { get; set; }
     public string? Descrption { get; set; }
+    public IEnumerable<Guid>? ProductIds { get; set; }
 }

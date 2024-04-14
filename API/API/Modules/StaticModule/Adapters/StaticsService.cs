@@ -1,8 +1,7 @@
 ﻿using API.Infrastructure;
 using API.Modules.LogsModule;
-using API.Modules.ProfilesModule.Ports;
+using API.Modules.StaticModule.ApiModels;
 using API.Modules.StaticModule.Entities;
-using API.Modules.StaticModule.Models;
 using API.Modules.StaticModule.Ports;
 using Microsoft.Extensions.FileProviders;
 

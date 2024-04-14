@@ -4,7 +4,6 @@ using API.Infrastructure.Extensions;
 using API.Modules.AccountsModule.Entities;
 using API.Modules.ChatsModule.ApiDTO;
 using API.Modules.ChatsModule.DTO;
-using API.Modules.ChatsModule.Entities;
 using API.Modules.ChatsModule.Ports;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;

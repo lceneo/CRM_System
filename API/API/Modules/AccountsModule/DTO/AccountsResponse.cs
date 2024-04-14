@@ -1,6 +1,6 @@
 ﻿using API.Modules.AccountsModule.Entities;
 
-namespace API.Modules.AccountsModule.Models;
+namespace API.Modules.AccountsModule.DTO;
 
 public class AccountsResponse
 {

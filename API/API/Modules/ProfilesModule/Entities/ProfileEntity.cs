@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using API.DAL;
-using API.Modules.AccountsModule.Models;
+using API.Modules.AccountsModule.Entities;
 using API.Modules.ChatsModule.Entities;
-using API.Modules.CrmModule.Entities;
+using API.Modules.CrmModule.Comments;
+using API.Modules.CrmModule.Tasks.Entities;
 using API.Modules.RatingModule.Entities;
-using API.Modules.StaticModule.Entities;
 
 namespace API.Modules.ProfilesModule.Entities;
 

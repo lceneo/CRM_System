@@ -1,6 +1,4 @@
-﻿using API.Modules.ProfilesModule.DTO;
-
-namespace API.Modules.RatingModule.Entities;
+﻿namespace API.Modules.RatingModule.DTO;
 
 public class RatingStatisticDTO
 {

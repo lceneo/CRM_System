@@ -4,13 +4,13 @@ using System.Security.Claims;
 using System.Text;
 using API.Infrastructure;
 using API.Modules.AccountsModule.DTO;
+using API.Modules.AccountsModule.Entities;
 using API.Modules.AccountsModule.Models;
 using API.Modules.AccountsModule.Ports;
 using API.Modules.LogsModule;
 using API.Modules.MailsModule.Ports;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Modules.AccountsModule.Adapters;
