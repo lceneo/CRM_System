@@ -9,4 +9,5 @@ public class CreateOrUpdateTaskRequest
     public TaskState? State { get; set; }
     public string? Title { get; set; }
     public string? Descrption { get; set; }
+    public IEnumerable<Guid>? ProductIds { get; set; }
 }

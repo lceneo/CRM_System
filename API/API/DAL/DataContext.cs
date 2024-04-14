@@ -2,6 +2,7 @@ using API.Modules.AccountsModule.Entities;
 using API.Modules.ChatsModule.Entities;
 using API.Modules.CrmModule.Comments;
 using API.Modules.CrmModule.Tasks.Entities;
+using API.Modules.ProductsModule;
 using API.Modules.ProfilesModule.Entities;
 using API.Modules.RatingModule.Entities;
 using API.Modules.StaticModule.Entities;
@@ -46,4 +47,5 @@ public class DataContext : DbContext
     public DbSet<TaskEntity> Tasks => Set<TaskEntity>();
     public DbSet<TaskActionEntity> TaskActions => Set<TaskActionEntity>();
     public DbSet<TaskCommentEntity> TaskComments => Set<TaskCommentEntity>();
+    public DbSet<ProductEntity> Products => Set<ProductEntity>();
 }

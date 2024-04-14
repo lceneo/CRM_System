@@ -33,6 +33,15 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntit
     public async Task<TEntity?> GetByIdAsync(Guid id)
         => await Set.FindAsync(id);
 
+    public async Task<TEntity?> GetById(Guid id, IQueryable<TEntity>? includedSet, bool asNoTracking = true)
+    {
+        var query = includedSet ?? Set;
+        if (asNoTracking)
+            query = query.AsNoTracking();
+
+        return await query.FirstOrDefaultAsync(e => e.Id == id);
+    }
+
     public Task<List<TEntity>> GetByIdsAsync(IEnumerable<Guid> ids)
     {
         var hashSet = ids.ToHashSet();
