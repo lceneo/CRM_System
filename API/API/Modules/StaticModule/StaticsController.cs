@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 using API.Infrastructure;
-using API.Modules.StaticModule.Models;
+using API.Modules.StaticModule.ApiModels;
 using API.Modules.StaticModule.Ports;
 using Microsoft.AspNetCore.Mvc;
 

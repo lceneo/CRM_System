@@ -1,6 +1,5 @@
-﻿using API.Extensions;
-using API.Modules.LogsModule;
-using API.Modules.RatingModule.Entities;
+﻿using API.Modules.LogsModule;
+using API.Modules.RatingModule.DTO;
 using API.Modules.RatingModule.Models;
 using API.Modules.RatingModule.Ports;
 using Microsoft.AspNetCore.Authorization;

@@ -1,7 +1,7 @@
 ﻿using API.DAL;
 using API.DAL.Repository;
 using API.Infrastructure.BaseApiDTOs;
-using API.Modules.AccountsModule.Models;
+using API.Modules.AccountsModule.Entities;
 using API.Modules.ProfilesModule.ApiDTO;
 using API.Modules.ProfilesModule.Entities;
 using API.Modules.ProfilesModule.Ports;

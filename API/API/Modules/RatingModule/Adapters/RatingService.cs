@@ -2,6 +2,7 @@
 using API.Modules.ChatsModule.Ports;
 using API.Modules.LogsModule;
 using API.Modules.ProfilesModule.Ports;
+using API.Modules.RatingModule.DTO;
 using API.Modules.RatingModule.Entities;
 using API.Modules.RatingModule.Models;
 using API.Modules.RatingModule.Ports;

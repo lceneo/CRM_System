@@ -1,6 +1,6 @@
 ﻿using API.DAL;
 using API.DAL.Repository;
-using API.Modules.AccountsModule.Models;
+using API.Modules.AccountsModule.Entities;
 using API.Modules.AccountsModule.Ports;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;

@@ -1,15 +1,10 @@
-﻿using System.Collections.Concurrent;
-using API.Extensions;
+﻿using API.Extensions;
 using API.Infrastructure;
 using API.Infrastructure.Extensions;
 using API.Modules.AccountsModule.Entities;
 using API.Modules.ChatsModule.ApiDTO;
-using API.Modules.ChatsModule.DTO;
-using API.Modules.ChatsModule.Entities;
 using API.Modules.ChatsModule.Ports;
 using API.Modules.LogsModule;
-using API.Modules.ProfilesModule.DTO;
-using API.Modules.ProfilesModule.Entities;
 using API.Modules.ProfilesModule.Ports;
 using API.Modules.RatingModule.Entities;
 using API.Modules.RatingModule.Ports;
