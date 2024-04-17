@@ -66,4 +66,4 @@ spec:
           - name: API_CHAT_HUB_URL 
             value: "Hubs/Chats"
           - name: API_CRM_HUB_URL
-            value: "Hubs/Chats"
+            value: "Hubs/Crm"
