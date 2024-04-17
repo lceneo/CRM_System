@@ -2,7 +2,7 @@
 cat > /usr/share/nginx/html/config/config.js << EOF
 __config = {
         apiUrl: "${API_URL}",
-        chatHubUrl: "${API_HUB_URL}",
+        chatHubUrl: "${API_CHAT_HUB_URL}",
         crmHubUrl: "${API_CRM_HUB_URL}",
         protocol: "${API_PROTOCOL}"
       }
