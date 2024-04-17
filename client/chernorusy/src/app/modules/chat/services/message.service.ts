@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {SocketService} from "../../../shared/services/socket.service";
+import {ChatHubService} from "./chat-hub.service";
 import {HttpService} from "../../../shared/services/http.service";
 import {IMessageInChat} from "../helpers/entities/MessageInChat";
 import {IMessageInChatResponseDTO} from "../helpers/DTO/request/MessageInChatResponseDTO";
@@ -23,17 +23,12 @@ export class MessageService {
   private requestNumber = 1;
   private pendingMessages: {[requestNumber: number]: IPendingMessage} = {};
   constructor(
-    private socketS: SocketService,
+    private chatSocketS: ChatHubService,
     private httpS: HttpService,
     private messageMapper: MessageMapperService
   ) {
-    if (this.socketS.isConnected()) { this.listenSocket(); }
-
-    this.socketS.connected$
-      .pipe(
-        takeUntilDestroyed()
-      )
-      .subscribe(() => this.listenSocket());
+    this.listenSocket();
+    console.log('messageS init')
   }
 
   public getMessages$(chatID: string) {
@@ -47,7 +42,7 @@ export class MessageService {
   }
 
   public async readMessages(chatID: string, messagesIDs: string[]) {
-    return await this.socketS.sendMessage('Check', { chatID: chatID, messageIds: messagesIDs });
+    return await this.chatSocketS.sendMessage('Check', { chatID: chatID, messageIds: messagesIDs });
   }
 
   public sendMessage(userOrChatID: string, messageData: IPendingMessage) {
@@ -59,11 +54,10 @@ export class MessageService {
 
     if (messageData.message) { sendMsgObj['message'] = messageData.message; }
     sendMsgObj['fileKeys'] = messageData.files.map(file => file.fileKey);
-    return this.socketS.sendMessage('Send', sendMsgObj);
+    return this.chatSocketS.sendMessage('Send', sendMsgObj);
   }
 
   private listenSocket() {
-    console.log('messageS init')
     const receiveFn = (msgReceive: IMessageReceive) => {
       this.receivedMessages$.next(this.messageMapper.msgReceiveToMsgInChat(msgReceive));
     }
@@ -72,8 +66,8 @@ export class MessageService {
       this.successMessages$.next(this.messageMapper.msgSuccessToMsgInChat(msgSuccess, this.pendingMessages[msgSuccess.requestNumber]));
     }
 
-    this.socketS.listenMethod('Recieve', receiveFn);
-    this.socketS.listenMethod('Success', successFn);
+    this.chatSocketS.listenMethod('Recieve', receiveFn);
+    this.chatSocketS.listenMethod('Success', successFn);
   }
 }
 

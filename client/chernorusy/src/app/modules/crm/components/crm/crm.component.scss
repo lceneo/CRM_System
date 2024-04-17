@@ -1,0 +1,17 @@
+:host {
+  display: block;
+  height: 100%;
+
+  ::ng-deep  {
+    .mat-mdc-tab-body-wrapper {
+      height: 100%;
+    }
+    .mat-mdc-tab-body-content {
+      padding-top: 1rem;
+    }
+  }
+}
+
+.mat-mdc-tab-group {
+  height: calc(100% - 50px);
+}

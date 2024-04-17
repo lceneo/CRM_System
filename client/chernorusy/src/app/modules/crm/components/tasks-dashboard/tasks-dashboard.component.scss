@@ -1,0 +1,17 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+.wrapper {
+  height: 100%;
+}
+
+.dashboards {
+  height: 100%;
+  display: flex;
+  column-gap: 2rem;
+  .dashboard {
+    flex: 1 1 0;
+  }
+}

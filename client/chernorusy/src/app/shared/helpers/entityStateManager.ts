@@ -1,9 +1,9 @@
 import {computed, DestroyRef, inject, Injectable, signal, WritableSignal} from "@angular/core";
 import {IEntityState} from "../models/states/EntityState";
 import {HttpService} from "../services/http.service";
-import {catchError, map, tap, throwError} from "rxjs";
+import {catchError, map, Observable, tap, throwError} from "rxjs";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {SocketService} from "../services/socket.service";
+import {ChatHubService} from "../../modules/chat/services/chat-hub.service";
 import {IChatResponseDTO} from "../../modules/chat/helpers/entities/ChatResponseDTO";
 
 @Injectable({providedIn: "any"})
@@ -20,22 +20,11 @@ export class EntityStateManager<T extends {id: string}> {
 
 
   protected httpS = inject(HttpService);
-  protected socketS = inject(SocketService);
   protected destroyRef = inject(DestroyRef);
-  constructor() {
-    setTimeout(() => {
-        if (this.socketS.isConnected()) {
-          this.initial();
-        }
 
-        this.socketS.connected$
-          .pipe(
-            takeUntilDestroyed(this.destroyRef)
-          )
-          .subscribe(() => this.initial());
-      }
-    );
-  }
+  protected httpInitMethod: 'get' | 'post' = 'get';
+  protected httpInitBody?: any
+  constructor() {}
 
   protected initial() {
     //@ts-ignore
@@ -44,7 +33,10 @@ export class EntityStateManager<T extends {id: string}> {
 
 
   protected initStore(fnCallback?: (...args: any[]) => any) {
-    this.httpS.get<T[]>(this.initMethod)
+    const httpReq = this.httpInitMethod === 'get' ?
+        this.httpS.get<T[]>(this.initMethod) :
+        this.httpS.post<T[]>(this.initMethod, this.httpInitBody);
+    httpReq
       .pipe(
         map((entities) => this.mapFn ? this.mapFn(entities) : entities),
         tap(entities => {
@@ -90,7 +82,7 @@ export class EntityStateManager<T extends {id: string}> {
   }
 
   public updateByID(id: string, updatedEntity: Partial<T>) {
-    const existingEntity = this.getEntitiesSync().find(chat => chat.id === id);
+    const existingEntity = this.getEntitiesSync().find(entity => entity.id === id);
     if (!existingEntity) {
       return;
     }
@@ -123,7 +115,7 @@ export class EntityStateManager<T extends {id: string}> {
     return computed(() => this.entityState().entities.find(entity => entity.id === id))
   }
 
-  public getEntitiesAsync() {
-    return computed(() => this.entityState().entities);
+  public getEntitiesAsync(filterFn?: (item: T) => boolean) {
+    return computed(() => this.entityState().entities.filter(entity => filterFn ? filterFn(entity) : true));
   }
 }

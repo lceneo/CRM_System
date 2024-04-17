@@ -1,42 +1,53 @@
+<ng-container *ngLet="isAuthorized$ | async as isAuthorized">
+  <nav class="navigation"
+       *ngIf="isAuthorized"
+  >
+    <a
+      *ngIf = "isAdmin$ | async"
+      class="btn"
+      [routerLink]="['authentication', 'registration']"
+      [routerLinkActive] = "'activeLink'"
+    >Создать пользователя</a>
+    <div
+      class="btn-group profileBtn" dropdown>
+      <button id="button-basic" dropdownToggle type="button" class="btn dropdown-toggle"
+              aria-controls="dropdown-basic">
+        {{profile()?.name}}  <i class="bi bi-person-fill icon"></i>
+        <span class="caret"></span>
+      </button>
+      <ul id="dropdown-split" *dropdownMenu class="dropdown-menu dropdown-menu-right dropdown"
+          role="menu" aria-labelledby="button-split">
+        <li role="menuitem"><a [routerLink]="['profile']" class="dropdown-item" href="#">Профиль</a></li>
+        <li class="divider dropdown-divider"></li>
+        <li
+          *ngIf="(role$ | async) === AccountRole.Client"
+          role="menuitem"
+        ><a [routerLink]="['vidjets']" class="dropdown-item" href="#">Мои виджеты</a>
+        <li role="menuitem"><a [routerLink]="['profile', 'changePassword']" class="dropdown-item" href="#">Сменить пароль</a>
+        <li role="menuitem"><a class="dropdown-item" (click) = "signOut()"><i class="bi bi-arrow-left-square-fill"></i>  Выйти</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
 
-<nav class="navigation"
-     *ngLet="isAuthorized$ | async as isAuthorized"
->
-  <a
-    *ngIf = "isAdmin$ | async"
-    class="btn"
-    [routerLink]="['authentication', 'registration']"
-    [routerLinkActive] = "'activeLink'"
-  >Создать пользователя</a>
-  <a
-    *ngIf = "isAuthorized"
-    class="btn"
-    [routerLink]="['main']"
-    [routerLinkActive] = "'activeLink'"
-  >Главная</a>
-  <div
-    *ngIf = "isAuthorized"
-    class="btn-group profileBtn" dropdown>
-    <button id="button-basic" dropdownToggle type="button" class="btn dropdown-toggle"
-            aria-controls="dropdown-basic">
-      {{profile()?.name}}  <i class="bi bi-person-fill icon"></i>
-      <span class="caret"></span>
-    </button>
-    <ul id="dropdown-split" *dropdownMenu class="dropdown-menu dropdown-menu-right dropdown"
-        role="menu" aria-labelledby="button-split">
-      <li role="menuitem"><a [routerLink]="['profile']" class="dropdown-item" href="#">Профиль</a></li>
-      <li class="divider dropdown-divider"></li>
-      <li
-        *ngIf="(role$ | async) === AccountRole.Client"
-        role="menuitem"
-      ><a [routerLink]="['vidjets']" class="dropdown-item" href="#">Мои виджеты</a>
-      <li role="menuitem"><a [routerLink]="['profile', 'changePassword']" class="dropdown-item" href="#">Сменить пароль</a>
-      <li role="menuitem"><a class="dropdown-item" (click) = "signOut()"><i class="bi bi-arrow-left-square-fill"></i>  Выйти</a>
-      </li>
-    </ul>
+  <div class="wrapperForSideBarAndContent">
+    <div class="sidebar" *ngIf="isAuthorized">
+      <button class="disabledBtnLink" mat-icon-button
+              [routerLink]="['main']" [routerLinkActive]="'activeBtnLink'"
+              [matTooltip]="'Диалоги'"
+      >
+        <mat-icon>mail_outline</mat-icon>
+      </button>
+      <button class="disabledBtnLink" mat-icon-button
+              [routerLink]="['crm']" [routerLinkActive]="'activeBtnLink'"
+              [matTooltip]="'CRM'"
+      >
+        <mat-icon>computer</mat-icon>
+      </button>
+    </div>
+    <div class="contentWrapper">
+      <router-outlet></router-outlet>
+    </div>
   </div>
-</nav>
+</ng-container>
 
-<div class="contentWrapper">
-  <router-outlet></router-outlet>
-</div>
