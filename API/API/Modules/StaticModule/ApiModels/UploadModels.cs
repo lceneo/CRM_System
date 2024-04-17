@@ -1,4 +1,4 @@
-﻿namespace API.Modules.StaticModule.Models;
+﻿namespace API.Modules.StaticModule.ApiModels;
 
 public class UploadResponse
 {

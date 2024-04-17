@@ -3,12 +3,14 @@
 @import './assets/styles/accordion';
 @import './assets/styles/scroll';
 @import './assets/styles/mat-menu';
+@import './assets/styles/mat-button';
 @import "bootstrap-icons/font/bootstrap-icons";
 
 @include form();
 @include modal();
 @include accordion();
 @include scroll();
+@include mat-button();
 
 body{
   .icon {

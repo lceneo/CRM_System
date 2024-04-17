@@ -63,5 +63,7 @@ spec:
             value: "request.stk8s.66bit.ru"
           - name: API_PROTOCOL
             value: "https"
-          - name: API_HUB_URL
+          - name: API_CHAT_HUB_URL 
             value: "Hubs/Chats"
+          - name: API_CRM_HUB_URL
+            value: "Hubs/Crm"

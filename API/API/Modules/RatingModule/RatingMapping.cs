@@ -1,4 +1,5 @@
-﻿using API.Modules.RatingModule.Entities;
+﻿using API.Modules.RatingModule.DTO;
+using API.Modules.RatingModule.Entities;
 using AutoMapper;
 
 namespace API.Modules.RatingModule;

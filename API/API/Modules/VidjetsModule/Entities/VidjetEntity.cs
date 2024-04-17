@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Nodes;
 using API.DAL;
-using API.Modules.AccountsModule.Models;
+using API.Modules.AccountsModule.Entities;
 
 namespace API.Modules.VidjetsModule.Entities;
 

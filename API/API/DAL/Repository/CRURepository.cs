@@ -33,6 +33,15 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntit
     public async Task<TEntity?> GetByIdAsync(Guid id)
         => await Set.FindAsync(id);
 
+    public async Task<TEntity?> GetById(Guid id, IQueryable<TEntity>? includedSet, bool asNoTracking = true)
+    {
+        var query = includedSet ?? Set;
+        if (asNoTracking)
+            query = query.AsNoTracking();
+
+        return await query.FirstOrDefaultAsync(e => e.Id == id);
+    }
+
     public Task<List<TEntity>> GetByIdsAsync(IEnumerable<Guid> ids)
     {
         var hashSet = ids.ToHashSet();
@@ -51,10 +60,13 @@ public class CRURepository<TEntity> : Repository<TEntity>, ICRURepository<TEntit
         await SaveChangesAsync();
     }
 
-    public async Task<CreateResponse<Guid>> CreateOrUpdateAsync(TEntity entity)
+    public async Task<CreateResponse<Guid>> CreateOrUpdateAsync(TEntity entity) => await CreateOrUpdateAsync(entity, null);
+    public async Task<CreateResponse<Guid>> CreateOrUpdateAsync(TEntity entity, IQueryable<TEntity>? includedSet)
     {
         var isCreated = false;
-        var cur = await Set.FindAsync(entity.Id);
+        var cur = includedSet != null 
+            ? await includedSet.FirstOrDefaultAsync(e => e.Id == entity.Id)
+            : await Set.FindAsync(entity.Id);
         if (cur == null)
         {
             await Set.AddAsync(entity);

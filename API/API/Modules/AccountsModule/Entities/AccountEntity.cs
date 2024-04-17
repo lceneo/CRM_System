@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using API.DAL;
-using API.Modules.AccountsModule.Entities;
 using API.Modules.ProfilesModule.Entities;
 
-namespace API.Modules.AccountsModule.Models;
+namespace API.Modules.AccountsModule.Entities;
 
 public class AccountEntity : IEntity
 {

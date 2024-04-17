@@ -1,6 +1,5 @@
 ﻿using API.Modules.AccountsModule.Adapters;
 using API.Modules.AccountsModule.Entities;
-using API.Modules.AccountsModule.Models;
 using API.Modules.ProfilesModule.Entities;
 
 namespace API.DAL.DbCreator.DbFillers;

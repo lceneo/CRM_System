@@ -2,7 +2,6 @@
 using API.Extensions;
 using API.Modules.AccountsModule.DTO;
 using API.Modules.AccountsModule.Entities;
-using API.Modules.AccountsModule.Models;
 using API.Modules.AccountsModule.Ports;
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication;

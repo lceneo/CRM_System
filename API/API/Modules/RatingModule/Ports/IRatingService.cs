@@ -1,5 +1,5 @@
 ﻿using API.Infrastructure;
-using API.Modules.RatingModule.Entities;
+using API.Modules.RatingModule.DTO;
 using API.Modules.RatingModule.Models;
 
 namespace API.Modules.RatingModule.Ports;

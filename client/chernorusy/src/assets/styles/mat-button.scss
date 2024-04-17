@@ -1,0 +1,7 @@
+
+@mixin mat-button() {
+  .mat-mdc-unelevated-button.mat-primary:not(:disabled) {
+    background-color: #3976e4 !important;
+    color: white !important;
+  }
+}

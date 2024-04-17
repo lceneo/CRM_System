@@ -1,5 +1,5 @@
 ﻿using API.Infrastructure;
-using API.Modules.StaticModule.Models;
+using API.Modules.StaticModule.ApiModels;
 
 namespace API.Modules.StaticModule.Ports;
 

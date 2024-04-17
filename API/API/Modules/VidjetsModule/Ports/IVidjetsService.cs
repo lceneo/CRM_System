@@ -2,7 +2,6 @@
 using API.Infrastructure.BaseApiDTOs;
 using API.Modules.VidjetsModule.DTO;
 using API.Modules.VidjetsModule.Models;
-using Microsoft.AspNetCore.Mvc;
 
 namespace API.Modules.VidjetsModule.Ports;
 

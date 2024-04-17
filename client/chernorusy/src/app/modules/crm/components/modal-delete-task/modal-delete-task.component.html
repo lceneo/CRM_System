@@ -1,0 +1,11 @@
+<div class="wrapper">
+    <section class="headerSection">
+        <h1 mat-dialog-title>Удалить задачу "{{taskToDelete?.title}}"?</h1>
+        <button mat-dialog-close class="closeBtn" mat-icon-button><mat-icon>close</mat-icon></button>
+    </section>
+    <section mat-dialog-content>Это действие удалит задачу, и его нельзя отменить.</section>
+    <section class="btnSection" mat-dialog-actions>
+        <button class="deleteBtn" color="primary" mat-flat-button mat-dialog-close (click) = "deleteTask()">Удалить</button>
+        <button class="cancelBtn" color="warn" mat-flat-button mat-dialog-close>Отмена</button>
+    </section>
+</div>
