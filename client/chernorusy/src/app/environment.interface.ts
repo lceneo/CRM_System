@@ -1,5 +1,6 @@
 export interface Environment {
   apiUrl: string;
-  hubUrl: string;
+  chatHubUrl: string;
+  crmHubUrl: string;
   protocol: 'http' | 'https';
 }

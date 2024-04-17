@@ -4,11 +4,14 @@ import {IVidjet} from "../entities/Vidjet";
 import {IVidjetPOSTResponseDTO} from "../DTO/response/VidjetPOSTResponseDTO";
 import {IVidjetPOSTRequestDTO} from "../DTO/request/VidjetPOSTRequestDTO";
 import {tap} from "rxjs";
+import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 
 @Injectable({
   providedIn: 'root'
 })
 export class VidjetService extends EntityStateManager<IVidjet> {
+
+
 
   protected override initMethod = '/Vidjets';
   protected override mapFn = (res: {items: IVidjet[]}) => {
