@@ -1,7 +1,6 @@
 import { notNull } from "../helpers/notNull";
 import { useOnClickOutside } from "../helpers/useOnClickOutside";
 import { STATE } from "../index";
-import { sendMessage } from "../requests/sendMessage";
 import { createHeader } from "./header";
 import { createFooter } from "./footer";
 import { cls } from "../helpers/cls";
@@ -37,7 +36,7 @@ export function createDiv({ text, id, className, styles }: {
 
 
 	const closeDialog = () => {
-		document.body.removeChild(div)
+		div.remove();
 		if (listeners) {
 			listeners.forEach(l => l());
 		}

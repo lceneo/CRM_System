@@ -6,6 +6,7 @@ import {cssStyles} from "./styles";
 import {SocketService} from "./service/socket";
 import {Customization, DefaultCustomization, getIsCustomizing} from "./customization";
 import {stylesStore} from "./store/styles";
+import {ManagerData} from "./service/localStorage";
 
 export let socket: SocketService | null;
 (async () => {
@@ -23,6 +24,7 @@ export interface GlobalState {
     token: string | null;
     chatId: string | null;
 	styles: Customization;
+    manager: ManagerData | null;
 }
 
 let isCustomizing = false;
@@ -31,7 +33,8 @@ export const STATE: GlobalState = {
     hub: null,
     token: null,
     chatId: null,
-	styles: DefaultCustomization
+	styles: DefaultCustomization,
+    manager: null,
 }
 
 const styleSheet = new CSSStyleSheet();

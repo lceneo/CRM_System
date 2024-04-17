@@ -1,5 +1,6 @@
 import { notNull } from "../helpers/notNull";
 import { cls } from "../helpers/cls";
+import {prefix} from "../const";
 
 export function createButton({ text, id, className, keepCircle, styles }: {
 	text?: string,
@@ -42,9 +43,14 @@ export function createButton({ text, id, className, keepCircle, styles }: {
 
 	const enable = (enable: boolean) => {
 		button.disabled = !enable;
+		if (!enable) {
+			button.classList.add(`${prefix}-disabled`);
+		} else {
+			button.classList.remove(`${prefix}-disabled`);
+		}
 	}
 
-	return [button, () => document.removeChild(button), showButton, enable];
+	return [button, () => button.remove(), showButton, enable];
 }
 
 function setButtonStyles(style: CSSStyleDeclaration) {
