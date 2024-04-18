@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
-import {TaskService} from "../../services/task.service";
-import {ITask} from "../../helpers/entities/ITask";
+import {TaskService} from "../../../services/task.service";
+import {ITask} from "../../../helpers/entities/ITask";
 
 @Component({
   selector: 'app-modal-delete-task',

@@ -1,7 +1,7 @@
 import {computed, Injectable, signal} from '@angular/core';
 import {HttpService} from "./http.service";
 import {IProfileCreateRequestDTO} from "../../modules/profile/DTO/request/ProfileCreateRequestDTO";
-import {catchError, map, of, switchMap, tap, throwError} from "rxjs";
+import {catchError, Observable, of, switchMap, tap, throwError} from "rxjs";
 import {AuthorizationService} from "./authorization.service";
 import {IProfileState} from "../models/states/ProfileState";
 import {IProfileResponseDTO} from "../../modules/profile/DTO/response/ProfileResponseDTO";

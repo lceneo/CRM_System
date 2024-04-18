@@ -1,5 +1,6 @@
 ﻿using API.Extensions;
 using API.Infrastructure.BaseApiDTOs;
+using API.Modules.CrmModule.Comments.DTO;
 using API.Modules.CrmModule.Comments.Requests;
 using API.Modules.CrmModule.Crm;
 using API.Modules.CrmModule.Tasks.DTO;
@@ -51,7 +52,8 @@ public class CrmController : ControllerBase
     public async Task<ActionResult<CreateResponse<Guid>>> CreateOrUpdateTask([FromBody]CreateOrUpdateTaskRequest request)
     {
         var result = await crmService.CreateOrUpdateTask(request, User.GetId());
-        await hub.NotifyChanges();
+        if (result.IsSuccess)
+            await hub.NotifyChanges(result.Value.Id);
         return result.ActionResult;
     }
 
@@ -100,6 +102,21 @@ public class CrmController : ControllerBase
     {
         var result = await crmService.CreateOrUpdateTaskComment(taskId, request, User.GetId());
         await hub.NotifyChanges(taskId);
+        return result.ActionResult;
+    }
+
+    /// <summary>
+    /// Поиск по комментам
+    /// </summary>
+    /// <param name="taskId"></param>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("Tasks/{taskId:Guid}/Comments/Search")]
+    public async Task<ActionResult<TaskCommentDTO>> SearchComments(
+        [FromRoute] Guid taskId,
+        [FromBody]SearchTaskCommentsRequest request)
+    {
+        var result = await crmService.Search(taskId, request);
         return result.ActionResult;
     }
     

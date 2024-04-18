@@ -5,7 +5,7 @@
         <app-task-item
                 class="dashboard"
                 [tasks]="newTasks()"
-                [header]="'Новые'"
+                [taskState]="TaskState.New"
                 cdkDropList
                 [cdkDropListData]="newTasks()"
                 (cdkDropListDropped)="dropTask($event, TaskState.New)"
@@ -16,7 +16,7 @@
     <app-task-item
             class="dashboard"
             [tasks]="pausedTasks()"
-            [header]="'Приостановленные'"
+            [taskState]="TaskState.Pause"
             cdkDropList
             [cdkDropListData]="pausedTasks()"
             (cdkDropListDropped)="dropTask($event, TaskState.Pause)"
@@ -27,7 +27,7 @@
     <app-task-item
             class="dashboard"
             [tasks]="inProgressTasks()"
-            [header]="'В работе'"
+            [taskState]="TaskState.InProgress"
             cdkDropList
             [cdkDropListData]="inProgressTasks()"
             (cdkDropListDropped)="dropTask($event, TaskState.InProgress)"
@@ -38,7 +38,7 @@
     <app-task-item
             class="dashboard"
             [tasks]="doneTasks()"
-            [header]="'Выполненные'"
+            [taskState]="TaskState.Done"
             cdkDropList
             [cdkDropListData]="doneTasks()"
             (cdkDropListDropped)="dropTask($event, TaskState.Done)"
@@ -49,7 +49,7 @@
     <app-task-item
             class="dashboard"
             [tasks]="archivedTasks()"
-            [header]="'Архив'"
+            [taskState]="TaskState.Archived"
             cdkDropList
             [cdkDropListData]="archivedTasks()"
             (cdkDropListDropped)="dropTask($event, TaskState.Archived)"

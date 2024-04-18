@@ -12,6 +12,9 @@
 }
 
 .titleWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   position: sticky;
   top: 0;
   border: 2px #dfe5eb solid;

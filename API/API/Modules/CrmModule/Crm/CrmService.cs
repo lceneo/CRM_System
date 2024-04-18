@@ -16,7 +16,7 @@ public interface ICrmService
     Task<Result<bool>> DeleteTask(Guid taskId);
     
     Task<Result<CreateResponse<Guid>>> CreateOrUpdateTaskComment(Guid taskId, CreateOrUpdateTaskCommentRequest request, Guid userId);
-    Task<Result<SearchResponseBaseDTO<TaskCommentDTO>>> Search(SearchTaskCommentsRequest request);
+    Task<Result<SearchResponseBaseDTO<TaskCommentDTO>>> Search(Guid taskId, SearchTaskCommentsRequest request);
     Task<Result<bool>> DeleteTaskComment(Guid taskId, Guid commentId);
 }
 
@@ -46,8 +46,8 @@ public class CrmService : ICrmService
         Guid userId)
             => await commentsService.CreateOrUpdateTaskComment(taskId, request, userId);
 
-    public async Task<Result<SearchResponseBaseDTO<TaskCommentDTO>>> Search(SearchTaskCommentsRequest request)
-        => await commentsService.Search(request);
+    public async Task<Result<SearchResponseBaseDTO<TaskCommentDTO>>> Search(Guid taskId, SearchTaskCommentsRequest request)
+        => await commentsService.Search(taskId, request);
 
     public async Task<Result<bool>> DeleteTaskComment(Guid taskId, Guid commentId)
         => await commentsService.DeleteTaskComment(taskId, commentId);
