@@ -14,7 +14,7 @@ public interface ITasksCommentsService
     Task<Result<CreateResponse<Guid>>> CreateOrUpdateTaskComment(Guid taskId, CreateOrUpdateTaskCommentRequest request,
         Guid userId);
 
-    Task<Result<SearchResponseBaseDTO<TaskCommentDTO>>> Search(SearchTaskCommentsRequest request);
+    Task<Result<SearchResponseBaseDTO<TaskCommentDTO>>> Search(Guid taskId, SearchTaskCommentsRequest request);
 
     Task<Result<bool>> DeleteTaskComment(Guid taskId, Guid commentId);
 }
@@ -81,9 +81,9 @@ public class TasksCommentsService : ITasksCommentsService
         return Result.Ok(result);
     }
 
-    public async Task<Result<SearchResponseBaseDTO<TaskCommentDTO>>> Search(SearchTaskCommentsRequest request)
+    public async Task<Result<SearchResponseBaseDTO<TaskCommentDTO>>> Search(Guid taskId, SearchTaskCommentsRequest request)
     {
-        var result = await commentsRepository.Search(request, true);
+        var result = await commentsRepository.Search(taskId, request, true);
         return Result.Ok(new SearchResponseBaseDTO<TaskCommentDTO>
         {
             Items = mapper.Map<List<TaskCommentDTO>>(result.Items),

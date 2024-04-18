@@ -56,7 +56,7 @@ public class StatisticsService : IStatisticsService
         DateTime? clientMessageTime = null;
         foreach (var message in messages.OrderBy(m => m.DateTime))
         {
-            if (clientMessageTime == null && message.Sender.Account.Role == AccountRole.Client)
+            if (clientMessageTime == null && message.Sender.Account.Role == AccountRole.Buyer)
                 clientMessageTime = message.DateTime;
             else if (clientMessageTime != null && message.Sender.Account.Role == AccountRole.Manager)
             {
