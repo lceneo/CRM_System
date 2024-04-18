@@ -10,6 +10,7 @@ namespace API.Modules.CrmModule.Comments;
 public interface ITaskCommentsRepository : ICRUDRepository<TaskCommentEntity>
 {
     Task<SearchResponseBaseDTO<TaskCommentEntity>> Search(
+        Guid taskId, 
         SearchTaskCommentsRequest request,
         bool asNoTracking = false);
 }
@@ -35,6 +36,7 @@ public class TaskCommentsRepository : CRUDRepository<TaskCommentEntity>, ITaskCo
         => await base.CreateOrUpdateAsync(entity, IncludedSet);
 
     public async Task<SearchResponseBaseDTO<TaskCommentEntity>> Search(
+        Guid taskId, 
         SearchTaskCommentsRequest request,
         bool asNoTracking = false)
     {
@@ -42,10 +44,9 @@ public class TaskCommentsRepository : CRUDRepository<TaskCommentEntity>, ITaskCo
         if (asNoTracking)
             query = query.AsNoTracking();
 
+        query = query.Where(c => c.Task.Id == taskId);
         if (request.Ids != null)
             query = query.Where(e => request.Ids.Contains(e.Id));
-        if (request.TaskId != null)
-            query = query.Where(e => e.Task.Id == request.AuthorId);
         if (request.AuthorId != null)
             query = query.Where(e => e.Author.Id == request.AuthorId);
         if (request.Text != null)
