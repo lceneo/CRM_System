@@ -1,8 +1,8 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import {TaskState} from "../../helpers/enums/TaskState";
+import {TaskState} from "../../../helpers/enums/TaskState";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
-import {TaskService} from "../../services/task.service";
-import {ITask} from "../../helpers/entities/ITask";
+import {TaskService} from "../../../services/task.service";
+import {ITask} from "../../../helpers/entities/ITask";
 
 @Component({
   selector: 'app-tasks-dashboard',

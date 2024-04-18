@@ -1,4 +1,4 @@
-import {Directive, ElementRef, HostListener, OnInit, Renderer2, RendererStyleFlags2} from '@angular/core';
+import {Directive, ElementRef, HostListener, Input, OnInit, Renderer2, RendererStyleFlags2} from '@angular/core';
 
 @Directive({
   selector: '[appTextareaResize]',
@@ -19,8 +19,13 @@ export class TextareaResizeDirective implements OnInit {
   }
 
   ngOnInit(): void {
+    if (!this.textAreaRef) { this.initTextAreaRef(); }
+    this.renderer2.setStyle(this.textAreaRef, 'box-sizing', `content-box`);
+  }
+
+  private initTextAreaRef() {
     this.textAreaRef = this.elementRef.nativeElement;
     if (!this.textAreaRef) { return; }
-    this.renderer2.setStyle(this.textAreaRef, 'box-sizing', `content-box`, RendererStyleFlags2.Important);
   }
+
 }

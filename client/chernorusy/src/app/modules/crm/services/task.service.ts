@@ -1,8 +1,12 @@
-import {inject, Injectable} from '@angular/core';
+import {computed, inject, Injectable} from '@angular/core';
 import {EntityStateManager} from "../../../shared/helpers/entityStateManager";
 import {ITask} from "../helpers/entities/ITask";
 import {CrmHubService} from "./crm-hub.service";
-import {map, tap} from "rxjs";
+import {map, switchMap, tap} from "rxjs";
+import {ITaskCreateOrUpdateDTO} from "../helpers/DTO/request/ITaskCreateOrUpdateDTO";
+import {ICommentPostDTO} from "../helpers/DTO/request/ICommentPostDTO";
+import {ICreateOrUpdateEntityDTO} from "../../../shared/helpers/DTO/response/ICreateOrUpdateEntityDTO";
+import {IComment} from "../helpers/entities/IComment";
 
 @Injectable({
   providedIn: 'root'
@@ -26,10 +30,19 @@ export class TaskService extends EntityStateManager<ITask>{
     this.registrateSocketHandlers();
   }
 
-  updateHTTP$(updatedTask: Partial<ITask> & {id: string}) {
-    return this.httpS.post('/Crm/Tasks', updatedTask)
+  createHTTP$(task: Omit<ITaskCreateOrUpdateDTO, 'productIds'>) {
+    return this.httpS.post<ICreateOrUpdateEntityDTO>('/Crm/Tasks', task)
+      .pipe(
+        switchMap((res) => this.getByIDHttp$(res.id)),
+        tap((task) => this.upsertEntities([task]))
+      );
+  }
+
+  updateHTTP$(updatedTask: Partial<ITaskCreateOrUpdateDTO>) {
+    return this.httpS.post<ICreateOrUpdateEntityDTO>('/Crm/Tasks', updatedTask)
         .pipe(
-            tap(() => this.updateByID(updatedTask.id, updatedTask))
+            switchMap((res) => this.getByIDHttp$(res.id)),
+            tap((updatedTask) => this.updateByID(updatedTask.id, updatedTask))
         );
   }
 
@@ -46,6 +59,48 @@ export class TaskService extends EntityStateManager<ITask>{
             tap(res => this.removeByID(taskID))
         );
   }
+
+  postComment$(taskID: string, comment: ICommentPostDTO) {
+    return this.httpS.post<ICreateOrUpdateEntityDTO>(`/Crm/Tasks/${taskID}/Comments`, comment)
+        .pipe(
+          switchMap(res => this.getCommentFromTaskHTTP$(taskID, res.id)),
+          tap(createdComment => this.addComment(taskID, createdComment))
+        );
+  }
+
+  updateComment$(taskID: string, comment: ICommentPostDTO) {
+      return this.httpS.post<ICreateOrUpdateEntityDTO>(`/Crm/Tasks/${taskID}/Comments`, comment)
+          .pipe(
+            switchMap(res => this.getCommentFromTaskHTTP$(taskID, res.id)),
+            tap(createdComment => this.updateComment(taskID, createdComment))
+      );
+  }
+
+  getCommentFromTaskHTTP$(taskID: string, commentID: string) {
+    return this.getByIDHttp$(taskID)
+        .pipe(
+            map(task => task.comments.find(comm => comm.id === commentID) as IComment)
+        );
+  }
+
+  getTaskCommentsAsync(taskID: string) {
+    return computed(() => this.getEntityAsync(taskID)()?.comments);
+  }
+  getTaskCommentsSync(taskID: string) {
+    return this.getByID(taskID)?.comments ?? [];
+  }
+  addComment(taskID: string, comment: IComment) {
+    const currentComments = this.getTaskCommentsSync(taskID);
+    this.updateByID(taskID, { comments: [...currentComments, comment]});
+  }
+
+  updateComment(taskID: string, comment: IComment) {
+    const currentComments = this.getTaskCommentsSync(taskID).filter(comm => comm.id !== comment.id);
+    this.updateByID(taskID, { comments: [...currentComments, comment]});
+  }
+
+
+
 
   private registrateSocketHandlers() {
     const updateTaskHandler = (updatedTask: IUpdatedTaskMsg) => {
