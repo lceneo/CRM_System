@@ -63,7 +63,7 @@ public class ChatsRepository : CRURepository<ChatEntity>, IChatsRepository
         if (req.ChatName != null)
             query = query.Where(c => c.Name.Contains(req.ChatName));
         if (req.UserIds?.Any() is true)
-            query = query.Where(c => c.Profiles.All(p => req.UserIds.Contains(p.Id)));
+            query = query.Where(c => c.Profiles.Any(p => req.UserIds.Contains(p.Id)));
 
         var total = query.Count();
         var items = await query
