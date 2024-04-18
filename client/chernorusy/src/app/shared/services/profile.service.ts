@@ -1,7 +1,7 @@
 import {computed, Injectable, signal} from '@angular/core';
 import {HttpService} from "./http.service";
 import {IProfileCreateRequestDTO} from "../../modules/profile/DTO/request/ProfileCreateRequestDTO";
-import {catchError, of, switchMap, tap, throwError} from "rxjs";
+import {catchError, map, Observable, of, switchMap, tap, throwError} from "rxjs";
 import {AuthorizationService} from "./authorization.service";
 import {IProfileState} from "../models/states/ProfileState";
 import {IProfileResponseDTO} from "../../modules/profile/DTO/response/ProfileResponseDTO";
@@ -49,10 +49,11 @@ export class ProfileService {
       );
   }
 
-  public getProfiles$() {
+  public getProfiles$(): Observable<IProfileResponseDTO[]> {
     return this.httpS.get<{items: IProfileResponseDTO[]}>(`/Profiles`)
       .pipe(
-        catchError(err => of(null))
+        map(res => res.items),
+        catchError(err => of([]))
       );
   }
 

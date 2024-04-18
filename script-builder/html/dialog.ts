@@ -1,7 +1,6 @@
 import { notNull } from "../helpers/notNull";
 import { useOnClickOutside } from "../helpers/useOnClickOutside";
 import { socket, STATE } from "../index";
-import { sendMessage } from "../requests/sendMessage";
 import { createHeader } from "./header";
 import { createFooter } from "./footer";
 import { cls } from "../helpers/cls";

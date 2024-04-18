@@ -5,6 +5,7 @@ import { Message, messagesStore } from "../store/messages";
 import {stylesStore} from "../store/styles";
 import {Customization, DefaultMessage, DefaultSection, messageSideToAlignSelf} from "../customization";
 import {getStatic} from "../requests/getStatic";
+import {prefix} from "../const";
 
 export function createMessageView({ id, className, styles, message, pending = false }: {
     id?: string,
@@ -36,7 +37,7 @@ export function createMessageView({ id, className, styles, message, pending = fa
             padding: '5px',
         }
     })
-    messageView.classList.add(cls(`message-view-${message.side}`));
+    messageView.classList.add(cls(`${prefix}-message-view-${message.side}`));
 
     const author = `${message.side === 'server' ? `<p class="${cls('message-view-author')}">${message.name} ${message.surname}</p>` : ''}`
     const time = `<time class="${cls('message-view-time')}">${message.timeStamp?.getHours().toString().padStart(2, '0')}:${message.timeStamp?.getMinutes().toString().padStart(2, '0')}</time>`;

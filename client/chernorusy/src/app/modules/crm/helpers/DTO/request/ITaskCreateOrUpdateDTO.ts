@@ -1,8 +1,8 @@
 import {TaskState} from "../../enums/TaskState";
 
-export interface ITaskCreateDTO
+export interface ITaskCreateOrUpdateDTO
 {
-    id: string;
+    id?: string;
     assignedTo: string;
     state: TaskState;
     title: string;

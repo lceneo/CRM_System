@@ -1,0 +1,25 @@
+
+<section class="headerSection">
+  <h2 mat-dialog-title>Новая задача</h2>
+  <button mat-icon-button mat-dialog-close><mat-icon>close</mat-icon></button>
+</section>
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="formGroup" (ngSubmit)="createTask()">
+    <mat-form-field class="titleField">
+      <mat-label>Наименование</mat-label>
+      <input [formControlName]="'title'" matInput>
+    </mat-form-field>
+    <mat-form-field class="titleField">
+      <mat-label>Ответственный</mat-label>
+      <mat-select [formControlName]="'assignedTo'">
+        <mat-option *ngFor="let profile of profiles$ | async; trackBy trackProfile" [value]="profile.id">{{profile.name}}</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <textarea
+              class="description form-control"
+              placeholder="Добавьте описание задаче..."
+              [formControlName]="'descrption'"></textarea>
+
+    <button class="submitBtn" [disabled] = "formGroup.invalid" mat-flat-button color="primary">Создать</button>
+  </form>
+</mat-dialog-content>
