@@ -33,7 +33,7 @@ export class ModalCreateTaskComponent {
   protected profiles$ = this.profileS.getProfiles$()
     .pipe(
       map(profiles =>
-        profiles.filter(profile => profile.role === AccountRole.Admin || profile.role === AccountRole.Manager))
+        profiles.items.filter(profile => profile.role === AccountRole.Admin || profile.role === AccountRole.Manager))
     );
 
   createTask() {
