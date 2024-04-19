@@ -17,6 +17,7 @@ import localeRu from '@angular/common/locales/ru';
 import {MatIconModule} from "@angular/material/icon";
 import {MatButtonModule} from "@angular/material/button";
 import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
 
 registerLocaleData(localeRu);
@@ -24,20 +25,21 @@ registerLocaleData(localeRu);
   declarations: [
     AppComponent
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        HttpClientModule,
-        TooltipModule.forRoot(),
-        NgLetDirective,
-        BsDropdownModule,
-        BrowserAnimationsModule,
-        MatSnackBarModule,
-        IconModule,
-        MatIconModule,
-        MatButtonModule,
-        MatTooltipModule
-    ],
+	imports: [
+		BrowserModule,
+		AppRoutingModule,
+		HttpClientModule,
+		TooltipModule.forRoot(),
+		NgLetDirective,
+		BsDropdownModule,
+		BrowserAnimationsModule,
+		MatSnackBarModule,
+		IconModule,
+		MatIconModule,
+		MatButtonModule,
+		MatTooltipModule,
+		MatProgressSpinnerModule
+	],
   providers: [
     checkResponseInterceptor,
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline'} },
@@ -47,3 +49,4 @@ registerLocaleData(localeRu);
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+

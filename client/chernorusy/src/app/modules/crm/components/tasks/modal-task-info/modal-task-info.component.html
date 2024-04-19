@@ -48,7 +48,10 @@
           <mat-list-item *ngFor="let comment of comments()">
             <span matListItemTitle>{{comment.author.name}}</span>
             <span matListItemLine>{{comment.createdAt | date: 'dd LLL YYYY HH:mm'}}</span>
-            <p class="commentText" matListItemLine>{{comment.text}}</p>
+            <div class="commentTextWrapper">
+              <p class="commentText" matListItemLine>{{comment.text}}</p>
+              <button class="editCommentBtn" mat-icon-button *ngIf="comment.author.id === this.profileID"><mat-icon>edit</mat-icon></button>
+            </div>
           </mat-list-item>
         </mat-list>
         <div class="textAreaBlock">
