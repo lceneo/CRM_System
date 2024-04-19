@@ -1,10 +1,11 @@
 import {computed, Injectable, signal} from '@angular/core';
 import {HttpService} from "./http.service";
 import {IProfileCreateRequestDTO} from "../../modules/profile/DTO/request/ProfileCreateRequestDTO";
-import {catchError, map, Observable, of, switchMap, tap, throwError} from "rxjs";
+import {catchError, Observable, of, switchMap, tap, throwError} from "rxjs";
 import {AuthorizationService} from "./authorization.service";
 import {IProfileState} from "../models/states/ProfileState";
 import {IProfileResponseDTO} from "../../modules/profile/DTO/response/ProfileResponseDTO";
+import {AccountRole} from "../../modules/profile/enums/AccountRole";
 
 
 @Injectable({
@@ -49,11 +50,24 @@ export class ProfileService {
       );
   }
 
-  public getProfiles$(): Observable<IProfileResponseDTO[]> {
-    return this.httpS.get<{items: IProfileResponseDTO[]}>(`/Profiles`)
+  public getProfiles$(params?: ProfilesGetParams) {
+    const searchParams = new URLSearchParams()
+    if (params) {
+      Object.keys(params)
+        .filter((paramKey) => params[paramKey as keyof ProfilesGetParams] !== null && params[paramKey as keyof ProfilesGetParams] !== undefined)
+        .forEach(paramKey => {
+          if (paramKey === 'Ids') {
+            params[paramKey]?.forEach(id => searchParams.append(paramKey, id));
+          } else {
+            searchParams.set(paramKey, JSON.stringify(params[paramKey as keyof ProfilesGetParams]));
+          }
+        })
+    }
+    const searchString = searchParams.toString();
+    const url = '/Profiles' + (searchString.length ? `?${searchString}` : '');
+    return this.httpS.get<{totalCount: number, items: IProfileResponseDTO[]}>(url)
       .pipe(
-        map(res => res.items),
-        catchError(err => of([]))
+        catchError(err => of({totalCount: 0, items: [] as IProfileResponseDTO[]}))
       );
   }
 
@@ -67,4 +81,12 @@ export class ProfileService {
         switchMap(() => this.updateProfileByHTTP())
       )
   }
+}
+
+
+export interface ProfilesGetParams {
+  Skip?: number;
+  Take?: number;
+  Role?: AccountRole;
+  Ids?: string[];
 }
