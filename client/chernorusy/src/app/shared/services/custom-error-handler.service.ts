@@ -16,6 +16,7 @@ export class CustomErrorHandlerService implements ErrorHandler {
       console.error(error.message || error.error);
       return;
     }
+    console.error(error['error'] || error.message);
     this.ngZone.run(() => {
       this.snackBar.open(error['error'] || error.message, 'Закрыть', { duration: 1500 });
     });

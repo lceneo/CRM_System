@@ -17,6 +17,7 @@ import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {TaskService} from "../../../services/task.service";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {ITaskCreateOrUpdateDTO} from "../../../helpers/DTO/request/ITaskCreateOrUpdateDTO";
+import {IComment} from "../../../helpers/entities/IComment";
 
 
 @Component({
@@ -36,7 +37,7 @@ export class ModalTaskInfoComponent implements OnInit {
 
   protected task = this.taskS.getEntityAsync(this.taskInfo.taskID);
   protected comments = computed(() =>
-      this.taskS.getTaskCommentsAsync(this.taskInfo.taskID)()?.sort((f, s) => new Date(f.createdAt).getTime() - new Date(s.createdAt).getTime()));
+      this.taskS.getTaskCommentsAsync(this.taskInfo.taskID)()?.sort((f, s) => new Date(f.createdAt).getTime() - new Date(s.createdAt).getTime()) as IComment[]);
 
   protected savedFormValue = computed(() => {
     const currentTaskState = this.task();
@@ -57,7 +58,7 @@ export class ModalTaskInfoComponent implements OnInit {
   protected profiles$ = this.profileS.getProfiles$()
     .pipe(
       map(profiles =>
-        profiles.filter(profile => profile.role === AccountRole.Admin || profile.role === AccountRole.Manager))
+        profiles.items.filter(profile => profile.role === AccountRole.Admin || profile.role === AccountRole.Manager))
     );
 
   protected currentMod: WritableSignal<TaskInfoMod> = signal('view');

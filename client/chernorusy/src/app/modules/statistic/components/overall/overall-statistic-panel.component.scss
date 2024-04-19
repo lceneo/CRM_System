@@ -1,0 +1,26 @@
+.wrapper {
+  width: 100%;
+}
+
+.overflow-text {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+
+  h2:first-child {
+    max-width: 60%;
+  }
+}
+
+.okay {
+  color: #15dc29;
+}
+
+.bad {
+  color: #f92d2d;
+}

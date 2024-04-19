@@ -100,6 +100,12 @@
   .mat-mdc-list-item {
     height: max-content;
     padding-left: 0;
+    ::ng-deep .mdc-list-item__secondary-text {
+      overflow: visible;
+      &::before {
+        display: none;
+      }
+    }
   }
   .comment {
     padding: 0;
@@ -108,6 +114,21 @@
     width: calc(100% - (1rem + 24px));
     max-height: 90px;
     resize: none;
+  }
+
+  .commentTextWrapper {
+    display: flex;
+    justify-content: space-between;
+    .editCommentBtn {
+      height: 18px;
+      width: 18px;
+      padding: 0;
+      transform: translateY(-14px);
+      .mat-icon {
+        font-size: 18px;
+        color: black;
+      }
+    }
   }
   .commentText {
     //max-height: calc(100% - 48px);

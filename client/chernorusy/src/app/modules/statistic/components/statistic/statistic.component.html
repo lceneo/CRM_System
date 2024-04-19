@@ -1,0 +1,14 @@
+<h1>Статистика</h1>
+
+<mat-tab-group class="tabs-group">
+  <mat-tab>
+    <ng-template matTabLabel>Сотрудники</ng-template>
+    <app-managers-statistic-panel></app-managers-statistic-panel>
+  </mat-tab>
+  <mat-tab>
+    <ng-template matTabLabel>Общее</ng-template>
+    <ng-template matTabContent>
+      <app-overall-statistic-panel></app-overall-statistic-panel>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

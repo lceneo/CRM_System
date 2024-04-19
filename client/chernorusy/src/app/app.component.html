@@ -44,9 +44,22 @@
       >
         <mat-icon>computer</mat-icon>
       </button>
+      <button class="disabledBtnLink" mat-icon-button
+              [routerLink]="['statistic']" [routerLinkActive]="'activeBtnLink'"
+              [matTooltip]="'Статистика'"
+      >
+        <mat-icon>bar_chart</mat-icon>
+      </button>
+      <button class="disabledBtnLink" mat-icon-button
+              [routerLink]="['diagrams']" [routerLinkActive]="'activeBtnLink'"
+              [matTooltip]="'Диаграммы'"
+      >
+        <mat-icon>pie_chart</mat-icon>
+      </button>
     </div>
     <div class="contentWrapper">
       <router-outlet></router-outlet>
+      <mat-spinner *ngIf="loadingRoute$ | async" class="central-spinner"></mat-spinner>
     </div>
   </div>
 </ng-container>

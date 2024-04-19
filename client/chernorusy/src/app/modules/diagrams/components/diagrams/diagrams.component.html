@@ -1,0 +1,9 @@
+<gridster [options]="options">
+  <gridster-item
+    [item]="item"
+    *ngFor="let item of (dashboard ? dashboard : []); let index=index"
+    class="itemGridster" [class.gridster-item-fullscreen]="item.layerIndex === 2" style="min-height: 100px; min-width: 106px"
+  >
+    <div class="gridster-item-content" style="background-color: yellow">Actually content</div>
+  </gridster-item>
+</gridster>

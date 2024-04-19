@@ -1,0 +1,46 @@
+ngx-datatable {
+  .datatable-header-cell-template-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #646464;
+
+    :hover {
+      color: black;
+    }
+
+    .datatable-header-cell-wrapper.ng-star-inserted,
+    .datatable-header-cell-template-wrap.ng-star-inserted {
+      overflow: hidden;
+      cursor: pointer;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .datatable-header:hover .datatable-header-cell.resizeable .resize-handle {
+    visibility: visible;
+    border-right: 1px solid #646464;
+    :hover {
+      border-right-color: black;
+    }
+  }
+
+  .datatable-header {
+    border-bottom: 1px solid #646464;
+    margin-bottom: 10px;
+  }
+
+  .datatable-body-cell-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+ngx-datatable.header-bottom {
+  .datatable-header-cell-template-wrap {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+}
