@@ -18,7 +18,7 @@ export class HttpService {
     return this.httpClient.get<T>(`${this.protocol}://${this.url}/api${method}`);
   }
 
-  public post<T>(method: string, body: any, options?: { headers: HttpHeaders } | {[p: string] : string }) {
+  public post<T>(method: string, body?: any, options?: { headers: HttpHeaders } | {[p: string] : string }) {
     return this.httpClient.post<T>(`${this.protocol}://${this.url}/api${method}`, body, options);
   }
 
