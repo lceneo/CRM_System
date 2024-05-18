@@ -10,8 +10,9 @@ namespace API.Modules.StatisticsModule;
 
 public interface IStatisticsService
 {
-    Task<Result<List<AverageAnswerTimeResponse>>> AverageAnswerTime(AverageAnswerTimeRequest request);
-    Task<Result<List<AverageAnswerTimeResponse>>> FirstMessageAverageAnswerTime(AverageAnswerTimeRequest request);
+    Task<Result<List<AverageAnswerTimeResponse>>> AverageAnswerTime(PeriodicStatisticRequest request);
+    Task<Result<List<AverageAnswerTimeResponse>>> FirstMessageAverageAnswerTime(PeriodicStatisticRequest request);
+    Result<List<ActivityStat>> ActivityStat(PeriodicStatisticRequest request);
 }
 
 public class StatisticsService : IStatisticsService
@@ -26,7 +27,7 @@ public class StatisticsService : IStatisticsService
         this.chatsRepository = chatsRepository;
     }
 
-    public async Task<Result<List<AverageAnswerTimeResponse>>> AverageAnswerTime(AverageAnswerTimeRequest request)
+    public async Task<Result<List<AverageAnswerTimeResponse>>> AverageAnswerTime(PeriodicStatisticRequest request)
     {
         var statFunc = GetFunc((messagesByChats) => messagesByChats
             .Select(messages => GetAverage(messages))
@@ -36,7 +37,7 @@ public class StatisticsService : IStatisticsService
         return Result.Ok(result);
     }
 
-    public async Task<Result<List<AverageAnswerTimeResponse>>> FirstMessageAverageAnswerTime(AverageAnswerTimeRequest request)
+    public async Task<Result<List<AverageAnswerTimeResponse>>> FirstMessageAverageAnswerTime(PeriodicStatisticRequest request)
     {
         var statFunc = GetFunc((messagesByChats) => messagesByChats
             .Select(messages => GetAverage(messages, (message) => message.Type == MessageType.System 
@@ -47,8 +48,38 @@ public class StatisticsService : IStatisticsService
         return Result.Ok(result);
     }
 
+    public Result<List<ActivityStat>> ActivityStat(PeriodicStatisticRequest request)
+    {
+        var result = new List<ActivityStat>();
+        foreach (var managerId in request.ManagerIds)
+        {
+            var searchReq = new MessagesSearchRequest
+            {
+                StartTime = request.StartTime,
+                EndTime = request.EndTime,
+                Sender = managerId,
+            };
+            var messagesSearch = messagesRepository.Search(searchReq);
+            var messages = messagesSearch.Items;
+
+            result.Add(new ActivityStat
+            {
+                ManagerId = managerId,
+                DailyStat = messages.GroupBy(m => m.DateTime.Date).Select(messagesByDate => new DailyStat
+                {
+                    Date = messagesByDate.Key,
+                    DialogsCount = messagesByDate.GroupBy(m => m.Chat.Id).Count(),
+                    MessagesCount = messagesByDate.Count()
+                }).ToArray(),
+                TotalMessagesCount = messagesSearch.TotalCount,
+            });
+        }
+
+        return Result.Ok(result);
+    }
+
     private async Task<List<AverageAnswerTimeResponse>> CountStat(
-        AverageAnswerTimeRequest request,
+        PeriodicStatisticRequest request,
         Func<IEnumerable<IEnumerable<MessageEntity>>, TimeSpan?> statFunc)
     {
         var searchReq = new MessagesSearchRequest
