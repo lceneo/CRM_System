@@ -1,4 +1,4 @@
-import {computed, Injectable} from '@angular/core';
+import {computed, inject, Injectable} from '@angular/core';
 import {IChatResponseDTO} from "../helpers/entities/ChatResponseDTO";
 import {EntityStateManager} from "../../../shared/helpers/entityStateManager";
 import {IMessageReceive} from "../helpers/entities/MessageReceive";
@@ -10,6 +10,7 @@ import {IUserConnectionStatus} from "../helpers/entities/UserConnectionStatus";
 import {ActiveStatus} from "../helpers/enums/ActiveStatus";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {IMessageInChat} from "../helpers/entities/MessageInChat";
+import {ChatHubService} from "./chat-hub.service";
 
 @Injectable({
   providedIn: 'root'
@@ -21,11 +22,14 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
   private allChatsSorted = computed(() => this.allChats()
     .sort((fChat, sChat) =>
       new Date(sChat.lastMessage?.dateTime ?? 0).getTime() - new Date(fChat.lastMessage?.dateTime ?? 0).getTime()));
+
+  protected chatSocketS = inject(ChatHubService);
   constructor(
     private messageS: MessageService,
     private freeChatS: FreeChatService
   ) {
     super();
+    this.initial();
   }
 
 
@@ -149,6 +153,6 @@ export class MyChatService extends EntityStateManager<IChatResponseDTO> {
         });
       })
     }
-    this.socketS.listenMethod('ActiveStatus', activeStatusFn);
+    this.chatSocketS.listenMethod('ActiveStatus', activeStatusFn);
   }
 }

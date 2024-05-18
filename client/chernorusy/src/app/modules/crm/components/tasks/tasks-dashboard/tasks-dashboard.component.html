@@ -1,0 +1,59 @@
+
+<div class="wrapper">
+<section class="dashboards" cdkDropListGroup>
+    <!--New-->
+        <app-task-item
+                class="dashboard"
+                [tasks]="newTasks()"
+                [taskState]="TaskState.New"
+                cdkDropList
+                [cdkDropListData]="newTasks()"
+                (cdkDropListDropped)="dropTask($event, TaskState.New)"
+        >
+        </app-task-item>
+
+    <!--Pause-->
+    <app-task-item
+            class="dashboard"
+            [tasks]="pausedTasks()"
+            [taskState]="TaskState.Pause"
+            cdkDropList
+            [cdkDropListData]="pausedTasks()"
+            (cdkDropListDropped)="dropTask($event, TaskState.Pause)"
+    >
+    </app-task-item>
+
+    <!--InProgress-->
+    <app-task-item
+            class="dashboard"
+            [tasks]="inProgressTasks()"
+            [taskState]="TaskState.InProgress"
+            cdkDropList
+            [cdkDropListData]="inProgressTasks()"
+            (cdkDropListDropped)="dropTask($event, TaskState.InProgress)"
+    >
+    </app-task-item>
+
+    <!--Done-->
+    <app-task-item
+            class="dashboard"
+            [tasks]="doneTasks()"
+            [taskState]="TaskState.Done"
+            cdkDropList
+            [cdkDropListData]="doneTasks()"
+            (cdkDropListDropped)="dropTask($event, TaskState.Done)"
+    >
+    </app-task-item>
+
+    <!--Archived-->
+    <app-task-item
+            class="dashboard"
+            [tasks]="archivedTasks()"
+            [taskState]="TaskState.Archived"
+            cdkDropList
+            [cdkDropListData]="archivedTasks()"
+            (cdkDropListDropped)="dropTask($event, TaskState.Archived)"
+    >
+    </app-task-item>
+    </section>
+</div>

@@ -4,6 +4,7 @@
 }
 
 .navigation {
+ height: 45px;
  position: sticky;
  top: 0;
  z-index: 100;
@@ -20,12 +21,34 @@
   }
 
 }
-
-.contentWrapper{
-  padding: 5%;
-  padding-bottom: 0;
+.wrapperForSideBarAndContent {
+  display: flex;
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    padding-top: 0.5rem;
+    background-color: #f8f9fe;
+  }
+  .contentWrapper{
+    height: calc(100vh - 45px);
+    padding: 5%;
+    padding-bottom: 0;
+    flex-grow: 1;
+    overflow: hidden;
+  }
 }
+
 
 .dropdown li:hover{
   cursor: pointer;
 }
+
+
+.activeBtnLink {
+  color: black !important;
+}
+
+.disabledBtnLink {
+  color: #ababab;
+}
+

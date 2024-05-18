@@ -3,12 +3,22 @@
 @import './assets/styles/accordion';
 @import './assets/styles/scroll';
 @import './assets/styles/mat-menu';
+@import './assets/styles/mat-button';
+@import './assets/styles/textarea';
 @import "bootstrap-icons/font/bootstrap-icons";
+@import './assets/styles/mat-spinner';
+@import './assets/styles/mat-tab';
+@import './assets/styles/ngx-datatable';
+@import '../node_modules/@swimlane/ngx-datatable/index.scss';
+@import '../node_modules/@swimlane/ngx-datatable/themes/material.scss';
+@import '../node_modules/@swimlane/ngx-datatable/assets/icons.css';
 
 @include form();
 @include modal();
 @include accordion();
 @include scroll();
+@include mat-button();
+@include textArea();
 
 body{
   .icon {

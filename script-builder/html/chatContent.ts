@@ -6,6 +6,8 @@ import {createMessageView} from "../components/messageView";
 import {socket} from "../index";
 import {stylesStore} from "../store/styles";
 import {getIsCustomizing} from "../customization";
+import {createRatingView} from "../components/ratingView";
+import {events} from "../service/events";
 
 export function createChatContent({ text, id, className, styles }: {
 	text?: string,
@@ -36,6 +38,7 @@ export function createChatContent({ text, id, className, styles }: {
 
 		}
 	})
+
 	const [divPending, closeDivPending, showDivPending] = createDiv({
 		className: 'chat-content-messages-pending',
 		styles: {
@@ -73,6 +76,10 @@ export function createChatContent({ text, id, className, styles }: {
 		divPending.append(...messages.map(m => createMessageView({message: m})[0]))
 		divWrapper.scroll(0, divWrapper.scrollHeight);
 	});
+
+	events.listen('archive', () =>
+		divMessages.appendChild(createRatingView({})[0])
+	);
 
 	const listeners: (() => void)[] = [];
 

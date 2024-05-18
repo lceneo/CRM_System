@@ -8,8 +8,9 @@ import {ICreatePasswordRequestDTO} from "../../modules/authentication/DTO/reques
 import {IChangePasswordRequestDTO} from "../../modules/authentication/DTO/request/ChangePasswordRequstDTO";
 import {IRecoverPasswordRequestDTO} from "../../modules/authentication/DTO/request/RecoverPasswordRequestDTO";
 import {AccountRole} from "../../modules/profile/enums/AccountRole";
-import {SocketService} from "./socket.service";
+import {ChatHubService} from "../../modules/chat/services/chat-hub.service";
 import {CustomErrorHandlerService} from "./custom-error-handler.service";
+import {CrmHubService} from "../../modules/crm/services/crm-hub.service";
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +19,8 @@ export class AuthorizationService {
 
   constructor(
     private httpS: HttpService,
-    private socketS: SocketService,
+    private chatSocketS: ChatHubService,
+    private crmSocketS: CrmHubService,
     private errorHandlerS: CustomErrorHandlerService
   ) {
     setTimeout(() => this.initAccountInfo());
@@ -54,7 +56,8 @@ export class AuthorizationService {
       this._authorizationStatus.next(true);
       this._isAdmin$.next(userData ? userData.role === AccountRole.Admin : false);
       if (userData) { this._role.next(userData.role as number); }
-      if (!this.socketS.isConnected()) { this.socketS.init(); }
+      if (!this.chatSocketS.isConnected()) { this.chatSocketS.init(); }
+      if (!this.crmSocketS.isConnected()) { this.crmSocketS.init(); }
     } else {
       this._authorizationStatus.next(false);
       this._isAdmin$.next(false);
@@ -70,7 +73,8 @@ export class AuthorizationService {
           this._role.next(loginResponse.role);
           this.userID = loginResponse.id;
           this.token = loginResponse.jwtToken;
-          if (!this.socketS.isConnected()) { this.socketS.init(); }
+          if (!this.chatSocketS.isConnected()) { this.chatSocketS.init(); }
+          if (!this.crmSocketS.isConnected()) { this.crmSocketS.init(); }
         }),
         catchError(err => {
           this.errorHandlerS.handleError(err);
@@ -80,7 +84,8 @@ export class AuthorizationService {
   }
 
   public logout$(fromResponse: boolean = false) {
-    this.socketS.stopConnection();
+    this.chatSocketS.stopConnection();
+    this.crmSocketS.stopConnection();
     if (fromResponse) {
       this._authorizationStatus.next(false);
       this._isAdmin$.next(false);
@@ -93,6 +98,7 @@ export class AuthorizationService {
           this._isAdmin$.next(false);
           this.userID = undefined;
           localStorage.removeItem('userID')
+          location.reload();
         })
       );
   }
@@ -111,7 +117,8 @@ export class AuthorizationService {
           this._role.next(loginResponse.role);
           this.userID = loginResponse.id;
           this.token = loginResponse.jwtToken;
-          if (!this.socketS.isConnected()) { this.socketS.init(); }
+          if (!this.chatSocketS.isConnected()) { this.chatSocketS.init(); }
+          if (!this.crmSocketS.isConnected()) { this.crmSocketS.init(); }
         })
       )
   }
@@ -136,7 +143,8 @@ export class AuthorizationService {
           this._role.next(res.role as number);
           this._isAdmin$.next(res.role === AccountRole.Admin);
           this._authorizationStatus.next(true);
-          if (!this.socketS.isConnected()) { this.socketS.init(); }
+          if (!this.chatSocketS.isConnected()) { this.chatSocketS.init(); }
+            if (!this.crmSocketS.isConnected()) { this.crmSocketS.init(); }
         }
       )
   }

@@ -1,0 +1,91 @@
+:host {
+  display: block;
+  height: 100%;
+  background-color: #F6F8FA;
+  max-width: calc(20% - 2rem);
+
+  ::ng-deep {
+    .mat-mdc-card-header-text {
+      max-width: 100%;
+    }
+  }
+}
+
+.titleWrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  border: 2px #dfe5eb solid;
+  border-right: none;
+  border-left: none;
+  background-color: #ecf0f3;
+  padding-left: 0.5rem;
+  .title {
+    font-size: 15px;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+//нужно, чтобы карточка не смещалась вниз при перемещении в пустой лист
+.emptyList {
+  margin: 0;
+}
+
+.tasksList {
+  padding: 0.5rem;
+  margin: 0;
+  list-style: none;
+  max-height: calc(100% - 36px);
+  overflow: auto;
+
+  li {
+    margin-top: 0.5rem;
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+}
+
+.deleteTaskBtn {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.mat-mdc-card-title {
+  font-size: 15px;
+  text-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mat-mdc-card-content {
+  display: flex;
+  column-gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+
+.description {
+  &__title {
+    font-weight: 500;
+  }
+  &__text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+  }
+}
+
+.detailedCardInfoBtn {
+  flex-grow: 1;
+}
+
+::marker {
+  content: none;
+}

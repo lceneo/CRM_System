@@ -7,6 +7,7 @@ import {IUserConnectionStatus} from "../helpers/entities/UserConnectionStatus";
 import {ActiveStatus} from "../helpers/enums/ActiveStatus";
 import {MessageService} from "./message.service";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import {ChatHubService} from "./chat-hub.service";
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,12 @@ export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
   protected override initMethod = '/Chats/Free';
   private pendingJoinIDs: string[] = [];
   private messageS = inject(MessageService);
+  protected chatSocketS = inject(ChatHubService);
+
+  constructor() {
+    super();
+    this.initial();
+  }
   protected override initial() {
     this.initStore();
     this.listenForNewMessages();
@@ -78,8 +85,8 @@ export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
       })
     }
 
-    this.socketS.listenMethod('UpdateFreeChats', updateFreeChatsFn);
-    this.socketS.listenMethod('ActiveStatus', activeStatusFn);
+    this.chatSocketS.listenMethod('UpdateFreeChats', updateFreeChatsFn);
+    this.chatSocketS.listenMethod('ActiveStatus', activeStatusFn);
   }
 
   public isPendingJoin(chatID: string) {

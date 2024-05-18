@@ -23,6 +23,7 @@ public class TasksRepository : CRUDRepository<TaskEntity>, ITasksRepository
         .Include(e => e.AssignedTo)
         .Include(e => e.Actions).ThenInclude(a => a.User)
         .Include(e => e.Comments).ThenInclude(c => c.Author)
+        .Include(e => e.Products)
         .AsQueryable();
 
     public async Task<TaskEntity?> GetByIdAsync(Guid taskId)

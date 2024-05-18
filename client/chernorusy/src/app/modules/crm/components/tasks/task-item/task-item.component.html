@@ -1,0 +1,36 @@
+
+<div class="titleWrapper">
+    <h2 class="title">{{header}}</h2>
+    <button mat-icon-button [matTooltip]="'Добавить задачу'" (click)="openModalCreateTask()"><mat-icon>add</mat-icon></button>
+</div>
+
+<ul [ngClass]="{
+    emptyList: !tasks.length,
+    tasksList: tasks.length
+   }
+">
+    <li *ngFor="let task of tasks; trackBy: trackTask"
+        cdkDrag
+        [cdkDragData]="task"
+    >
+        <mat-card class="example-card" (dblclick)="openModalTaskInfo(task)">
+          <mat-card-header>
+              <mat-card-title>{{task.title}}</mat-card-title>
+              <mat-card-subtitle>{{task.creation.dateTime | date: 'dd LLLL YYYY'}}</mat-card-subtitle>
+              <button class="deleteTaskBtn" mat-icon-button
+                      (click) = "deleteTask(task.id)"
+              ><mat-icon>delete</mat-icon></button>
+          </mat-card-header>
+          <mat-card-content>
+              <span class="description__title">Исполнитель:</span>
+              <p class="description__text">{{task.assignedTo.name}}</p>
+              <mat-divider></mat-divider>
+          </mat-card-content>
+          <mat-card-actions>
+              <button color="primary" class="detailedCardInfoBtn" mat-flat-button (click) = "openModalTaskInfo(task)">Открыть</button>
+          </mat-card-actions>
+          <mat-card-footer>
+          </mat-card-footer>
+    </mat-card>
+    </li>
+</ul>

@@ -113,7 +113,7 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
       .pipe(
         tap(() => {
           this.loadingChat$.next(false);
-          if (!this.chat!().unreadMessagesCount) { this.scrollToTheBottom(); }
+          if (!this.chat!()?.unreadMessagesCount) { this.scrollToTheBottom(); }
           else { this.triggerScrollForMessagesOnScreen(); }
         }),
         switchMap(() => merge(this.messageS.receivedMessages$, this.messageS.successMessages$)),
@@ -423,9 +423,16 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
           checkers: [...msg.checkers, {id: profile.id, name: profile.name, surname: profile.surname}]}
         ));
 
-    const currentUnreadCount = this.chatS!.getByID(this.chatID!)!.unreadMessagesCount;
-    this.chatS?.updateByID(this.chatID!, {unreadMessagesCount: currentUnreadCount - messagesToView.length});
-
+    const currentChatState =  this.chatS!.getByID(this.chatID!);
+    if (currentChatState) {
+      this.chatS?.updateByID(this.chatID!, {unreadMessagesCount: currentChatState.unreadMessagesCount - messagesToView.length});
+    } else {
+      //для случаев когда чат находится в переходном состоянии (например, полсе Join'а)
+      setTimeout(() => {
+        const currentUnreadCount = this.chatS!.getByID(this.chatID!)!.unreadMessagesCount;
+        this.chatS?.updateByID(this.chatID!, {unreadMessagesCount: currentUnreadCount - messagesToView.length});
+      }, 500)
+    }
     return this.messageS.readMessages(this.chatID!, messagesToView);
   }
 

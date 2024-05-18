@@ -10,6 +10,8 @@ import {widgetInit} from "../requests/widgetInit";
 import {STATE} from "../index";
 import {Message, messagesStore} from "../store/messages";
 import {getIsCustomizing} from "../customization";
+import {LocalStorage} from "./localStorage";
+import {events} from "./events";
 
 export class SocketService {
     private hub!: HubConnection;
@@ -54,7 +56,18 @@ export class SocketService {
 
         this.hub.on('Recieve', (data) => {
             const msg = data.message?.toString();
-            if (msg?.endsWith('вошел в чат')) {
+
+            if (!data.sender && msg === 'Чат архивирован менеджером') {
+                events.trigger('archive');
+                return;
+            }
+
+            if (!data.sender && msg?.endsWith('вышел из чата')) {
+                messagesStore.setMessage(new Message(data.message, new Date(data.dateTime), 'join'))
+                return;
+            }
+
+            if (!data.sender && msg?.endsWith('вошел в чат')) {
                 messagesStore.setMessage(new Message(data.message, new Date(data.dateTime), 'join'))
                 return;
             }
@@ -75,6 +88,12 @@ export class SocketService {
 
         this.hub.on('ActiveStatus', (data) => {
             this.activeStatusListeners.forEach(f => f(data.status === 0))
+        })
+
+        this.hub.on('Check', (data) => {
+            console.log('data', data);
+            LocalStorage.manager = data.value.checker;
+            STATE.manager = data.value.checker;
         })
     }
 
@@ -158,6 +177,31 @@ export class SocketService {
         })
     }
 
+    sendRating(score: number, comment: string | null = ''): Promise<Date> {
+        const chatId = STATE.chatId || LocalStorage.chatId;
+        const token = STATE.token || LocalStorage.token;
+
+        if (!chatId) return Promise.reject('no chat id');
+        if (!token) return Promise.reject('no token');
+        if (this.hub?.state !== HubConnectionState.Connected) return this.sendRating(score, comment);
+
+        return new Promise(res => {
+            const awaiter: SuccessListener = (requestNum, timestamp) => {
+                this._waitingForMessageSuccess--;
+                res(timestamp);
+                return false;
+            }
+            this.successListeners.push(awaiter);
+            const body: RatingRequestBody & {requestNum: number} = {
+                score,
+                comment: comment ?? '',
+                chatId: chatId!,
+                requestNum: this.requestNumber,
+            }
+            this.hub?.send('Rate', body);
+        })
+    }
+
     private getHub(url: string): HubConnection {
         const hub = new HubConnectionBuilder()
             .withUrl(url, {
@@ -192,3 +236,9 @@ type SocketInitParams = {
 
 type SuccessListener = (requestNum: number, timeStamp: Date) => undefined | void | false | true
 type MessageListener = (message: string, timeStamp: Date) => undefined | void | false | true
+
+interface RatingRequestBody {
+    chatId: string;
+    comment: string;
+    score: number;
+}

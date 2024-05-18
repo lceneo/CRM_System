@@ -11,6 +11,9 @@ import {loadingStyles} from "./loading.styles";
 import {activeStatusMessage} from "./active-status-message";
 import {iconStyles} from "./icon.styles";
 import {linkStyles} from "./link.styles";
+import {starStyles} from "./star.styles";
+import {ratingSendBtn} from "./rating-send-btn";
+import {PStyles} from "./p.styles";
 
 export const cssStyles = [
 	animations,
@@ -27,5 +30,8 @@ export const cssStyles = [
 	activeStatusMessage,
 	iconStyles,
 	linkStyles,
+	starStyles,
+	ratingSendBtn,
+	PStyles,
 ].join('\t');
 

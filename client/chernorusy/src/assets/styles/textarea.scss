@@ -1,0 +1,9 @@
+
+@mixin textArea() {
+  textarea {
+    &.ng-invalid.ng-touched {
+      color: red;
+      border-color: #f44336;
+    }
+  }
+}

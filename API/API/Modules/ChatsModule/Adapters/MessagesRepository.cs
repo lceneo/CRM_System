@@ -16,7 +16,7 @@ public class MessagesRepository : CRUDRepository<MessageEntity>, IMessagesReposi
     }
 
     private IQueryable<MessageEntity> IncludedSet => Set
-        .Include(m => m.Sender)
+        .Include(m => m.Sender).ThenInclude(s => s.Account)
         .Include(m => m.Files)
         .Include(m => m.Checks).ThenInclude(c => c.Profile)
         .AsQueryable();

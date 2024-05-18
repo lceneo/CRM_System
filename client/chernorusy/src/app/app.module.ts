@@ -1,4 +1,4 @@
-import {ErrorHandler, NgModule} from '@angular/core';
+import {ErrorHandler, LOCALE_ID, NgModule} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -12,27 +12,41 @@ import {MAT_FORM_FIELD_DEFAULT_OPTIONS} from "@angular/material/form-field";
 import {CustomErrorHandlerService} from "./shared/services/custom-error-handler.service";
 import {MatSnackBarModule} from "@angular/material/snack-bar";
 import {IconModule} from "./shared/modules/icon.module";
+import {registerLocaleData} from "@angular/common";
+import localeRu from '@angular/common/locales/ru';
+import {MatIconModule} from "@angular/material/icon";
+import {MatButtonModule} from "@angular/material/button";
+import {MatTooltipModule} from "@angular/material/tooltip";
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 
+
+registerLocaleData(localeRu);
 @NgModule({
   declarations: [
     AppComponent
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    TooltipModule.forRoot(),
-    NgLetDirective,
-    BsDropdownModule,
-    BrowserAnimationsModule,
-    MatSnackBarModule,
-    IconModule
-  ],
+	imports: [
+		BrowserModule,
+		AppRoutingModule,
+		HttpClientModule,
+		TooltipModule.forRoot(),
+		NgLetDirective,
+		BsDropdownModule,
+		BrowserAnimationsModule,
+		MatSnackBarModule,
+		IconModule,
+		MatIconModule,
+		MatButtonModule,
+		MatTooltipModule,
+		MatProgressSpinnerModule
+	],
   providers: [
     checkResponseInterceptor,
     { provide: MAT_FORM_FIELD_DEFAULT_OPTIONS, useValue: {appearance: 'outline'} },
-    { provide: ErrorHandler, useClass: CustomErrorHandlerService }
+    { provide: ErrorHandler, useClass: CustomErrorHandlerService },
+    {provide: LOCALE_ID, useValue: 'ru-RU'}
   ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
