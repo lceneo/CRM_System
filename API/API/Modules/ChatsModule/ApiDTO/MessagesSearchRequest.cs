@@ -4,6 +4,7 @@ namespace API.Modules.ChatsModule.ApiDTO;
 
 public class MessagesSearchRequest
 {
+    public Guid? ChatId { get; set; }
     public HashSet<Guid>? MessageIds { get; set; }
     public Guid? Sender { get; set; }
     public MessageType? Type { get; set; }
