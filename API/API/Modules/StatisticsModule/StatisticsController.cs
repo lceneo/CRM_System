@@ -30,4 +30,17 @@ public class StatisticsController : ControllerBase
         var result = await statisticsService.AverageAnswerTime(request);
         return result.ActionResult;
     }
+
+    /// <summary>
+    /// Среднее время первого ответа на сообщение
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("FirstMessageAverageAnswerTime")]
+    public async Task<ActionResult<IEnumerable<AverageAnswerTimeResponse>>> FirstMessageAverageAnswerTime(
+        [FromBody] AverageAnswerTimeRequest request)
+    {
+        var result = await statisticsService.FirstMessageAverageAnswerTime(request);
+        return result.ActionResult;
+    }
 }
