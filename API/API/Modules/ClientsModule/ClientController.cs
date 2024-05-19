@@ -32,9 +32,10 @@ public class ClientController : ControllerBase
 
     /// <summary>
     /// Создаёт или обновляет существующего клиента.
-    ///
-    /// Чтобы обновить нужно указать `Id`
     /// </summary>
+    /// <remarks>
+    /// Чтобы обновить нужно указать `Id`
+    /// </remarks>
     /// <returns></returns>
     [HttpPost]
     public async Task<ActionResult<CreateResponse>> CreateOrUpdate(
