@@ -23,6 +23,8 @@ public class TasksRepository : CRUDRepository<TaskEntity>, ITasksRepository
         .Include(e => e.AssignedTo)
         .Include(e => e.Actions).ThenInclude(a => a.User)
         .Include(e => e.Comments).ThenInclude(c => c.Author)
+        .Include(e => e.Products)
+        .Include(e => e.Client)
         .AsQueryable();
 
     public async Task<TaskEntity?> GetByIdAsync(Guid taskId)
@@ -45,6 +47,8 @@ public class TasksRepository : CRUDRepository<TaskEntity>, ITasksRepository
             query = query.Where(e => e.State == request.State.Value);
         if (request.Title != null)
             query = query.Where(e => e.Title.Contains(request.Title));
+        if (request.ClientId != null)
+            query = query.Where(e => e.Client.Id == request.ClientId);
 
         var items = await query.ToListAsync();
         return new SearchResponseBaseDTO<TaskEntity>

@@ -62,6 +62,13 @@ public class ChatsController : ControllerBase
         return response.ActionResult;
     }
 
+    [HttpPatch]
+    public async Task<ActionResult<CreateResponse>> ChangeChat([FromBody] ChangeChatRequest request)
+    {
+        var response = await chatsService.ChangeChat(request);
+        return response.ActionResult;
+    }
+
     [HttpPost("{chatId:Guid}/Join")]
     [Authorize(Roles = $"{nameof(AccountRole.Manager)},{nameof(AccountRole.Admin)}")]
     public async Task<ActionResult> JoinChatAsync([FromRoute] Guid chatId)

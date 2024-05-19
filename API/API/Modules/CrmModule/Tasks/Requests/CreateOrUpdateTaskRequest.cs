@@ -10,4 +10,5 @@ public class CreateOrUpdateTaskRequest
     public string? Title { get; set; }
     public string? Descrption { get; set; }
     public IEnumerable<Guid>? ProductIds { get; set; }
+    public Guid? ClientId { get; set; }
 }
