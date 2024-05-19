@@ -6,12 +6,14 @@ using API.Modules.ChatsModule.ApiDTO;
 using API.Modules.ChatsModule.DTO;
 using API.Modules.ChatsModule.Entities;
 using API.Modules.ChatsModule.Ports;
+using API.Modules.ClientsModule;
 using API.Modules.LogsModule;
 using API.Modules.ProfilesModule.DTO;
 using API.Modules.ProfilesModule.Ports;
 using API.Modules.StaticModule.Entities;
 using API.Modules.StaticModule.Ports;
 using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.SignalR;
 
 namespace API.Modules.ChatsModule.Adapters;
@@ -25,6 +27,7 @@ public class ChatsService : IChatsService
     private readonly IMapper mapper;
     private readonly IHubContext<ChatsHub> chatHub;
     private readonly IStaticsRepository staticsRepository;
+    private readonly IClientsRepository clientsRepository;
 
     public ChatsService(
         ILog log,
@@ -33,7 +36,8 @@ public class ChatsService : IChatsService
         IProfilesRepository profilesRepository,
         IMessagesRepository messagesRepository,
         IHubContext<ChatsHub> chatHub,
-        IStaticsRepository staticsRepository)
+        IStaticsRepository staticsRepository, 
+        IClientsRepository clientsRepository)
     {
         this.log = log;
         this.chatsRepository = chatsRepository;
@@ -42,6 +46,7 @@ public class ChatsService : IChatsService
         this.mapper = mapper;
         this.chatHub = chatHub;
         this.staticsRepository = staticsRepository;
+        this.clientsRepository = clientsRepository;
     }
 
     public async Task<Result<(ChatEntity chat, MessageEntity message)>> SendMessageAsync(
@@ -255,6 +260,38 @@ public class ChatsService : IChatsService
             }
         }
         return Result.NoContent<bool>();
+    }
+
+    /// <summary>
+    /// Изменить чат.
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    public async Task<Result<CreateResponse>> ChangeChat(ChangeChatRequest request)
+    {
+        var chat = await chatsRepository.GetByIdAsync(request.ChatId);
+        if (chat == null)
+            return Result.NotFound<CreateResponse>("");
+
+        if (request.Status != null)
+            chat.Status = request.Status.Value;
+        if (request.ClientId != null)
+        {
+            var client = request.ClientId == Guid.Empty 
+                ? null 
+                : await clientsRepository.GetByIdAsync(request.ClientId.Value);
+            if (client == null && request.ClientId != Guid.Empty)
+                return Result.BadRequest<CreateResponse>("Клиента, которого вы хотите привязать не существует");
+
+            chat.Client = client;
+        }
+
+        await chatsRepository.SaveChangesAsync();
+        return Result.Ok(new CreateResponse
+        {
+            Id = chat.Id,
+            IsCreated = false,
+        });
     }
 
     public Result<SearchResponseBaseDTO<MessageOutDTO>> SearchMessages(Guid chatId,
