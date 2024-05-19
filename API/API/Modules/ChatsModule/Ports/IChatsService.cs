@@ -27,6 +27,7 @@ public interface IChatsService
     Task<Result<ChatOutDTO>> GetChatByIdAsync(Guid userId, Guid chatId);
     
     Task<Result<bool>> ChangeChatStatus(Guid chatId, ChangeChatStatusRequest req);
+    Task<Result<CreateResponse>> ChangeChat(ChangeChatRequest request);
 
     Result<SearchResponseBaseDTO<MessageOutDTO>> SearchMessages(Guid chatId, Guid userId, MessagesSearchRequest messagesSearchReq);
 

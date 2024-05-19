@@ -21,13 +21,17 @@ public class ChatsMapping : Profile
     private string GetChatName(ChatEntity src, ChatOutDTO dest, string _, ResolutionContext context)
     {
         ProfileEntity? profile = null;
+        if (src.Name != null)
+            return src.Name;
+        if (src.Client != null)
+            return $"{src.Client.Surname} {src.Client.Name}";
+        if (src.Profiles.Count == 0)
+            return "Не задано";
         if (src.Profiles.Count == 1)
             profile = src.Profiles.First();
         if (src.Profiles.Count == 2)
             profile = src.Profiles.First(e => e.Id != (Guid) context.Items["userId"]);
-        return profile != null
-            ? $"{profile.Surname} {profile.Name}"
-            : src.Name;
+        return $"{profile.Surname} {profile.Name}";
     }
 
     private int MapUnreadsCount(

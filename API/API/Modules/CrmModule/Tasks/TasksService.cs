@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using API.Infrastructure;
 using API.Infrastructure.BaseApiDTOs;
+using API.Modules.ClientsModule;
 using API.Modules.CrmModule.Comments;
 using API.Modules.CrmModule.Tasks.DTO;
 using API.Modules.CrmModule.Tasks.Entities;
@@ -27,14 +28,16 @@ public class TasksService : ITasksService
     private readonly ITasksRepository tasksRepository;
     private readonly IProfilesRepository profilesRepository;
     private readonly IProductsRepository productsRepository;
+    private readonly IClientsRepository clientsRepository;
 
-    public TasksService(ILog log, IMapper mapper, ITasksRepository tasksRepository, IProfilesRepository profilesRepository, IProductsRepository productsRepository)
+    public TasksService(ILog log, IMapper mapper, ITasksRepository tasksRepository, IProfilesRepository profilesRepository, IProductsRepository productsRepository, IClientsRepository clientsRepository)
     {
         this.log = log;
         this.mapper = mapper;
         this.tasksRepository = tasksRepository;
         this.profilesRepository = profilesRepository;
         this.productsRepository = productsRepository;
+        this.clientsRepository = clientsRepository;
     }
 
     public async Task<Result<CreateResponse<Guid>>> CreateOrUpdateTask(CreateOrUpdateTaskRequest request, Guid userId)
@@ -76,12 +79,24 @@ public class TasksService : ITasksService
         }
         if (request.ProductIds != null)
         {
-            var products = request.ProductIds
-                .Select(productId => productsRepository.GetByIdAsync(productId, false).GetAwaiter().GetResult())
-                .ToHashSet();
+            var products = !request.ProductIds.Any()
+                ? new HashSet<ProductEntity>()
+                : request.ProductIds
+                    .Select(productId => productsRepository.GetByIdAsync(productId, false).GetAwaiter().GetResult())
+                    .ToHashSet()!;
             if (products.Count != request.ProductIds.Count())
                 return Result.BadRequest<CreateResponse<Guid>>("Таких продуктов не существует");
             task.Products = products!;
+        }
+        if (request.ClientId != null)
+        {
+            var client = request.ClientId != Guid.Empty 
+                ? await clientsRepository.GetByIdAsync(request.ClientId.Value)
+                : null;
+            if (client == null && request.ClientId != Guid.Empty)
+                return Result.NotFound<CreateResponse<Guid>>("Клиента, которого вы хотите связать с задачей не существует");
+
+            task.Client = client!;
         }
         
         await tasksRepository.CreateOrUpdateAsync(task);

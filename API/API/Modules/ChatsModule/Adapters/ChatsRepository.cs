@@ -20,6 +20,7 @@ public class ChatsRepository : CRURepository<ChatEntity>, IChatsRepository
         .Include(c => c.Messages).ThenInclude(m => m.Sender)
         .Include(c => c.Messages).ThenInclude(m => m.Files)
         .Include(c => c.Messages).ThenInclude(m => m.Checks).ThenInclude(c => c.Profile)
+        .Include(c => c.Client)
         .AsQueryable();
 
     public async Task<List<ChatEntity>> GetFreeChats()
@@ -64,6 +65,8 @@ public class ChatsRepository : CRURepository<ChatEntity>, IChatsRepository
             query = query.Where(c => c.Name.Contains(req.ChatName));
         if (req.UserIds?.Any() is true)
             query = query.Where(c => c.Profiles.Any(p => req.UserIds.Contains(p.Id)));
+        if (req.ClientId != null)
+            query = query.Where(c => c.Client != null && c.Client.Id == req.ClientId);
 
         var total = query.Count();
         var items = await query

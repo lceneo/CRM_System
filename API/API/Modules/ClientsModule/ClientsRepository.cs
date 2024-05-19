@@ -21,6 +21,9 @@ public class ClientsRepository : CRUDRepository<ClientEntity>, IClientsRepositor
     private IQueryable<ClientEntity> IncludedSet => Set
         .AsQueryable();
 
+    public async Task<ClientEntity?> GetByIdAsync(Guid id) =>
+        (await Search(new SearchClientsRequest() {Ids = new HashSet<Guid>() {id}})).Items.FirstOrDefault();
+
     public async Task<SearchResponseBaseDTO<ClientEntity>> Search(SearchClientsRequest request)
     {
         var query = IncludedSet;

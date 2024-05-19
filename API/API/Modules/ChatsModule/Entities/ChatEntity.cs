@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using API.DAL;
+using API.Modules.ClientsModule;
 using API.Modules.ProfilesModule.Entities;
 using API.Modules.RatingModule.Entities;
 
@@ -13,4 +14,5 @@ public class ChatEntity : IEntity
     public string Name { get; set; }
     public ChatStatus Status { get; set; }
     public HashSet<RatingEntity> Rates { get; set; }
+    public ClientEntity? Client { get; set; }
 }

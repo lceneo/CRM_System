@@ -8,4 +8,5 @@ public class SearchTasksRequest
     public Guid? AssignedTo { get; set; }
     public TaskState? State { get;set; }
     public string? Title { get; set; }
+    public Guid? ClientId { get; set; }
 }
