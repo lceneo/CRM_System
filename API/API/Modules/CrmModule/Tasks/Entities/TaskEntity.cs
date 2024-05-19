@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using API.DAL;
+using API.Modules.ClientsModule;
 using API.Modules.CrmModule.Comments;
 using API.Modules.ProductsModule;
 using API.Modules.ProfilesModule.Entities;
@@ -17,6 +18,7 @@ public class TaskEntity : IEntity
     public HashSet<TaskActionEntity> Actions { get; set; }
     public HashSet<TaskCommentEntity> Comments { get; set; }
     public HashSet<ProductEntity> Products { get; set; } = new();
+    public ClientEntity? Client { get; set; }
 }
 
 public enum TaskState
