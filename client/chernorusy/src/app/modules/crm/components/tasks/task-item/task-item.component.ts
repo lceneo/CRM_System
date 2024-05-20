@@ -1,7 +1,7 @@
-import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {ITask} from "../../../helpers/entities/ITask";
 import {TaskState} from "../../../helpers/enums/TaskState";
-import {TaskService} from "../../../services/task.service";
+import {TaskOrderType, TaskService} from "../../../services/task.service";
 import {MatDialog} from "@angular/material/dialog";
 import {ModalDeleteTaskComponent} from "../modal-delete-task/modal-delete-task.component";
 import {filter, switchMap} from "rxjs";
@@ -14,7 +14,13 @@ import {ModalTaskInfoComponent} from "../modal-task-info/modal-task-info.compone
   styleUrls: ['./task-item.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TaskItemComponent {
+export class TaskItemComponent implements OnChanges {
+
+  constructor(
+    private taskS: TaskService,
+    private matDialog: MatDialog
+  ) {
+  }
 
  @Input({required: true}) tasks: ITask[] = [];
  @Input({required: true}) set taskState (value: TaskState) {
@@ -42,13 +48,16 @@ export class TaskItemComponent {
    return this._taskState as TaskState;
  }
 
- constructor(
-     private taskS: TaskService,
-     private matDialog: MatDialog
- ) {}
 
   protected header?: string;
   private _taskState?: TaskState;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if ('tasks' in changes) {
+      const orderedState = this.taskS.getStateOrder(this.taskState) as TaskOrderType;
+      if (orderedState) { this.tasks = changes['tasks'].currentValue.sort((f: ITask, s: ITask) => orderedState[f.id] - orderedState[s.id]); }
+    }
+  }
   openModalCreateTask() {
    this.matDialog.open(ModalCreateTaskComponent, {disableClose: true, autoFocus: false, data: this.taskState});
   }

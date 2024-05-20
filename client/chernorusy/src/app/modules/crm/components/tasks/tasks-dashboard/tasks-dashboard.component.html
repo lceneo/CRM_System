@@ -9,6 +9,7 @@
                 cdkDropList
                 [cdkDropListData]="newTasks()"
                 (cdkDropListDropped)="dropTask($event, TaskState.New)"
+                [id]="TaskState.New.toString()"
         >
         </app-task-item>
 
@@ -20,6 +21,7 @@
             cdkDropList
             [cdkDropListData]="pausedTasks()"
             (cdkDropListDropped)="dropTask($event, TaskState.Pause)"
+            [id]="TaskState.Pause.toString()"
     >
     </app-task-item>
 
@@ -31,6 +33,7 @@
             cdkDropList
             [cdkDropListData]="inProgressTasks()"
             (cdkDropListDropped)="dropTask($event, TaskState.InProgress)"
+            [id]="TaskState.InProgress.toString()"
     >
     </app-task-item>
 
@@ -42,6 +45,7 @@
             cdkDropList
             [cdkDropListData]="doneTasks()"
             (cdkDropListDropped)="dropTask($event, TaskState.Done)"
+            [id]="TaskState.Done.toString()"
     >
     </app-task-item>
 
@@ -53,6 +57,7 @@
             cdkDropList
             [cdkDropListData]="archivedTasks()"
             (cdkDropListDropped)="dropTask($event, TaskState.Archived)"
+            [id]="TaskState.Archived.toString()"
     >
     </app-task-item>
     </section>
