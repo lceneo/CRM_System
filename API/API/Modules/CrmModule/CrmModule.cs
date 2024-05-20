@@ -18,6 +18,7 @@ public class CrmModule : IModule
         services.AddScoped<ICrmService, CrmService>();
 
         services.AddScoped<ICrmHubNotifier, CrmHubNotifier>();
+        services.AddSingleton<CrmHubConnectionsProvider>();
         
         return services;
     }
