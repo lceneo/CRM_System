@@ -57,8 +57,8 @@ export class EntityStateManager<T extends {id: string}> {
       )
       .subscribe(
         {
-          complete: () => {
-            fnCallback && fnCallback();
+          next: (res: T[]) => {
+            fnCallback && fnCallback(res);
           }
         }
       );
