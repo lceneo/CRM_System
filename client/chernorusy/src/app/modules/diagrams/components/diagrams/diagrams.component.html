@@ -1,9 +1,98 @@
-<gridster [options]="options">
-  <gridster-item
-    [item]="item"
-    *ngFor="let item of (dashboard ? dashboard : []); let index=index"
-    class="itemGridster" [class.gridster-item-fullscreen]="item.layerIndex === 2" style="min-height: 100px; min-width: 106px"
+<div class="wrapp">
+  <form [formGroup]="dateForm" class="date-time-row">
+    <button mat-icon-button [matMenuTriggerFor]="chartsMenu">
+      <mat-icon>add</mat-icon>
+    </button>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Старт:</mat-label>
+      <input
+        matInput
+        [formControl]="dateForm.controls.dateStart"
+        [max]="curDateEndDay"
+        [matDatepicker]="pickerStart"
+      />
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="pickerStart"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #pickerStart></mat-datepicker>
+      <mat-error *ngIf="dateForm.controls.dateStart.hasError('required')"
+        >Заполните поле</mat-error
+      >
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Время начала:</mat-label>
+      <input matInput type="time" [formControl]="dateForm.controls.timeStart" />
+      <mat-hint>ЧЧ:ММ</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Конец:</mat-label>
+      <input
+        matInput
+        [formControl]="dateForm.controls.dateEnd"
+        [max]="curDateStartDay"
+        [matDatepicker]="pickerEnd"
+      />
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="pickerEnd"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #pickerEnd></mat-datepicker>
+      <mat-error *ngIf="dateForm.controls.dateEnd.hasError('required')"
+        >Заполните поле</mat-error
+      >
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Время конца:</mat-label>
+      <input matInput type="time" [formControl]="dateForm.controls.timeEnd" />
+      <mat-hint>ЧЧ:ММ</mat-hint>
+    </mat-form-field>
+  </form>
+
+  <gridster
+    #gridster
+    [options]="options"
+    style="background: transparent; overflow: auto"
   >
-    <div class="gridster-item-content" style="background-color: yellow">Actually content</div>
-  </gridster-item>
-</gridster>
+    <gridster-item
+      [item]="item"
+      *ngFor="let item of dashboard ? dashboard : []; let index = index"
+      class="itemGridster"
+      [class.gridster-item-fullscreen]="item.layerIndex === 2"
+      style="min-height: 100px; min-width: 106px"
+    >
+      <div class="itemGridster_wrapp">
+        <div class="itemGridster__header_drag">
+          <h5>{{ item["title"] }}</h5>
+          <button
+            mat-icon-button
+            style="scale: 0.6"
+            (mousedown)="$event.stopPropagation()"
+            (click)="removeChart($event, item)"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        <div class="itemGridster__content">
+          <app-component-load [dashboardItem]="item"></app-component-load>
+        </div>
+      </div>
+    </gridster-item>
+  </gridster>
+</div>
+
+<mat-menu #chartsMenu>
+  <button
+    mat-menu-item
+    *ngFor="let chart of charts"
+    (click)="addChart(chart.title)"
+  >
+    {{ chart.title }}
+  </button>
+</mat-menu>
