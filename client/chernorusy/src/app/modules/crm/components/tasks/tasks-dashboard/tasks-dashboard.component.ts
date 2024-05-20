@@ -26,6 +26,7 @@ export class TasksDashboardComponent {
   dropTask(event: CdkDragDrop<ITask[]>, newTaskState: TaskState) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      this.taskS.swapTwoItemsInOneStateColumn(event.item.data.id, newTaskState, event.currentIndex, event.previousIndex);
     } else {
       transferArrayItem(
           event.previousContainer.data,
@@ -34,12 +35,8 @@ export class TasksDashboardComponent {
           event.currentIndex,
       );
       this.taskS.updateHTTP$({id: event.item.data.id, state: newTaskState}).subscribe();
-      // спс антону за кошерный бек
-      // this.taskS.removeFromStateOrder(+event.previousContainer.id, event.item.data.id);
+      this.taskS.switchStateInOrderState(event.item.data.id, +event.previousContainer.id, newTaskState, event.currentIndex);
     }
-
-    const orderByTaskID: TaskOrderType = event.container.data.reduce((prev, curr, i) => ({...prev, [curr.id]: i}), {});
-    this.taskS.saveStateOrder(newTaskState, orderByTaskID);
   }
 
   protected readonly TaskState = TaskState;

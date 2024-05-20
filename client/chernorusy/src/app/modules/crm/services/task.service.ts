@@ -60,6 +60,7 @@ export class TaskService extends EntityStateManager<ITask>{
       return;
     }
     Object.keys(newStateOrder).forEach(taskID => {
+      if (taskID === undefined) { console.log(taskID)}
       // сохраняем новый порядок задачи
       this.tasksOrderByState[state]![taskID] = newStateOrder[taskID];
     })
@@ -73,6 +74,22 @@ export class TaskService extends EntityStateManager<ITask>{
   removeFromStateOrder(state: TaskState, taskIDToRemove: string) {
     if (!this.tasksOrderByState[state] || !this.tasksOrderByState[state]!.hasOwnProperty(taskIDToRemove)) { return; }
     delete this.tasksOrderByState[state]![taskIDToRemove];
+    this.updateIndexesInStateOrder(state);
+  }
+
+  swapTwoItemsInOneStateColumn(taskID: string, state: TaskState, newIndex: number, oldIndex: number) {
+    const currentStateOrder = this.getStateOrder(state) || {};
+    const taskIDToSwapWith = Object.keys(currentStateOrder).find(secondTaskID => currentStateOrder[secondTaskID] === newIndex) as string;
+    if (taskIDToSwapWith) {
+      this.saveStateOrder(state, {[taskID]: newIndex, [taskIDToSwapWith]: oldIndex});
+    } else {
+      this.saveStateOrder(state, {[taskID]: newIndex});
+    }
+  }
+
+  switchStateInOrderState(taskID: string, oldState: TaskState, newState: TaskState, indexToPlaceIn?: number) {
+    this.removeFromStateOrder(oldState, taskID);
+    this.addToTaskOrderState(taskID, newState, indexToPlaceIn);
   }
 
   private setInitialTaskOrderState(tasks: ITask[]) {
@@ -84,18 +101,37 @@ export class TaskService extends EntityStateManager<ITask>{
     });
   }
 
-  private addToTaskOrderStateNewTask(task: ITask) {
-    const currentStateOrder = this.getStateOrder(task.state) ?? {};
-    const currentMaxIndex = max(Object.values(currentStateOrder));
-    const newTaskColumnIndex = currentMaxIndex ? currentMaxIndex + 1 : 0;
-    this.saveStateOrder(task.state, {...currentStateOrder, [task.id]: newTaskColumnIndex})
+  private addToTaskOrderState(taskID: string, state: TaskState, indexToPlaceIn?: number) {
+    const currentStateOrder = this.getStateOrder(state) ?? {};
+    let newTaskColumnIndex: number;
+    if (indexToPlaceIn !== undefined) {
+      newTaskColumnIndex = indexToPlaceIn;
+      const tasksToAdjust = Object.keys(currentStateOrder)
+        .filter(taskID => currentStateOrder[taskID] >= indexToPlaceIn)
+        .reduce((prev, curr) => ({...prev, [curr]: currentStateOrder[curr] + 1}), {})
+      this.saveStateOrder(state, {...tasksToAdjust, [taskID]: newTaskColumnIndex})
+    }
+    else {
+      const currentMaxIndex = max(Object.values(currentStateOrder));
+      newTaskColumnIndex = currentMaxIndex ? currentMaxIndex + 1 : 0;
+      this.saveStateOrder(state, {...currentStateOrder, [taskID]: newTaskColumnIndex})
+    }
+  }
+
+  private updateIndexesInStateOrder(stateToUpdate: TaskState) {
+    const currentState = this.getStateOrder(stateToUpdate)!;
+    Object.keys(currentState).sort((f, s) => currentState[f] - currentState[s])
+      .forEach((taskID, i) => currentState[taskID] = i);
   }
 
   createHTTP$(task: Omit<ITaskCreateOrUpdateDTO, 'productIds'>) {
     return this.httpS.post<ICreateOrUpdateEntityDTO>('/Crm/Tasks', task)
       .pipe(
         switchMap((res) => this.getByIDHttp$(res.id)),
-        tap((task) => this.upsertEntities([task]))
+        tap((task) => {
+          this.upsertEntities([task]);
+          this.addToTaskOrderState(task.id, task.state);
+        })
       );
   }
 
@@ -117,7 +153,11 @@ export class TaskService extends EntityStateManager<ITask>{
   deleteByIDHTTP$(taskID: string) {
     return this.httpS.delete(`/Crm/Tasks/${taskID}`)
         .pipe(
-            tap(res => this.removeByID(taskID))
+            tap(res => {
+              const prevState = this.getByID(taskID);
+              this.removeFromStateOrder(prevState!.state, taskID);
+              this.removeByID(taskID);
+            })
         );
   }
 
@@ -192,8 +232,8 @@ export class TaskService extends EntityStateManager<ITask>{
                   const previousState = this.getByID(updatedTask.id);
                   const isCreated = !previousState;
                   this.upsertEntities([updatedTask]);
-                  if (isCreated) { this.addToTaskOrderStateNewTask(updatedTask); }
-                  else if (previousState) { this.removeFromStateOrder(previousState.state, previousState.id)}
+                  if (isCreated) { this.addToTaskOrderState(updatedTask.id, updatedTask.state); }
+                  else if (previousState) { this.switchStateInOrderState(updatedTask.id, previousState.state, updatedTask.state); }
                 })
             ).subscribe();
       }

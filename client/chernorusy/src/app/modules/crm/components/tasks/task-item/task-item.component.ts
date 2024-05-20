@@ -55,7 +55,7 @@ export class TaskItemComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if ('tasks' in changes) {
       const orderedState = this.taskS.getStateOrder(this.taskState) as TaskOrderType;
-      this.tasks = changes['tasks'].currentValue.sort((f: ITask, s: ITask) => orderedState[f.id] - orderedState[s.id]);
+      if (orderedState) { this.tasks = changes['tasks'].currentValue.sort((f: ITask, s: ITask) => orderedState[f.id] - orderedState[s.id]); }
     }
   }
   openModalCreateTask() {
