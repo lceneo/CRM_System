@@ -26,5 +26,5 @@ public class CrmHubConnectionsProvider
         return users.ContainsKey(userId);
     }
 
-    public IEnumerable<Guid> Users => users.Keys.ToArray();
+    public Guid[] Users => users.Keys.ToArray();
 }
