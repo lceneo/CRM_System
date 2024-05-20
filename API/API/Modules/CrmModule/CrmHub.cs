@@ -1,6 +1,7 @@
 ﻿using API.Extensions;
 using API.Infrastructure;
 using API.Modules.CrmModule.Crm;
+using API.Modules.LogsModule;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -17,28 +18,43 @@ public class CrmHubNotifier : ICrmHubNotifier
 {
     private readonly IHubContext<CrmHub> hub;
     private readonly CrmHubConnectionsProvider connectionsProvider;
+    private readonly ILog log;
 
-    public CrmHubNotifier(IHubContext<CrmHub> hub, CrmHubConnectionsProvider connectionsProvider)
+    public CrmHubNotifier(
+        IHubContext<CrmHub> hub, 
+        CrmHubConnectionsProvider connectionsProvider,
+        ILog log)
     {
+        this.log = log;
         this.hub = hub;
         this.connectionsProvider = connectionsProvider;
     }
 
     public async Task NotifyChanges(Guid senderId)
     {
-        foreach (var userId in connectionsProvider.Users)
+        var users = connectionsProvider.Users;
+        await log.Info($"Notify by user: {senderId} to Users: {string.Join(", ", users)}");
+        foreach (var userId in users)
         {
             if (senderId != userId)
+            {
+                await log.Info($"Send Notify by {senderId} to {userId}");
                 await hub.Clients.Group(userId.ToString()).SendAsync("Changes", new CrmChanges());
+            }
         }
     }
 
     public async Task NotifyChanges(Guid senderId, Guid taskId)
     {
-        foreach (var userId in connectionsProvider.Users)
+        var users = connectionsProvider.Users;
+        await log.Info($"Notify by user: [{senderId}] to Users: [{string.Join(", ", users)}]");
+        foreach (var userId in users)
         {
             if (senderId != userId)
-                await hub.Clients.Group(CrmHub.groupName).SendAsync("Changes", new CrmChanges{TaskId = taskId});
+            {
+                await log.Info($"Send Notify by {senderId} to {userId}");
+                await hub.Clients.Group(userId.ToString()).SendAsync("Changes", new CrmChanges {TaskId = taskId});
+            }
         }
     }
 }
