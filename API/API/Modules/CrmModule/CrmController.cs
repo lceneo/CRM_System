@@ -53,7 +53,7 @@ public class CrmController : ControllerBase
     {
         var result = await crmService.CreateOrUpdateTask(request, User.GetId());
         if (result.IsSuccess)
-            await hub.NotifyChanges(result.Value.Id);
+            await hub.NotifyChanges(User.GetId(), result.Value.Id);
         return result.ActionResult;
     }
 
@@ -81,7 +81,7 @@ public class CrmController : ControllerBase
     public async Task<ActionResult> DeleteTask([FromRoute]Guid taskId)
     {
         await crmService.DeleteTask(taskId);
-        await hub.NotifyChanges();
+        await hub.NotifyChanges(User.GetId());
         return NoContent();
     }
 
@@ -101,7 +101,7 @@ public class CrmController : ControllerBase
         [FromBody] CreateOrUpdateTaskCommentRequest request)
     {
         var result = await crmService.CreateOrUpdateTaskComment(taskId, request, User.GetId());
-        await hub.NotifyChanges(taskId);
+        await hub.NotifyChanges(User.GetId(), taskId);
         return result.ActionResult;
     }
 
@@ -130,7 +130,7 @@ public class CrmController : ControllerBase
         [FromRoute] Guid commentId)
     {
         await crmService.DeleteTaskComment(taskId, commentId);
-        await hub.NotifyChanges(taskId);
+        await hub.NotifyChanges(User.GetId(), taskId);
         return NoContent();
     }
 }
