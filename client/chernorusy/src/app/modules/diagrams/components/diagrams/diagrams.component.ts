@@ -25,6 +25,7 @@ import {
 } from 'rxjs';
 import { charts } from './charts';
 import { dateRangeChangesSymb } from './component-load/component-load.component';
+import { MatMenu } from '@angular/material/menu';
 
 @Component({
   selector: 'app-diagrams',
@@ -33,6 +34,7 @@ import { dateRangeChangesSymb } from './component-load/component-load.component'
 })
 export class DiagramsComponent implements OnDestroy {
   @ViewChild('gridster') gridster!: GridsterComponent;
+  @ViewChild('chartsMenu') menu!: MatMenu;
 
   destroy$ = new Subject<void>();
 
@@ -80,9 +82,14 @@ export class DiagramsComponent implements OnDestroy {
     },
   ];
 
-  addChart(title: string) {
+  ngAfterViewInit() {
+    console.log(this.menu.lazyContent);
+    console.log(this.charts);
+  }
+
+  addChart(id: number) {
     const item: GridsterItem = {
-      title,
+      chartId: id,
       cols: 1,
       rows: 1,
       x: 0,
@@ -126,12 +133,10 @@ export class DiagramsComponent implements OnDestroy {
       this.dashboard = [];
     }
 
-    this.dashboard.forEach(
-      (item) => {
-        item[dateRangeChangesSymb as any] = this.dateRangeChanges$;
-        item[panelRemovedSymb as any] = new Subject<void>();
-      }
-    );
+    this.dashboard.forEach((item) => {
+      item[dateRangeChangesSymb as any] = this.dateRangeChanges$;
+      item[panelRemovedSymb as any] = new Subject<void>();
+    });
 
     merge(fromEvent(window, 'beforeunload'), this.destroy$).subscribe(() =>
       this.saveDashboard()

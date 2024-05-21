@@ -16,14 +16,14 @@ import {
   StatisticsService,
 } from 'src/app/shared/services/statistics.service';
 import { ECharts, EChartsOption } from 'echarts';
-import { ChartDashboardItem } from '../../charts';
+import { ChartDashboardItem } from '../../../charts';
 import { DatePipe } from '@angular/common';
 import {
   dateRangeChangesSymb,
   headerButtonsSymb,
-} from '../../component-load/component-load.component';
+} from '../../../component-load/component-load.component';
 import { IProfileResponseDTO } from 'src/app/modules/profile/DTO/response/ProfileResponseDTO';
-import { panelRemovedSymb } from '../../diagrams.component';
+import { panelRemovedSymb } from '../../../diagrams.component';
 
 @Component({
   selector: 'app-received-dialogs-overall',
