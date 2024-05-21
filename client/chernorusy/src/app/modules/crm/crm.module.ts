@@ -21,7 +21,10 @@ import {MatSelectModule} from "@angular/material/select";
 import { ModalTaskInfoComponent } from './components/tasks/modal-task-info/modal-task-info.component';
 import {NgLetDirective} from "../../shared/directives/ng-let.directive";
 import {MatBadgeModule} from "@angular/material/badge";
-
+import { TaskCommentComponent } from './components/tasks/comments/task-comment/task-comment.component';
+import { ModalDeleteTaskCommentComponent } from './components/tasks/comments/modal-delete-task-comment/modal-delete-task-comment.component';
+import { ProductsTableComponent } from './components/products/products-table/products-table.component';
+import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 
 const routes: Routes =
 [
@@ -35,28 +38,32 @@ const routes: Routes =
     TaskItemComponent,
     ModalDeleteTaskComponent,
     ModalCreateTaskComponent,
-    ModalTaskInfoComponent
+    ModalTaskInfoComponent,
+    TaskCommentComponent,
+    ModalDeleteTaskCommentComponent,
+    ProductsTableComponent
   ],
-    imports: [
-        CommonModule,
-        RouterModule.forChild(routes),
-        MatTabsModule,
-        CdkDropList,
-        CdkDrag,
-        CdkDropListGroup,
-        MatCardModule,
-        MatListModule,
-        MatButtonModule,
-        MatIconModule,
-        MatDialogModule,
-        MatTooltipModule,
-        MatInputModule,
-        FormsModule,
-        TextareaResizeDirective,
-        MatSelectModule,
-        ReactiveFormsModule,
-        NgLetDirective,
-        MatBadgeModule
-    ]
+  imports: [
+    CommonModule,
+    RouterModule.forChild(routes),
+    MatTabsModule,
+    CdkDropList,
+    CdkDrag,
+    CdkDropListGroup,
+    MatCardModule,
+    MatListModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDialogModule,
+    MatTooltipModule,
+    MatInputModule,
+    FormsModule,
+    TextareaResizeDirective,
+    MatSelectModule,
+    ReactiveFormsModule,
+    NgLetDirective,
+    MatBadgeModule,
+    NgxDatatableModule
+  ]
 })
 export class CrmModule { }

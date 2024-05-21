@@ -1,0 +1,46 @@
+
+.commentTextWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.btnBox {
+  display: flex;
+  gap: 0.5rem;
+  .btn {
+    display: flex;
+    height: 18px;
+    width: 18px;
+    padding: 0;
+    transform: translateY(-14px);
+    .mat-icon {
+      font-size: 18px;
+    }
+  }
+}
+
+.commentTextArea {
+  max-height: 100px;
+  resize: none;
+  width: 90%;
+  overflow-wrap: anywhere;
+  text-wrap: wrap !important;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+
+  &:focus {
+      border-color: #719ECE;
+      outline: none;
+      box-shadow: 0 0 10px #719ECE;
+  }
+
+  &.view {
+    border: none;
+  }
+
+  &.edit {
+    color: black;
+  }
+}
+

@@ -116,27 +116,6 @@
     resize: none;
   }
 
-  .commentTextWrapper {
-    display: flex;
-    justify-content: space-between;
-    .editCommentBtn {
-      height: 18px;
-      width: 18px;
-      padding: 0;
-      transform: translateY(-14px);
-      .mat-icon {
-        font-size: 18px;
-        color: black;
-      }
-    }
-  }
-  .commentText {
-    //max-height: calc(100% - 48px);
-    overflow-y: scroll;
-    overflow-wrap: anywhere;
-    text-wrap: wrap !important;
-  }
-
   .textAreaBlock {
     display: flex;
     column-gap: 0.5rem;

@@ -161,7 +161,7 @@ export class TaskService extends EntityStateManager<ITask>{
         );
   }
 
-  postComment$(taskID: string, comment: ICommentPostDTO) {
+  postCommentHTTP$(taskID: string, comment: ICommentPostDTO) {
     return this.httpS.post<ICreateOrUpdateEntityDTO>(`/Crm/Tasks/${taskID}/Comments`, comment)
         .pipe(
           switchMap(res => this.getCommentFromTaskHTTP$(taskID, res.id)),
@@ -169,7 +169,14 @@ export class TaskService extends EntityStateManager<ITask>{
         );
   }
 
-  updateComment$(taskID: string, comment: ICommentPostDTO) {
+  deleteCommentHTTP$(taskID: string, commentID: string) {
+    return this.httpS.post(`/Crm/Tasks/${taskID}/Comments/${commentID}`)
+      .pipe(
+        tap(createdComment => this.deleteComment(taskID, commentID))
+      );
+  }
+
+  updateCommentHTTP$(taskID: string, comment: ICommentPostDTO) {
       return this.httpS.post<ICreateOrUpdateEntityDTO>(`/Crm/Tasks/${taskID}/Comments`, comment)
           .pipe(
             switchMap(res => this.getCommentFromTaskHTTP$(taskID, res.id)),
@@ -193,6 +200,11 @@ export class TaskService extends EntityStateManager<ITask>{
   addComment(taskID: string, comment: IComment) {
     const currentComments = this.getTaskCommentsSync(taskID);
     this.updateByID(taskID, { comments: [...currentComments, comment]});
+  }
+
+  deleteComment(taskID: string, commentID: string) {
+    const currentComments = this.getTaskCommentsSync(taskID);
+    this.updateByID(taskID, { comments: currentComments.filter(comm => comm.id !== commentID)});
   }
 
   updateComment(taskID: string, comment: IComment) {
