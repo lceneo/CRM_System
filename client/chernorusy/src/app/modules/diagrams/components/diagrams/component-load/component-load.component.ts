@@ -10,6 +10,8 @@ import {
 } from '@angular/core';
 import { GridsterItem } from 'angular-gridster2';
 import { charts, ImportItem } from '../charts';
+import { take } from 'rxjs';
+import { panelRemovedSymb } from '../diagrams.component';
 
 @Component({
   selector: 'app-component-load',
@@ -20,6 +22,8 @@ export class ComponentLoadComponent implements AfterViewInit {
   @Input() dashboardItem!: GridsterItem;
   @Input() headerGridsterItem!: TemplateRef<any>;
   preload = true;
+  buttonTemplates: TemplateRef<any>[] = [];
+  title: string = '...';
 
   constructor(
     private injector: Injector,
@@ -35,6 +39,7 @@ export class ComponentLoadComponent implements AfterViewInit {
         `Couldn't find chart name ${this.dashboardItem['title']}`
       );
     }
+    this.title = item.title;
     this.loadModule(item!)
       .catch(console.error)
       .finally(() => {
@@ -58,8 +63,17 @@ export class ComponentLoadComponent implements AfterViewInit {
       ngModuleRef: moduleRef,
     });
     console.log('createdComponent', createdComponent);
-    (createdComponent.instance as any)['dateRangeChanges$'] =
-      this.dashboardItem['dateRangeChanges$'];
+    (createdComponent.instance as any)[panelRemovedSymb] =
+      this.dashboardItem[panelRemovedSymb as any];
+    (createdComponent.instance as any)[dateRangeChangesSymb] =
+      this.dashboardItem[dateRangeChangesSymb as any];
+    console.log(this.dashboardItem);
+    (createdComponent.instance as any)[headerButtonsSymb]
+      ?.pipe(take(1))
+      .subscribe((templates: any) => (this.buttonTemplates = templates));
     createdComponent.changeDetectorRef.detectChanges();
   }
 }
+
+export const dateRangeChangesSymb = Symbol('dateRangeChanges$');
+export const headerButtonsSymb = Symbol('headerButtons$');

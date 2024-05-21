@@ -18,6 +18,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatMenuModule } from '@angular/material/menu';
+import { NgxEchartsModule } from 'ngx-echarts';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: DiagramsComponent },
@@ -38,6 +39,9 @@ const routes: Routes = [
     MatInputModule,
     ReactiveFormsModule,
     MatMenuModule,
+
+    NgxEchartsModule.forRoot({ echarts: () => import('echarts') }),
+    ReceivedDialogsOverallModule,
   ],
 })
 export class DiagramsModule {}

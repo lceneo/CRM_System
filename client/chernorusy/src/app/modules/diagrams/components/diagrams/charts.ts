@@ -11,6 +11,7 @@ export function ChartDashboardItem(title: string, module: string) {
     title,
     import: () => import(`./modules/${module}/${module}.module`),
   });
+  return function (constructor: any) {};
 }
 
 export const charts: ImportItem[] = [];
