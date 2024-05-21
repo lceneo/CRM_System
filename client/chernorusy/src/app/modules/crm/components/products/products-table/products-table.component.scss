@@ -1,0 +1,18 @@
+.wrapper {
+  height: 100%;
+  .table {
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.cellText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+:host ::ng-deep {
+  .datatable-body {
+    overflow-x: hidden !important;
+  }
+}

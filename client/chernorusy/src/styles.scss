@@ -1,17 +1,18 @@
-@import './assets/styles/form';
-@import './assets/styles/modal';
-@import './assets/styles/accordion';
-@import './assets/styles/scroll';
-@import './assets/styles/mat-menu';
-@import './assets/styles/mat-button';
-@import './assets/styles/textarea';
+@import "./assets/styles/form";
+@import "./assets/styles/modal";
+@import "./assets/styles/accordion";
+@import "./assets/styles/scroll";
+@import "./assets/styles/mat-menu";
+@import "./assets/styles/mat-button";
+@import "./assets/styles/textarea";
 @import "bootstrap-icons/font/bootstrap-icons";
-@import './assets/styles/mat-spinner';
-@import './assets/styles/mat-tab';
-@import './assets/styles/ngx-datatable';
-@import '../node_modules/@swimlane/ngx-datatable/index.scss';
-@import '../node_modules/@swimlane/ngx-datatable/themes/material.scss';
-@import '../node_modules/@swimlane/ngx-datatable/assets/icons.css';
+@import "./assets/styles/mat-spinner";
+@import "./assets/styles/mat-tab";
+@import "./assets/styles/ngx-datatable";
+@import "./assets/styles/gridster";
+@import "../node_modules/@swimlane/ngx-datatable/index.scss";
+@import "../node_modules/@swimlane/ngx-datatable/themes/material.scss";
+@import "../node_modules/@swimlane/ngx-datatable/assets/icons.css";
 
 @include form();
 @include modal();
@@ -19,17 +20,20 @@
 @include scroll();
 @include mat-button();
 @include textArea();
+@include gridster();
 
-body{
+body {
   .icon {
     font-size: 1.3rem;
   }
   overflow-x: hidden;
 }
-body { font-family: Roboto, "Helvetica Neue", sans-serif; }
+body {
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 .smileMenu {
-    border: 1px solid #c4b2b2;
+  border: 1px solid #c4b2b2;
 
   .mat-mdc-menu-content {
     display: flex;
@@ -39,6 +43,7 @@ body { font-family: Roboto, "Helvetica Neue", sans-serif; }
   }
 }
 
-.disable-backdrop-click .cdk-overlay-backdrop.cdk-overlay-transparent-backdrop.cdk-overlay-backdrop-showing {
+.disable-backdrop-click
+  .cdk-overlay-backdrop.cdk-overlay-transparent-backdrop.cdk-overlay-backdrop-showing {
   pointer-events: none;
 }

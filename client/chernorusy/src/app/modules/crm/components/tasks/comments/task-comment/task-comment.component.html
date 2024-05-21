@@ -1,0 +1,41 @@
+<section>
+  <span matListItemTitle>{{comment?.author?.name}}</span>
+  <span matListItemLine>{{comment?.createdAt | date: 'dd LLL YYYY HH:mm'}}</span>
+  <div class="commentTextWrapper">
+    <textarea class="commentTextArea"
+              [ngClass]="{
+                'view': commentMode === 'view',
+                'edit': commentMode === 'edit'
+              }"
+              appTextareaResize
+              [formControl]="commentTextControl"
+              matListItemLine
+    ></textarea>
+    <section class="btnBox" *ngIf="comment?.author?.id === this.profileID">
+      <button class="btn"
+              *ngIf="commentMode === 'edit'"
+              mat-icon-button
+              [disabled]="editBtnDisabled()"
+              [matTooltip]="'Применить'"
+              [matTooltipPosition]="'above'"
+              [matTooltipDisabled]="editBtnDisabled()"
+              (click)="updateComment(taskID!, comment!.id, commentTextControl.value!)">
+        <mat-icon>check</mat-icon>
+      </button>
+      <button class="btn" mat-icon-button (click)="toggleCommentMode()"
+              [matTooltip]="'Смена режима'"
+              [matTooltipPosition]="'above'"
+      >
+        <mat-icon>{{commentMode === 'view' ? 'edit' : 'remove_red_eye'}}</mat-icon></button>
+      <button class="btn"
+              mat-icon-button
+              (click)="deleteComment(taskID!, comment!.id)"
+              [matTooltip]="'Удалить'"
+              [matTooltipPosition]="'above'"
+      >
+        <mat-icon>delete_outline</mat-icon>
+      </button>
+    </section>
+  </div>
+</section>
+
