@@ -63,7 +63,7 @@ export class ModalTaskInfoComponent implements OnInit {
 
   protected currentMod: WritableSignal<TaskInfoMod> = signal('view');
   protected saveChangesBtnDisabled = signal(true);
-  protected profileID = this.profileS.profile()?.id;
+
 
   ngOnInit(): void {
     this.formGroup.disable();
@@ -92,7 +92,7 @@ export class ModalTaskInfoComponent implements OnInit {
   }
   protected postComment() {
     if (this.commentControl.valid && this.commentControl.value) {
-        this.taskS.postComment$(this.taskInfo.taskID, {text: this.commentControl.value})
+        this.taskS.postCommentHTTP$(this.taskInfo.taskID, {text: this.commentControl.value})
             .pipe(
                 tap(() => this.commentControl.setValue(''))
             )
