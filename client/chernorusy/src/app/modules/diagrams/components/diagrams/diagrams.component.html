@@ -1,6 +1,10 @@
 <div class="wrapp">
   <form [formGroup]="dateForm" class="date-time-row">
-    <button mat-icon-button [matMenuTriggerFor]="chartsMenu">
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="chartsMenu"
+      [matMenuTriggerData]="{ items: charts }"
+    >
       <mat-icon>add</mat-icon>
     </button>
 
@@ -68,19 +72,32 @@
       style="min-height: 100px; min-width: 106px"
     >
       <div class="itemGridster_wrapp">
-        <div class="itemGridster__header_drag">
-          <h5>{{ item["title"] }}</h5>
-          <button
-            mat-icon-button
-            style="scale: 0.6"
-            (mousedown)="$event.stopPropagation()"
-            (click)="removeChart($event, item)"
-          >
-            <mat-icon>close</mat-icon>
-          </button>
-        </div>
+        <ng-template
+          #headerTemplate
+          let-title="title"
+          let-buttonTemplates="buttonTemplates"
+        >
+          <div class="itemGridster__header_drag">
+            <h5>{{ title }}</h5>
+            <div class="buttons">
+              <ng-container *ngFor="let template of buttonTemplates">
+                <ng-template *ngTemplateOutlet="template"></ng-template>
+              </ng-container>
+              <button
+                mat-icon-button
+                (mousedown)="$event.stopPropagation()"
+                (click)="removeChart($event, item)"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+        </ng-template>
         <div class="itemGridster__content">
-          <app-component-load [dashboardItem]="item"></app-component-load>
+          <app-component-load
+            [dashboardItem]="item"
+            [headerGridsterItem]="headerTemplate"
+          ></app-component-load>
         </div>
       </div>
     </gridster-item>
@@ -88,11 +105,32 @@
 </div>
 
 <mat-menu #chartsMenu>
-  <button
-    mat-menu-item
-    *ngFor="let chart of charts"
-    (click)="addChart(chart.title)"
-  >
-    {{ chart.title }}
-  </button>
+  <ng-template matMenuContent let-items="items">
+    <ng-container *ngFor="let chart of items">
+      <button
+        mat-menu-item
+        *ngIf="chart.children && chart.children.length; else btnNoChildren"
+        [matMenuTriggerFor]="subMenu"
+        [matMenuTriggerData]="{ items: chart.children }"
+      >
+        {{ chart.title }}
+      </button>
+
+      <ng-template #btnNoChildren>
+        <button mat-menu-item (click)="addChart(chart.id)">
+          {{ chart.title }}
+        </button>
+      </ng-template>
+    </ng-container>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #subMenu>
+  <ng-template matMenuContent let-items="items">
+    <ng-container *ngFor="let chart of items"
+      ><button mat-menu-item (click)="addChart(chart.id)">
+        {{ chart.title }}
+      </button></ng-container
+    >
+  </ng-template>
 </mat-menu>

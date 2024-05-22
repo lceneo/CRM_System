@@ -11,8 +11,21 @@ import {
   GridsterItem,
   GridType,
 } from 'angular-gridster2';
-import { filter, map, Observable, shareReplay, startWith, tap } from 'rxjs';
+import {
+  filter,
+  fromEvent,
+  isObservable,
+  map,
+  merge,
+  Observable,
+  shareReplay,
+  startWith,
+  Subject,
+  tap,
+} from 'rxjs';
 import { charts } from './charts';
+import { dateRangeChangesSymb } from './component-load/component-load.component';
+import { MatMenu } from '@angular/material/menu';
 
 @Component({
   selector: 'app-diagrams',
@@ -21,6 +34,9 @@ import { charts } from './charts';
 })
 export class DiagramsComponent implements OnDestroy {
   @ViewChild('gridster') gridster!: GridsterComponent;
+  @ViewChild('chartsMenu') menu!: MatMenu;
+
+  destroy$ = new Subject<void>();
 
   options: GridsterConfig = {
     gridType: GridType.ScrollVertical,
@@ -66,14 +82,20 @@ export class DiagramsComponent implements OnDestroy {
     },
   ];
 
-  addChart(title: string) {
+  ngAfterViewInit() {
+    console.log(this.menu.lazyContent);
+    console.log(this.charts);
+  }
+
+  addChart(id: number) {
     const item: GridsterItem = {
-      title,
+      chartId: id,
       cols: 1,
       rows: 1,
       x: 0,
       y: 0,
-      dateRangeChanges$: this.dateRangeChanges$,
+      [dateRangeChangesSymb]: this.dateRangeChanges$,
+      [panelRemovedSymb]: new Subject<void>(),
     };
     const foundSpace = this.gridster.getNextPossiblePosition(item);
     if (foundSpace) {
@@ -94,6 +116,7 @@ export class DiagramsComponent implements OnDestroy {
     ev.preventDefault();
     ev.stopPropagation();
     this.dashboard = this.dashboard.filter((i) => i !== item);
+    item[panelRemovedSymb as any].next();
     this.cdr.detectChanges();
   }
 
@@ -109,10 +132,34 @@ export class DiagramsComponent implements OnDestroy {
     } catch {
       this.dashboard = [];
     }
+
+    this.dashboard.forEach((item) => {
+      item[dateRangeChangesSymb as any] = this.dateRangeChanges$;
+      item[panelRemovedSymb as any] = new Subject<void>();
+    });
+
+    merge(fromEvent(window, 'beforeunload'), this.destroy$).subscribe(() =>
+      this.saveDashboard()
+    );
   }
 
   ngOnDestroy() {
-    localStorage.setItem('diagrams-dashboard', JSON.stringify(this.dashboard));
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private saveDashboard() {
+    const cleaerdDashboard = this.dashboard.map((obj) => {
+      const cleared = {} as GridsterItem;
+      Object.keys(obj)
+        .filter((key) => !isObservable(obj[key]))
+        .forEach((key) => (cleared[key] = obj[key]));
+      return cleared;
+    });
+    localStorage.setItem(
+      'diagrams-dashboard',
+      JSON.stringify(cleaerdDashboard)
+    );
   }
 
   dateForm = this.fb.group(
@@ -162,3 +209,5 @@ export class DiagramsComponent implements OnDestroy {
 
   charts = charts;
 }
+
+export const panelRemovedSymb = Symbol('panelRemoved$');

@@ -20,5 +20,17 @@
         height: calc($resize-size / 2);
       }
     }
+
+    .itemGridster_wrapp {
+      .itemGridster__header_drag {
+        .buttons > button {
+          scale: 0.6;
+        }
+      }
+    }
+  }
+
+  app-component-load + * {
+    height: -webkit-fill-available;
   }
 }
