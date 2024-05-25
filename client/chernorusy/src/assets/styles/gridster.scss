@@ -1,0 +1,36 @@
+@mixin gridster() {
+  $resize-size: 5px;
+  gridster-item.itemGridster {
+    .gridster-item-resizable-handler {
+      &.handle-w,
+      &.handle-e {
+        width: $resize-size;
+      }
+
+      &.handle-n,
+      &.handle-s {
+        height: $resize-size;
+      }
+
+      &.handle-se,
+      &.handle-ne,
+      &.handle-sw,
+      &.handle-nw {
+        width: calc($resize-size / 2);
+        height: calc($resize-size / 2);
+      }
+    }
+
+    .itemGridster_wrapp {
+      .itemGridster__header_drag {
+        .buttons > button {
+          scale: 0.6;
+        }
+      }
+    }
+  }
+
+  app-component-load + * {
+    height: -webkit-fill-available;
+  }
+}

@@ -1,9 +1,136 @@
-<gridster [options]="options">
-  <gridster-item
-    [item]="item"
-    *ngFor="let item of (dashboard ? dashboard : []); let index=index"
-    class="itemGridster" [class.gridster-item-fullscreen]="item.layerIndex === 2" style="min-height: 100px; min-width: 106px"
+<div class="wrapp">
+  <form [formGroup]="dateForm" class="date-time-row">
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="chartsMenu"
+      [matMenuTriggerData]="{ items: charts }"
+    >
+      <mat-icon>add</mat-icon>
+    </button>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Старт:</mat-label>
+      <input
+        matInput
+        [formControl]="dateForm.controls.dateStart"
+        [max]="curDateEndDay"
+        [matDatepicker]="pickerStart"
+      />
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="pickerStart"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #pickerStart></mat-datepicker>
+      <mat-error *ngIf="dateForm.controls.dateStart.hasError('required')"
+        >Заполните поле</mat-error
+      >
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Время начала:</mat-label>
+      <input matInput type="time" [formControl]="dateForm.controls.timeStart" />
+      <mat-hint>ЧЧ:ММ</mat-hint>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+      <mat-label>Конец:</mat-label>
+      <input
+        matInput
+        [formControl]="dateForm.controls.dateEnd"
+        [max]="curDateStartDay"
+        [matDatepicker]="pickerEnd"
+      />
+      <mat-hint>MM/DD/YYYY</mat-hint>
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="pickerEnd"
+      ></mat-datepicker-toggle>
+      <mat-datepicker #pickerEnd></mat-datepicker>
+      <mat-error *ngIf="dateForm.controls.dateEnd.hasError('required')"
+        >Заполните поле</mat-error
+      >
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Время конца:</mat-label>
+      <input matInput type="time" [formControl]="dateForm.controls.timeEnd" />
+      <mat-hint>ЧЧ:ММ</mat-hint>
+    </mat-form-field>
+  </form>
+
+  <gridster
+    #gridster
+    [options]="options"
+    style="background: transparent; overflow: auto"
   >
-    <div class="gridster-item-content" style="background-color: yellow">Actually content</div>
-  </gridster-item>
-</gridster>
+    <gridster-item
+      [item]="item"
+      *ngFor="let item of dashboard ? dashboard : []; let index = index"
+      class="itemGridster"
+      [class.gridster-item-fullscreen]="item.layerIndex === 2"
+      style="min-height: 100px; min-width: 106px"
+    >
+      <div class="itemGridster_wrapp">
+        <ng-template
+          #headerTemplate
+          let-title="title"
+          let-buttonTemplates="buttonTemplates"
+        >
+          <div class="itemGridster__header_drag">
+            <h5>{{ title }}</h5>
+            <div class="buttons">
+              <ng-container *ngFor="let template of buttonTemplates">
+                <ng-template *ngTemplateOutlet="template"></ng-template>
+              </ng-container>
+              <button
+                mat-icon-button
+                (mousedown)="$event.stopPropagation()"
+                (click)="removeChart($event, item)"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+        </ng-template>
+        <div class="itemGridster__content">
+          <app-component-load
+            [dashboardItem]="item"
+            [headerGridsterItem]="headerTemplate"
+          ></app-component-load>
+        </div>
+      </div>
+    </gridster-item>
+  </gridster>
+</div>
+
+<mat-menu #chartsMenu>
+  <ng-template matMenuContent let-items="items">
+    <ng-container *ngFor="let chart of items">
+      <button
+        mat-menu-item
+        *ngIf="chart.children && chart.children.length; else btnNoChildren"
+        [matMenuTriggerFor]="subMenu"
+        [matMenuTriggerData]="{ items: chart.children }"
+      >
+        {{ chart.title }}
+      </button>
+
+      <ng-template #btnNoChildren>
+        <button mat-menu-item (click)="addChart(chart.id)">
+          {{ chart.title }}
+        </button>
+      </ng-template>
+    </ng-container>
+  </ng-template>
+</mat-menu>
+
+<mat-menu #subMenu>
+  <ng-template matMenuContent let-items="items">
+    <ng-container *ngFor="let chart of items"
+      ><button mat-menu-item (click)="addChart(chart.id)">
+        {{ chart.title }}
+      </button></ng-container
+    >
+  </ng-template>
+</mat-menu>

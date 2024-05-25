@@ -1,0 +1,51 @@
+.wrapp {
+  height: -webkit-fill-available;
+}
+
+.itemGridster_wrapp {
+  height: inherit;
+  width: inherit;
+  min-width: inherit;
+  min-height: inherit;
+  border: 5px solid #dfe5eb;
+}
+
+.itemGridster__header_drag {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ecf0f3;
+  padding-inline: 10px;
+  cursor: grab;
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.itemGridster__content {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+h5 {
+  margin: 0;
+  padding: 0;
+}
+
+input[type="time"]::-webkit-datetime-edit-hour-field,
+input[type="time"]::-webkit-datetime-edit-minute-field {
+  padding-inline: 10px;
+  border-radius: 5px;
+}
+
+form {
+  flex-direction: row;
+  gap: 5px;
+}
+
+.buttons {
+  display: flex;
+}
+

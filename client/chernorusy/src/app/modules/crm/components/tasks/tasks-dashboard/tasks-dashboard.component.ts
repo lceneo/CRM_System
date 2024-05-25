@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {TaskState} from "../../../helpers/enums/TaskState";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
-import {TaskService} from "../../../services/task.service";
+import {TaskOrderType, TaskService} from "../../../services/task.service";
 import {ITask} from "../../../helpers/entities/ITask";
 
 @Component({
@@ -26,6 +26,7 @@ export class TasksDashboardComponent {
   dropTask(event: CdkDragDrop<ITask[]>, newTaskState: TaskState) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+      this.taskS.swapTwoItemsInOneStateColumn(event.item.data.id, newTaskState, event.currentIndex, event.previousIndex);
     } else {
       transferArrayItem(
           event.previousContainer.data,
@@ -34,6 +35,7 @@ export class TasksDashboardComponent {
           event.currentIndex,
       );
       this.taskS.updateHTTP$({id: event.item.data.id, state: newTaskState}).subscribe();
+      this.taskS.switchStateInOrderState(event.item.data.id, +event.previousContainer.id, newTaskState, event.currentIndex);
     }
   }
 
