@@ -3,6 +3,9 @@ using API.Infrastructure.BaseApiDTOs;
 using API.Modules.CrmModule.Comments;
 using API.Modules.CrmModule.Comments.DTO;
 using API.Modules.CrmModule.Comments.Requests;
+using API.Modules.CrmModule.Taskcolumns;
+using API.Modules.CrmModule.Taskcolumns.DTO;
+using API.Modules.CrmModule.Taskcolumns.Requests;
 using API.Modules.CrmModule.Tasks;
 using API.Modules.CrmModule.Tasks.DTO;
 using API.Modules.CrmModule.Tasks.Requests;
@@ -18,17 +21,23 @@ public interface ICrmService
     Task<Result<CreateResponse<Guid>>> CreateOrUpdateTaskComment(Guid taskId, CreateOrUpdateTaskCommentRequest request, Guid userId);
     Task<Result<SearchResponseBaseDTO<TaskCommentDTO>>> Search(Guid taskId, SearchTaskCommentsRequest request);
     Task<Result<bool>> DeleteTaskComment(Guid taskId, Guid commentId);
+    
+    Task<Result<SearchResponseBaseDTO<TaskColumnDTO>>> SearchTaskColumns(SearchTaskColumnsRequest request);
+    Task<Result<CreateResponse>> CreateOrUpdateTaskColumn(CreateOrUpdateTaskColumnRequest request);
+    Task<Result<bool>> DeleteTaskColumn(Guid columnId);
 }
 
 public class CrmService : ICrmService
 {
     private readonly ITasksService tasksService;
     private readonly ITasksCommentsService commentsService;
+    private readonly ITasksColumnsService columnsService;
 
-    public CrmService(ITasksService tasksService, ITasksCommentsService commentsService)
+    public CrmService(ITasksService tasksService, ITasksCommentsService commentsService, ITasksColumnsService columnsService)
     {
         this.tasksService = tasksService;
         this.commentsService = commentsService;
+        this.columnsService = columnsService;
     }
 
     public async Task<Result<CreateResponse<Guid>>> CreateOrUpdateTask(CreateOrUpdateTaskRequest request, Guid userId)
@@ -51,4 +60,13 @@ public class CrmService : ICrmService
 
     public async Task<Result<bool>> DeleteTaskComment(Guid taskId, Guid commentId)
         => await commentsService.DeleteTaskComment(taskId, commentId);
+
+    public async Task<Result<SearchResponseBaseDTO<TaskColumnDTO>>> SearchTaskColumns(SearchTaskColumnsRequest request)
+        => await columnsService.Search(request);
+
+    public async Task<Result<CreateResponse>> CreateOrUpdateTaskColumn(CreateOrUpdateTaskColumnRequest request)
+        => await columnsService.CreateOrUpdate(request);
+
+    public async Task<Result<bool>> DeleteTaskColumn(Guid columnId)
+        => await columnsService.Delete(columnId);
 }
