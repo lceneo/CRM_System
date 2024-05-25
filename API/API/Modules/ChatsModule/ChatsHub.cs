@@ -4,6 +4,8 @@ using API.Infrastructure.Extensions;
 using API.Modules.AccountsModule.Entities;
 using API.Modules.ChatsModule.ApiDTO;
 using API.Modules.ChatsModule.Ports;
+using API.Modules.ClientsModule;
+using API.Modules.ClientsModule.Requests;
 using API.Modules.LogsModule;
 using API.Modules.ProfilesModule.Ports;
 using API.Modules.RatingModule.Entities;
@@ -30,6 +32,7 @@ public class ChatsHub : Hub, IHub
     private readonly IRatingRepository ratingRepository;
     private readonly IMapper mapper;
     private readonly ILog log;
+    private readonly IClientsService clientsService;
 
     public ChatsHub(
         HubConnectionsProvider connectionsProvider,
@@ -39,7 +42,8 @@ public class ChatsHub : Hub, IHub
         IProfilesRepository profilesRepository,
         IRatingRepository ratingRepository,
         IMapper mapper,
-        ILog log)
+        ILog log, 
+        IClientsService clientsService)
     {
         this.connectionsProvider = connectionsProvider;
         this.chatsService = chatsService;
@@ -49,6 +53,7 @@ public class ChatsHub : Hub, IHub
         this.ratingRepository = ratingRepository;
         this.mapper = mapper;
         this.log = log;
+        this.clientsService = clientsService;
     }
 
     public async Task Send(SendMessageRequest request)
@@ -180,6 +185,27 @@ public class ChatsHub : Hub, IHub
         };
         await ratingRepository.CreateAsync(rate);
         await log.Info($"Пользователь: {userId} оставил отзыв о менеджере: {manager.Id} в чате: {chat.Id}");
+    }
+
+    public async Task CreateClient(CreateClientInHubRequest request)
+    {
+        var chat = await chatsRepository.GetByIdAsync(request.ChatId);
+        if (chat == null)
+        {
+            await log.Error($"Hub. Не найден чат: {request.ChatId}");
+            return;
+        }
+        
+        var createReq = mapper.Map<CreateOrUpdateClientRequest>(request);
+        var response = await clientsService.CreateOrUpdateClient(createReq);
+        if (!response.IsSuccess)
+        {
+            await Clients.Caller.SendAsync("Error", response.Error);
+            return;
+        }
+
+        await Managers.SendAsync("ChangeChat", chat.Id);
+        await log.Info($"Клиент заполнил информацию о себе в chat: [{request.ChatId}]");
     }
 
     public override Task OnConnectedAsync()

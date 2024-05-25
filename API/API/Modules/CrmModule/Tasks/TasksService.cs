@@ -3,6 +3,8 @@ using API.Infrastructure;
 using API.Infrastructure.BaseApiDTOs;
 using API.Modules.ClientsModule;
 using API.Modules.CrmModule.Comments;
+using API.Modules.CrmModule.Taskcolumns;
+using API.Modules.CrmModule.Taskcolumns.Requests;
 using API.Modules.CrmModule.Tasks.DTO;
 using API.Modules.CrmModule.Tasks.Entities;
 using API.Modules.CrmModule.Tasks.Requests;
@@ -29,8 +31,9 @@ public class TasksService : ITasksService
     private readonly IProfilesRepository profilesRepository;
     private readonly IProductsRepository productsRepository;
     private readonly IClientsRepository clientsRepository;
+    private readonly ITaskColumnsRepository columnsRepository;
 
-    public TasksService(ILog log, IMapper mapper, ITasksRepository tasksRepository, IProfilesRepository profilesRepository, IProductsRepository productsRepository, IClientsRepository clientsRepository)
+    public TasksService(ILog log, IMapper mapper, ITasksRepository tasksRepository, IProfilesRepository profilesRepository, IProductsRepository productsRepository, IClientsRepository clientsRepository, ITaskColumnsRepository columnsRepository)
     {
         this.log = log;
         this.mapper = mapper;
@@ -38,6 +41,7 @@ public class TasksService : ITasksService
         this.profilesRepository = profilesRepository;
         this.productsRepository = productsRepository;
         this.clientsRepository = clientsRepository;
+        this.columnsRepository = columnsRepository;
     }
 
     public async Task<Result<CreateResponse<Guid>>> CreateOrUpdateTask(CreateOrUpdateTaskRequest request, Guid userId)
@@ -76,6 +80,16 @@ public class TasksService : ITasksService
                 return Result.NotFound<CreateResponse<Guid>>("Пользователя, на которого хотите назначить задачу, не существует");
 
             task.AssignedTo = assignedTo;
+        }
+        if (request.ColumnId != null)
+        {
+            var columnSearch = request.ColumnId != Guid.Empty
+                ? await columnsRepository.Search(new SearchTaskColumnsRequest() {Ids = new HashSet<Guid>() {request.ColumnId.Value}})
+                : null;
+            if (columnSearch.TotalCount == 0)
+                return Result.NotFound<CreateResponse<Guid>>("Колонки для задачи не существует");
+
+            task.Column = columnSearch.Items.First();
         }
         if (request.ProductIds != null)
         {
