@@ -9,5 +9,6 @@ public class ClientsMapping : Profile
     {
         CreateMap<ClientEntity, ClientDTO>();
         CreateMap<CreateOrUpdateClientRequest, ClientEntity>();
+        CreateMap<CreateClientInHubRequest, CreateOrUpdateClientRequest>();
     }
 }

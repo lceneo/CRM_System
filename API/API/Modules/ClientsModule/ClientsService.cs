@@ -51,6 +51,16 @@ public class ClientsService : IClientsService
             client = searchResp.Items.First();
         }
 
+        if (isCreated && request.Email == null && request.Phone == null)
+            return Result.BadRequest<CreateResponse>("Email или телефон обязяателны");
+        var existed = await clientsRepository.Search(new SearchClientsRequest()
+        {
+            Email = request.Email,
+            Phone = request.Phone,
+        });
+        if (existed.TotalCount != 0)
+            return Result.BadRequest<CreateResponse>("Email/телефон уже занят");
+
         client ??= new ClientEntity();
         mapper.Map(request, client);
         if (isCreated)
