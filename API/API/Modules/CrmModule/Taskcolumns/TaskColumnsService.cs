@@ -52,6 +52,8 @@ public class TaskColumnsService : ITasksColumnsService
             column.Name = request.Name;
         if (request.Order != null)
             column.Order = request.Order.Value;
+        if (request.Color != null)
+            column.Color = request.Color;
 
         if (isCreated)
             await taskColumnsRepository.CreateAsync(column);
