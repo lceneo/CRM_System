@@ -12,7 +12,7 @@ public class TasksMapping : Profile
         CreateMap<CreateOrUpdateTaskRequest, TaskEntity>()
             .ForMember(dest => dest.AssignedTo, opt => opt.Ignore())
             .ForMember(dest => dest.Products, opt => opt.Ignore())
-            .ForMember(dest => dest.State, opt => opt.MapFrom((src, dest) => src.State ?? dest.State))
+            .ForMember(dest => dest.Column, opt => opt.Ignore())
             .ForMember(dest => dest.Descrption, opt => opt.MapFrom((src, dest) => src.Descrption ?? dest.Descrption))
             .ForMember(dest => dest.Title, opt => opt.MapFrom((src, dest) => src.Title ?? dest.Title));
         CreateMap<TaskActionEntity, TaskActionDTO>()
@@ -20,6 +20,7 @@ public class TasksMapping : Profile
         CreateMap<TaskEntity, TaskDTO>()
             .ForMember(dest => dest.AssignedTo, opt => opt.MapFrom(src => src.AssignedTo))
             .ForMember(dest => dest.Creation, opt => opt.MapFrom(src => src.Actions.First()))
+            .ForMember(dest => dest.Column, opt => opt.MapFrom(src => src.Column))
             .ForMember(dest => dest.LastEdition, opt => opt.MapFrom(src => src.Actions.Last()))
             .ForMember(dest => dest.Comments, opt => opt.MapFrom(src => src.Comments))
             .ForMember(dest => dest.Products, opt => opt.MapFrom(src => src.Products));

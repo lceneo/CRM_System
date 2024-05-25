@@ -3,6 +3,8 @@ using API.Infrastructure.BaseApiDTOs;
 using API.Modules.CrmModule.Comments.DTO;
 using API.Modules.CrmModule.Comments.Requests;
 using API.Modules.CrmModule.Crm;
+using API.Modules.CrmModule.Taskcolumns.DTO;
+using API.Modules.CrmModule.Taskcolumns.Requests;
 using API.Modules.CrmModule.Tasks.DTO;
 using API.Modules.CrmModule.Tasks.Requests;
 using Microsoft.AspNetCore.Authorization;
@@ -131,6 +133,44 @@ public class CrmController : ControllerBase
     {
         await crmService.DeleteTaskComment(taskId, commentId);
         await hub.NotifyChanges(User.GetId(), taskId);
+        return NoContent();
+    }
+
+    /// <summary>
+    /// Поиск по Колонкам задач
+    /// </summary>
+    /// <param name="request"></param>
+    /// <returns></returns>
+    [HttpPost("Tasks/Columns/Search")]
+    public async Task<ActionResult<SearchResponseBaseDTO<TaskColumnDTO>>> SearchTaskColumns(
+        [FromBody] SearchTaskColumnsRequest request)
+    {
+        var res = await crmService.SearchTaskColumns(request);
+        return res.ActionResult;
+    }
+
+    /// <summary>
+    /// Создает/редактирует Колонку задачи
+    /// </summary>
+    /// <remarks>
+    /// Если добавлять, то должны быть `все` поля, кроме `Id`
+    /// </remarks>
+    [HttpPost("Tasks/Columns")]
+    public async Task<ActionResult<CreateResponse>> CreateOrUpdateTaskColumn(
+        [FromBody] CreateOrUpdateTaskColumnRequest request)
+    {
+        var res = await crmService.CreateOrUpdateTaskColumn(request);
+        await hub.NotifyChanges(User.GetId());
+        return res.ActionResult;
+    }
+
+    /// <summary>
+    /// Удалить Колонку
+    /// </summary>
+    [HttpDelete("Tasks/Columns/{columnId:Guid}")]
+    public async Task<ActionResult> DeleteAsync([FromRoute] Guid columnId)
+    {
+        var res = await crmService.DeleteTaskColumn(columnId);
         return NoContent();
     }
 }
