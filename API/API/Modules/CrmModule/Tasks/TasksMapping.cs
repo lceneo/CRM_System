@@ -14,7 +14,8 @@ public class TasksMapping : Profile
             .ForMember(dest => dest.Products, opt => opt.Ignore())
             .ForMember(dest => dest.Column, opt => opt.Ignore())
             .ForMember(dest => dest.Descrption, opt => opt.MapFrom((src, dest) => src.Descrption ?? dest.Descrption))
-            .ForMember(dest => dest.Title, opt => opt.MapFrom((src, dest) => src.Title ?? dest.Title));
+            .ForMember(dest => dest.Title, opt => opt.MapFrom((src, dest) => src.Title ?? dest.Title))
+            .ForMember(dest => dest.Priority, opt => opt.MapFrom((src, dest) => src.Priority ?? dest.Priority));
         CreateMap<TaskActionEntity, TaskActionDTO>()
             .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User));
         CreateMap<TaskEntity, TaskDTO>()

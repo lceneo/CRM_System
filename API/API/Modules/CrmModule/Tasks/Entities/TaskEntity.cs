@@ -16,6 +16,7 @@ public class TaskEntity : IEntity
     public TaskColumnEntity? Column { get; set; }
     public string Title { get; set; }
     public string Descrption { get; set; }
+    public int Priority { get; set; }
     public HashSet<TaskActionEntity> Actions { get; set; }
     public HashSet<TaskCommentEntity> Comments { get; set; }
     public HashSet<ProductEntity> Products { get; set; } = new();

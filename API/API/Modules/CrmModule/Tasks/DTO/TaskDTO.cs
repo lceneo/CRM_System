@@ -14,6 +14,7 @@ public class TaskDTO
     public TaskColumnDTO Column { get; set; }
     public string Title { get; set; }
     public string Descrption { get; set; }
+    public int Priority { get; set; }
     public TaskActionDTO Creation { get; set; }
     public TaskActionDTO LastEdition { get; set; }
     public IEnumerable<TaskCommentDTO> Comments { get; set; }
