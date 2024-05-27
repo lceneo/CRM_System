@@ -178,7 +178,22 @@ export class ManagersStatisticPanelComponent
     switchMap((ids) =>
       this.statS.getAverageAnswerTime$(ids, ...this.getThisMonthDateSpan())
     ),
-    shareReplay()
+    map((resp) => {
+      return resp.reduce((grouped, { averageTime, managerId }) => {
+        if (!averageTime) {
+          grouped[managerId] = null;
+          return grouped;
+        }
+        const a = /(?<hours>\d\d):(?<minutes>\d\d):(?<seconds>\d\d)\./g.exec(
+          averageTime
+        )!;
+        const { hours, minutes, seconds } = a.groups!;
+        const milliseconds =
+          +hours * 60 * 60 * 1000 + +minutes * 60 * 1000 + +seconds * 1000;
+        grouped[managerId] = milliseconds;
+        return grouped;
+      }, {} as { [managerId: string]: number | null });
+    })
   );
 
   private getThisMonthDateSpan(): [Date, Date] {
@@ -212,6 +227,7 @@ export class ManagersStatisticPanelComponent
   }
 
   protected readonly ColumnMode = ColumnMode;
+  protected readonly Math = Math;
 }
 
 type SearchForm = FormGroup<{

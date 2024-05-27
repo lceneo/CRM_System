@@ -73,5 +73,18 @@
   let-row="row"
   let-column="column"
 >
-  <span>{{(averageTimes$ | async)?.[row.id] ?? '-'}}</span>
+  <ng-container *ngLet="(averageTimes$ | async)?.[row.id] as avgTimeMs">
+    <span *ngIf="avgTimeMs === null">-</span>
+    <span *ngIf="avgTimeMs! < 1000">0 сек.</span>
+    <span *ngIf="avgTimeMs! >= 1000 && avgTimeMs! < 1000 * 60">
+      {{ Math.floor(avgTimeMs! / 1000) }} сек.
+    </span>
+    <span *ngIf="avgTimeMs! >= 1000 * 60 && avgTimeMs! < 1000 * 60 * 60">
+      {{ Math.floor(avgTimeMs! / 1000 / 60) }} мин.
+    </span>
+    <span *ngIf="avgTimeMs! >= 1000 * 60 * 60">
+      {{ Math.floor(avgTimeMs! / 1000 / 60 / 60) }} ч.
+      {{ Math.floor((avgTimeMs! / 1000 / 60) % 60) }} мин.
+    </span>
+  </ng-container>
 </ng-template>

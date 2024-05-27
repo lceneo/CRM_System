@@ -109,23 +109,8 @@ export class StatisticsService {
 
 export interface GetAverageAnswerTimeResponse {
   managerId: string;
-  averageTime: {
-    ticks: number;
-    days: number;
-    hours: number;
-    milliseconds: number;
-    microseconds: number;
-    nanoseconds: number;
-    minutes: number;
-    seconds: number;
-    totalDays: number;
-    totalHours: number;
-    totalMilliseconds: number;
-    totalMicroseconds: number;
-    totalNanoseconds: number;
-    totalMinutes: number;
-    totalSeconds: number;
-  } | null;
+  /** "00:00:05.4811530" */
+  averageTime: string | null;
 }
 
 export interface GetActivityStatsResponse {
