@@ -1,0 +1,89 @@
+<ngx-datatable
+  #table
+  [rows]="rows"
+  [virtualization]="false"
+  [scrollbarH]="true"
+  [scrollbarV]="true"
+  [columnMode]="ColumnMode.force"
+  [messages]="{ emptyMessage: 'Нет менеджеров' }"
+  [loadingIndicator]="(load$ | async)!"
+  style="width: 100%; height: 100%"
+>
+  <ngx-datatable-column
+    *ngFor="let col of columns"
+    [name]="col.name!"
+    [prop]="col.prop!"
+    [width]="col.width || 100"
+    [minWidth]="col.minWidth || 100"
+    [frozenLeft]="col.prop === 'managerId'"
+    [cellTemplate]="col.cellTemplate! || countTmpl"
+    [headerTemplate]="col.headerTemplate ?? null"
+  >
+    <ng-template
+      #managerTmpl
+      ngx-datatable-cell-template
+      let-row="row"
+      let-column="column"
+      let-value="value"
+    >
+      <span *ngIf="!!managerNames[row[column.prop]]">
+        {{ managerNames[value]?.name ?? "" }}
+        {{ managerNames[value]?.surname ?? "" }}
+      </span>
+      <span *ngIf="!managerNames[row[column.prop]]">no name-</span>
+    </ng-template>
+
+    <ng-template
+      #countTmpl
+      ngx-datatable-cell-template
+      let-row="row"
+      let-column="column"
+      let-value="value"
+    >
+      <ng-container [ngSwitch]="column.prop">
+        <ng-container *ngSwitchCase="'managerId'"
+          ><ng-template
+            *ngTemplateOutlet="
+              managerTmpl;
+              context: { row: row, column: column, value: value }
+            "
+          ></ng-template
+        ></ng-container>
+        <span *ngSwitchDefault>
+          {{ data[row.managerId][dateIndexes[column.name]]?.dialogsCount ?? 0 }}
+        </span>
+      </ng-container>
+    </ng-template>
+
+    <ng-template
+      #dateHeaderTmpl
+      ngx-datatable-header-template
+      let-column="column"
+    >
+      <ng-container *ngIf="column.prop === 'managerId'">{{
+        column.name
+      }}</ng-container>
+      <ng-container *ngIf="column.prop !== 'managerId'">{{
+        column.prop | date : "YYYY.MM.dd"
+      }}</ng-container>
+    </ng-template>
+  </ngx-datatable-column>
+</ngx-datatable>
+
+<ng-template #managerChoseBtn>
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>settings</mat-icon>
+  </button>
+</ng-template>
+
+<mat-menu #menu (closed)="deselectedManagers$.next(deselectedManagers$.value)">
+  <mat-selection-list #managerSelectionList (click)="$event.stopPropagation()">
+    <mat-list-option
+      [selected]="!deselectedManagers$.value.has(manager.id)"
+      (selectedChange)="changeSelection(manager, $event)"
+      togglePosition="before"
+      *ngFor="let manager of managers$ | async"
+      >{{ manager.name }} {{ manager.surname }}
+    </mat-list-option>
+  </mat-selection-list>
+</mat-menu>

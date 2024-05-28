@@ -32,7 +32,7 @@ export function ChartDashboardMenu(
       const subMenuItem: ImportItem = {
         id: `${title}:${subMenu.title}`,
         title: subMenu.title,
-        dashboardTitle,
+        dashboardTitle: subMenu.dashboardTitle,
         import: () => import(`./modules/${module}/${module}.module`),
         component: () => subMenu.component,
       };

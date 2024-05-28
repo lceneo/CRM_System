@@ -24,8 +24,9 @@ import {
   tap,
 } from 'rxjs';
 import { charts } from './charts';
-import { dateRangeChangesSymb } from './component-load/component-load.component';
+import { dateRangeChangesSymb, panelResizedSymb } from './chart-item';
 import { MatMenu } from '@angular/material/menu';
+import { panelRemovedSymb } from './chart-item';
 
 @Component({
   selector: 'app-diagrams',
@@ -63,7 +64,9 @@ export class DiagramsComponent implements OnDestroy {
     maxItemArea: 10000,
     minItemRows: 1,
     minItemCols: 1,
-
+    itemResizeCallback: (item, itemComponent) => {
+      item[panelResizedSymb as any].next();
+    },
     draggable: {
       enabled: true,
       dragHandleClass: 'itemGridster__header_drag',
@@ -96,6 +99,7 @@ export class DiagramsComponent implements OnDestroy {
       y: 0,
       [dateRangeChangesSymb]: this.dateRangeChanges$,
       [panelRemovedSymb]: new Subject<void>(),
+      [panelResizedSymb]: new Subject<{ fullscreen?: boolean } | void>(),
     };
     const foundSpace = this.gridster.getNextPossiblePosition(item);
     if (foundSpace) {
@@ -136,10 +140,64 @@ export class DiagramsComponent implements OnDestroy {
     this.dashboard.forEach((item) => {
       item[dateRangeChangesSymb as any] = this.dateRangeChanges$;
       item[panelRemovedSymb as any] = new Subject<void>();
+      item[panelResizedSymb as any] = new Subject<{
+        fullscreen?: boolean;
+      } | void>();
     });
 
     merge(fromEvent(window, 'beforeunload'), this.destroy$).subscribe(() =>
       this.saveDashboard()
+    );
+  }
+
+  toggleFullscreen(ev: MouseEvent | TouchEvent, item: GridsterItem) {
+    const toFullscreen = item.layerIndex !== 2;
+    if (toFullscreen) {
+      item.resizeEnabled = false;
+      item.dragEnabled = false;
+      item.layerIndex = 2;
+      const { x, y, cols, rows } = item;
+      item['prevPosition'] = {
+        x,
+        y,
+        cols,
+        rows,
+      };
+      item.x = 0;
+      item.y = 0;
+      item.cols = 100;
+      item.rows = 100;
+    } else {
+      item.resizeEnabled = true;
+      item.dragEnabled = true;
+      item.layerIndex = 1;
+      console.log(item['prevPosition']);
+      if (item['prevPosition']) {
+        const { x, y, cols, rows } = item['prevPosition'];
+        item.x = x;
+        item.y = y;
+        item.cols = cols;
+        item.rows = rows;
+      } else {
+        this.gridster.getNextPossiblePosition(item);
+      }
+    }
+
+    console.log(
+      item.layerIndex,
+      item.resizeEnabled,
+      item.dragEnabled,
+      item.x,
+      item.y,
+      item.cols,
+      item.rows
+    );
+    console.log(this.gridster.grid);
+
+    this.options?.api?.optionsChanged?.();
+    setTimeout(
+      () => item[panelResizedSymb as any]?.next({ fullscreen: toFullscreen }),
+      250
     );
   }
 
@@ -209,5 +267,3 @@ export class DiagramsComponent implements OnDestroy {
 
   charts = charts;
 }
-
-export const panelRemovedSymb = Symbol('panelRemoved$');

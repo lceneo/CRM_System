@@ -26,12 +26,15 @@ import {
 import { IProfileResponseDTO } from 'src/app/modules/profile/DTO/response/ProfileResponseDTO';
 
 @Component({
-  selector: 'app-received-dialogs-overall-chart',
-  templateUrl: './received-dialogs-overall.component.html',
-  styleUrls: ['./received-dialogs-overall.component.scss'],
+  selector: 'app-send-messages-overall-chart',
+  templateUrl: './send-messages-overall.component.html',
+  styleUrls: ['./send-messages-overall.component.scss'],
 })
-@ChartDashboardItem('Кол-во диалогов по менеджерам', 'received-dialogs-overall')
-export class ReceivedDialogsOverallComponent {
+@ChartDashboardItem(
+  'Кол-во сообщений по менеджерам по менеджерам',
+  'send-messages-overall'
+)
+export class SendMessagesOverallComponent {
   [dateRangeChangesSymb]!: Observable<[from: Date, to: Date]>;
   [headerButtonsSymb] = new Subject();
   [panelRemovedSymb]!: Subject<void>;
@@ -93,7 +96,7 @@ export class ReceivedDialogsOverallComponent {
     console.log('tooltip', { managerName, date, count });
     return `<time>${this.dateP.transform(date, 'yyyy-MM-dd')}</time>
     <hr>
-    <b>${managerName}</b> диалогов: ${count}`;
+    <b>${managerName}</b> сообщений: ${count}`;
   }
 
   destroy$ = new Subject<void>();
@@ -136,11 +139,11 @@ export class ReceivedDialogsOverallComponent {
           }
           grouped[cur.managerId].push(...cur.dailyStat);
           return grouped;
-        }, {} as { [managerId: string]: { date: string; dialogsCount: number }[] });
+        }, {} as { [managerId: string]: { date: string; messagesCount: number }[] });
 
         Object.keys(byManagerId).forEach((managerId) => {
           const stats = byManagerId[managerId];
-          const groupedByDayDialogsCount = stats.reduce((grouped, cur) => {
+          const groupedByDayMessagesCount = stats.reduce((grouped, cur) => {
             const date = new Date(cur.date);
             const year = date.getFullYear();
             const month = date.getMonth();
@@ -149,17 +152,17 @@ export class ReceivedDialogsOverallComponent {
             if (!grouped[dayStr]) {
               grouped[dayStr] = [];
             }
-            grouped[dayStr].push(cur.dialogsCount);
+            grouped[dayStr].push(cur.messagesCount);
             return grouped;
           }, {} as Record<string, number[]>);
-          const finalData = Object.keys(groupedByDayDialogsCount)
+          const finalData = Object.keys(groupedByDayMessagesCount)
             .map((dateString) => {
-              const counts = groupedByDayDialogsCount[dateString];
+              const counts = groupedByDayMessagesCount[dateString];
               const countsSum = counts.reduce((acc, cur) => (acc += cur), 0);
               const meanCount = Math.ceil(countsSum / counts.length);
               const [year, month, day] = dateString.split('::').map(Number);
               const date = new Date(year, month, day, 0, 0, 0, 0).toISOString();
-              return { date, dialogsCount: meanCount };
+              return { date, messagesCount: meanCount };
             })
             .sort(
               (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
@@ -171,7 +174,7 @@ export class ReceivedDialogsOverallComponent {
         const values = Object.keys(byManagerId).map((managerId) => ({
           name: `${names[managerId].name} ${names[managerId].surname}`,
           type: 'line',
-          data: byManagerId[managerId].map((d) => [d.date, d.dialogsCount]),
+          data: byManagerId[managerId].map((d) => [d.date, d.messagesCount]),
         }));
 
         (this.options.series as any) = values;

@@ -86,6 +86,16 @@
               <button
                 mat-icon-button
                 (mousedown)="$event.stopPropagation()"
+                (click)="toggleFullscreen($event, item)"
+              >
+                <mat-icon *ngIf="item.layerIndex === 2">
+                  fullscreen_exit
+                </mat-icon>
+                <mat-icon *ngIf="item.layerIndex !== 2">fullscreen</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                (mousedown)="$event.stopPropagation()"
                 (click)="removeChart($event, item)"
               >
                 <mat-icon>close</mat-icon>
