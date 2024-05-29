@@ -110,7 +110,7 @@ export function createClientFormView({
   const validityState = {
     surname: false,
     name: false,
-    patronymic: false,
+    patronymic: true,
     emailOrPhone: false,
   };
 

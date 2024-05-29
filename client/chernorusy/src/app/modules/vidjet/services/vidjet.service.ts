@@ -1,23 +1,27 @@
 import { Injectable } from '@angular/core';
-import {EntityStateManager} from "../../../shared/helpers/entityStateManager";
-import {IVidjet} from "../entities/Vidjet";
-import {IVidjetPOSTResponseDTO} from "../DTO/response/VidjetPOSTResponseDTO";
-import {IVidjetPOSTRequestDTO} from "../DTO/request/VidjetPOSTRequestDTO";
-import {tap} from "rxjs";
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
+import { EntityStateManager } from '../../../shared/helpers/entityStateManager';
+import { IVidjet } from '../entities/Vidjet';
+import { IVidjetPOSTResponseDTO } from '../DTO/response/VidjetPOSTResponseDTO';
+import { IVidjetPOSTRequestDTO } from '../DTO/request/VidjetPOSTRequestDTO';
+import { tap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class VidjetService extends EntityStateManager<IVidjet> {
-
-
-
+  protected override httpInitMethod = 'get' as 'get';
   protected override initMethod = '/Vidjets';
-  protected override mapFn = (res: {items: IVidjet[]}) => {
-    res.items.forEach(item => item.styles = typeof item.styles === 'string' ? JSON.parse(item.styles) : item.styles);
+  protected override mapFn = (res: { items: IVidjet[] }) => {
+    res.items.forEach(
+      (item) =>
+        (item.styles =
+          typeof item.styles === 'string'
+            ? JSON.parse(item.styles)
+            : item.styles)
+    );
     return res.items;
-  }
+  };
 
   public readonly defaultStyles: Customization = {
     comeMsg: {
@@ -29,7 +33,7 @@ export class VidjetService extends EntityStateManager<IVidjet> {
         size: 14,
         type: 'px',
         color: 'black',
-        lineHeight: 1
+        lineHeight: 1,
       },
     },
     mngMsg: {
@@ -41,14 +45,14 @@ export class VidjetService extends EntityStateManager<IVidjet> {
         size: 7,
         type: 'px',
         color: 'black',
-        lineHeight: 1
+        lineHeight: 1,
       },
       content: {
         align: 'left',
         size: 14,
         type: 'px',
         color: 'black',
-        lineHeight: 1
+        lineHeight: 1,
       },
     },
     userMsg: {
@@ -60,14 +64,14 @@ export class VidjetService extends EntityStateManager<IVidjet> {
         size: 7,
         type: 'px',
         color: 'black',
-        lineHeight: 1
+        lineHeight: 1,
       },
       content: {
         align: 'left',
         size: 14,
         type: 'px',
         color: 'black',
-        lineHeight: 1
+        lineHeight: 1,
       },
     },
     content: {
@@ -79,12 +83,15 @@ export class VidjetService extends EntityStateManager<IVidjet> {
       padding: '5px 5px 5px 5px',
     },
     header: {
-      bgc:'black',
+      bgc: 'black',
       padding: '5px 5px 5px 5px',
     },
-    online: {color: {offline: "", online: ""}, show: false, size: 0},
-    position: {X: {side: 'left', move: 0, moveType: 'px'}, Y: {side: 'bottom', move: 0, moveType: 'px'}},
-  }
+    online: { color: { offline: '', online: '' }, show: false, size: 0 },
+    position: {
+      X: { side: 'left', move: 0, moveType: 'px' },
+      Y: { side: 'bottom', move: 0, moveType: 'px' },
+    },
+  };
 
   constructor() {
     super();
@@ -94,78 +101,73 @@ export class VidjetService extends EntityStateManager<IVidjet> {
     this.initStore();
   }
 
-
   public createOrUpdateVidjet(vidjet: IVidjetPOSTRequestDTO) {
-    return this.httpS.post<IVidjetPOSTResponseDTO>('/Vidjets', vidjet)
-      .pipe(
-        tap((res) => {
-          'id' in vidjet ? this.updateByID(vidjet.id as string, {domen: vidjet.domen})
-              //@ts-ignore
-            : this.upsertEntities([{...vidjet, id: res.id}]);
-        })
-      )
+    return this.httpS.post<IVidjetPOSTResponseDTO>('/Vidjets', vidjet).pipe(
+      tap((res) => {
+        'id' in vidjet
+          ? this.updateByID(vidjet.id as string, { domen: vidjet.domen })
+          : //@ts-ignore
+            this.upsertEntities([{ ...vidjet, id: res.id }]);
+      })
+    );
   }
 
-  public getStyles() {
-
-  }
+  public getStyles() {}
 
   public deleteVidjet(id: string) {
-    return this.httpS.delete(`/Vidjets/${id}`)
-      .pipe(
-        tap(() => this.removeByID(id))
-      );
+    return this.httpS
+      .delete(`/Vidjets/${id}`)
+      .pipe(tap(() => this.removeByID(id)));
   }
-
 }
-
-
 
 export interface Customization {
   position: {
-    X: CustomizationPosition<'left' | 'right'>,
-    Y: CustomizationPosition<'top' | 'bottom'>,
-  }
-  header: DefaultSection,
-  footer: DefaultSection,
-  content: DefaultSection,
-  userMsg: DefaultMessage,
-  mngMsg: DefaultMessage,
-  comeMsg: Omit<DefaultMessage, 'time'>,
+    X: CustomizationPosition<'left' | 'right'>;
+    Y: CustomizationPosition<'top' | 'bottom'>;
+  };
+  header: DefaultSection;
+  footer: DefaultSection;
+  content: DefaultSection;
+  userMsg: DefaultMessage;
+  mngMsg: DefaultMessage;
+  comeMsg: Omit<DefaultMessage, 'time'>;
   online: {
     color: {
-      online: string,
-      offline: string,
-    },
-    size: number,
-    show: boolean
-  }
+      online: string;
+      offline: string;
+    };
+    size: number;
+    show: boolean;
+  };
 }
 
 export interface DefaultMessage extends DefaultSection {
   content: Font & {
-    align: 'left' | 'center' | 'right'
-  },
+    align: 'left' | 'center' | 'right';
+  };
   time: Font & {
-    align: 'left' | 'center' | 'right'
-  },
-  side: 'left' | 'center' | 'right'
+    align: 'left' | 'center' | 'right';
+  };
+  side: 'left' | 'center' | 'right';
 }
 
 export interface DefaultSection {
-  bgc: string
-  padding: string
+  bgc: string;
+  padding: string;
 }
 
 interface Font {
-  size: number,
-  type: 'em' | 'px' | 'rem'
-  color: string
-  lineHeight: number
+  size: number;
+  type: 'em' | 'px' | 'rem';
+  color: string;
+  lineHeight: number;
 }
 
-interface CustomizationPosition<TSide extends 'left' | 'right' | 'top' | 'bottom'> {
-  side: TSide
-  move: number
-  moveType: 'px' | '%'
+interface CustomizationPosition<
+  TSide extends 'left' | 'right' | 'top' | 'bottom'
+> {
+  side: TSide;
+  move: number;
+  moveType: 'px' | '%';
 }

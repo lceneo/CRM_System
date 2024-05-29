@@ -1,23 +1,62 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from './http.service';
-import { catchError, map, of } from 'rxjs';
+import { catchError, map, of, tap } from 'rxjs';
+import { EntityStateManager } from '../helpers/entityStateManager';
 
 @Injectable({ providedIn: 'root' })
-export class ClientService {
-  constructor(private httpS: HttpService) {}
+export class ClientService extends EntityStateManager<Client> {
+  protected override httpInitMethod: 'get' | 'post' = 'post';
+  protected override httpInitBody?: any = {};
+  protected override initMethod: string = '/Client/Search';
+  protected override mapFn?: Function | undefined = (
+    resp: ClientSearchResponse
+  ) => resp.items;
+  constructor() {
+    super();
+    this.getEntitiesSync;
+  }
+
+  updateData$() {
+    return this.search$().pipe(
+      tap((resp) => {
+        this.upsertEntities(resp.items);
+      })
+    );
+  }
 
   createOrUpdate$(client: ClientCreateOrUpdate) {
-    return this.httpS.post<{
-      id: string;
-      isCreated: boolean;
-    }>('/Client', client);
+    return this.httpS
+      .post<{
+        id: string;
+        isCreated: boolean;
+      }>('/Client', client)
+      .pipe(
+        tap(({ id, isCreated }) => {
+          if (!isCreated) {
+            this.updateByID(id, client);
+          } else {
+            this.upsertEntities([
+              {
+                phone: null,
+                email: null,
+                patronymic: null,
+                description: null,
+                ...client,
+                id,
+              },
+            ]);
+          }
+        })
+      );
   }
 
   delete$(clientId: string) {
-    return this.httpS.delete(`/Client/${clientId}`);
+    return this.httpS
+      .delete(`/Client/${clientId}`)
+      .pipe(tap(() => this.removeByID(clientId)));
   }
 
-  search$(search: ClientSearch) {
+  search$(search: ClientSearch = {}) {
     return this.httpS
       .post<ClientSearchResponse>('/Client/Search', search)
       .pipe(catchError(() => of({ totalCount: 0, items: [] })));
