@@ -10,7 +10,7 @@ namespace API.Modules.ClientsModule;
 public interface IClientsService
 {
     Task<Result<SearchResponseBaseDTO<ClientDTO>>> Search(SearchClientsRequest request);
-    Task<Result<CreateResponse>> CreateOrUpdateClient(CreateOrUpdateClientRequest request);
+    Task<Result<CreateResponse>> CreateOrUpdateClient(CreateOrUpdateClientRequest request, bool fromHub = false);
     Task<Result<bool>> Delete(Guid clientId);
 }
 
@@ -36,7 +36,7 @@ public class ClientsService : IClientsService
         });
     }
 
-    public async Task<Result<CreateResponse>> CreateOrUpdateClient(CreateOrUpdateClientRequest request)
+    public async Task<Result<CreateResponse>> CreateOrUpdateClient(CreateOrUpdateClientRequest request, bool fromHub = false)
     {
         ClientEntity? client = null;
         var isCreated = request.Id == null;
@@ -59,7 +59,12 @@ public class ClientsService : IClientsService
             Phone = request.Phone,
         });
         if (existed.TotalCount != 0)
-            return Result.BadRequest<CreateResponse>("Email/телефон уже занят");
+        {
+            if (!fromHub)
+                return Result.BadRequest<CreateResponse>("Email/телефон уже занят");
+
+            return Result.Ok(new CreateResponse(){IsCreated = false, Id = existed.Items.First().Id});
+        }
 
         client ??= new ClientEntity();
         mapper.Map(request, client);
