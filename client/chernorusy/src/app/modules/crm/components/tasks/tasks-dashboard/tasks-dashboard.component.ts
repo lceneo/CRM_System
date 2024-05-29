@@ -1,8 +1,9 @@
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {TaskState} from "../../../helpers/enums/TaskState";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
-import {TaskOrderType, TaskService} from "../../../services/task.service";
+import {TaskService} from "../../../services/task.service";
 import {ITask} from "../../../helpers/entities/ITask";
+import {ColumnService} from "../../../services/column.service";
 
 @Component({
   selector: 'app-tasks-dashboard',
@@ -13,20 +14,16 @@ import {ITask} from "../../../helpers/entities/ITask";
 export class TasksDashboardComponent {
 
   constructor(
+      private columnS: ColumnService,
       private taskS: TaskService
   ) {}
 
-  protected newTasks = this.taskS.getEntitiesAsync(t => t.state === TaskState.New);
-  protected pausedTasks = this.taskS.getEntitiesAsync(t => t.state === TaskState.Pause);
-  protected inProgressTasks = this.taskS.getEntitiesAsync(t => t.state === TaskState.InProgress);
-  protected doneTasks = this.taskS.getEntitiesAsync(t => t.state === TaskState.Done);
-  protected archivedTasks = this.taskS.getEntitiesAsync(t => t.state === TaskState.Archived);
+  protected columns = this.columnS.getEntitiesSortedAsync();
 
 
-  dropTask(event: CdkDragDrop<ITask[]>, newTaskState: TaskState) {
+  dropTask(event: CdkDragDrop<ITask[]>, newColumnId: string) {
     if (event.previousContainer === event.container) {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-      this.taskS.swapTwoItemsInOneStateColumn(event.item.data.id, newTaskState, event.currentIndex, event.previousIndex);
     } else {
       transferArrayItem(
           event.previousContainer.data,
@@ -34,8 +31,7 @@ export class TasksDashboardComponent {
           event.previousIndex,
           event.currentIndex,
       );
-      this.taskS.updateHTTP$({id: event.item.data.id, state: newTaskState}).subscribe();
-      this.taskS.switchStateInOrderState(event.item.data.id, +event.previousContainer.id, newTaskState, event.currentIndex);
+      this.taskS.updateHTTP$({id: event.item.data.id, columnId: newColumnId}).subscribe();
     }
   }
 

@@ -2,6 +2,7 @@ import {IProfileResponseDTO} from "../../../profile/DTO/response/ProfileResponse
 import {TaskState} from "../enums/TaskState";
 import {IComment} from "./IComment";
 import {IProduct} from "./IProduct";
+import {IColumn} from "./IColumn";
 
 export interface ITask {
     id: string;
@@ -21,4 +22,5 @@ export interface ITask {
     };
     comments: IComment[];
     products: Omit<IProduct, 'taskIds'>[];
+    column: IColumn;
 }

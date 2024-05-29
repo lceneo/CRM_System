@@ -4,8 +4,9 @@ export interface ITaskCreateOrUpdateDTO
 {
     id?: string;
     assignedTo: string;
-    state: TaskState;
+    columnId: string;
     title: string;
     descrption: string;
     productIds: string[];
+    clientId: string;
 }
