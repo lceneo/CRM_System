@@ -1,10 +1,8 @@
-import {computed, DestroyRef, inject, Injectable, signal, WritableSignal} from "@angular/core";
+import {computed, DestroyRef, effect, inject, Injectable, signal, WritableSignal} from "@angular/core";
 import {IEntityState} from "../models/states/EntityState";
 import {HttpService} from "../services/http.service";
-import {catchError, map, Observable, tap, throwError} from "rxjs";
-import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {ChatHubService} from "../../modules/chat/services/chat-hub.service";
-import {IChatResponseDTO} from "../../modules/chat/helpers/entities/ChatResponseDTO";
+import {catchError, map, tap, throwError} from "rxjs";
+import {takeUntilDestroyed, toObservable} from "@angular/core/rxjs-interop";
 
 @Injectable({providedIn: "any"})
 export class EntityStateManager<T extends {id: string}> {
@@ -117,5 +115,14 @@ export class EntityStateManager<T extends {id: string}> {
 
   public getEntitiesAsync(filterFn?: (item: T) => boolean) {
     return computed(() => this.entityState().entities.filter(entity => filterFn ? filterFn(entity) : true));
+  }
+
+  public selectLoaded$() {
+    return toObservable(
+      computed(() => this.entityState().loaded)
+    )
+      .pipe(
+        takeUntilDestroyed(this.destroyRef)
+      );
   }
 }

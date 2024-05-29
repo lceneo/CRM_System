@@ -25,6 +25,11 @@ import { TaskCommentComponent } from './components/tasks/comments/task-comment/t
 import { ModalDeleteTaskCommentComponent } from './components/tasks/comments/modal-delete-task-comment/modal-delete-task-comment.component';
 import { ProductsTableComponent } from './components/products/products-table/products-table.component';
 import {NgxDatatableModule} from "@swimlane/ngx-datatable";
+import {TasksByColumnPipe} from "./pipes/tasks-by-column.pipe";
+import { ModalCreateUpdateProductComponent } from './components/products/modal-create-update-product/modal-create-update-product.component';
+import { ModalDeleteProductComponent } from './components/products/modal-delete-product/modal-delete-product.component';
+import { ModalCreateUpdateColumnComponent } from './components/tasks/modal-create-update-column/modal-create-update-column.component';
+import { ModalDeleteColumnComponent } from './components/tasks/modal-delete-column/modal-delete-column.component';
 
 const routes: Routes =
 [
@@ -41,29 +46,34 @@ const routes: Routes =
     ModalTaskInfoComponent,
     TaskCommentComponent,
     ModalDeleteTaskCommentComponent,
-    ProductsTableComponent
+    ProductsTableComponent,
+    ModalCreateUpdateProductComponent,
+    ModalDeleteProductComponent,
+    ModalCreateUpdateColumnComponent,
+    ModalDeleteColumnComponent
   ],
-  imports: [
-    CommonModule,
-    RouterModule.forChild(routes),
-    MatTabsModule,
-    CdkDropList,
-    CdkDrag,
-    CdkDropListGroup,
-    MatCardModule,
-    MatListModule,
-    MatButtonModule,
-    MatIconModule,
-    MatDialogModule,
-    MatTooltipModule,
-    MatInputModule,
-    FormsModule,
-    TextareaResizeDirective,
-    MatSelectModule,
-    ReactiveFormsModule,
-    NgLetDirective,
-    MatBadgeModule,
-    NgxDatatableModule
-  ]
+    imports: [
+        CommonModule,
+        RouterModule.forChild(routes),
+        MatTabsModule,
+        CdkDropList,
+        CdkDrag,
+        CdkDropListGroup,
+        MatCardModule,
+        MatListModule,
+        MatButtonModule,
+        MatIconModule,
+        MatDialogModule,
+        MatTooltipModule,
+        MatInputModule,
+        FormsModule,
+        TextareaResizeDirective,
+        MatSelectModule,
+        ReactiveFormsModule,
+        NgLetDirective,
+        MatBadgeModule,
+        NgxDatatableModule,
+        TasksByColumnPipe
+    ]
 })
 export class CrmModule { }

@@ -8,10 +8,17 @@
     [scrollbarV]="true"
     [scrollbarH]="true"
     [rows]="products()"
+    [messages]="{
+      emptyMessage: 'Нет данных',
+      totalMessage: 'Всего продуктов'
+    }"
   >
     <ngx-datatable-column [prop]="'id'" name="Идентификатор" [cellTemplate]="textTemplate" [flexGrow]="1" [resizeable]="false" [sortable]="false"> </ngx-datatable-column>
     <ngx-datatable-column [prop]="'description'" name="Описание" [cellTemplate]="textTemplate" [flexGrow]="1" [resizeable]="false" [sortable]="false"> </ngx-datatable-column>
     <ngx-datatable-column [prop]="'price'" name="Цена" [cellTemplate]="priceTemplate" [flexGrow]="1" [resizeable]="false"></ngx-datatable-column>
+    <ngx-datatable-column [cellTemplate]="editBtnTemplate" [flexGrow]="1" [resizeable]="false" [sortable]="false"></ngx-datatable-column>
+    <ngx-datatable-column [cellTemplate]="deleteBtnTemplate" [flexGrow]="1" [resizeable]="false" [sortable]="false"></ngx-datatable-column>
+    <ngx-datatable-footer [template]="footerTemplate"></ngx-datatable-footer>
   </ngx-datatable>
 </section>
 
@@ -21,4 +28,41 @@
 
 <ng-template #priceTemplate let-row="row" let-value="value">
   <span class="cellText" [matTooltip]="value + '₽'">{{value + '₽'}}</span>
+</ng-template>
+
+<ng-template #editBtnTemplate let-product="row" let-value="value">
+  <button class="btn"
+          mat-icon-button
+          [matTooltip]="'Изменить'"
+          [matTooltipPosition]="'above'"
+          (click)="openUpdateProductModal(product.id)"
+  >
+    <mat-icon>edit</mat-icon>
+  </button>
+</ng-template>
+
+<ng-template #deleteBtnTemplate let-row="row" let-value="value">
+  <button class="btn"
+          mat-icon-button
+          [matTooltip]="'Удалить продукт'"
+          [matTooltipPosition]="'above'"
+          (click)="openDeleteProductModal(row.id)"
+  >
+    <mat-icon>delete</mat-icon>
+  </button>
+</ng-template>
+
+<ng-template #footerTemplate
+  ngx-datatable-footer-template
+  let-rowCount="rowCount"
+>
+  <section class="footer">
+    <span>Всего продуктов: {{ rowCount }}</span>
+    <button class="addProductBtn"
+            mat-mini-fab
+            [matTooltip]="'Добавить продукт'"
+            (click)="openCreateProductModal()">
+      <mat-icon>add</mat-icon>
+    </button>
+  </section>
 </ng-template>

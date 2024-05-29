@@ -64,12 +64,7 @@ export function createChatContent({
     });
     divMessages.appendChild(msgView);
   });
-
-  if (!LocalStorage.client) {
-    const [clientForm] = createClientFormView({});
-    divMessages.appendChild(clientForm);
-  }
-
+  let clientForm: HTMLDivElement;
   messagesStore.onItemsAdd((message) => {
     const [msgView] = createMessageView({
       message,
@@ -77,6 +72,14 @@ export function createChatContent({
     divMessages.appendChild(msgView);
     if (socket?.waitingForMessageSuccess === 0) {
       divPending.replaceChildren();
+    }
+
+    if (message.side === "join" && message.content.endsWith("вошел в чат")) {
+      if (clientForm) {
+        clientForm.remove();
+      }
+      [clientForm] = createClientFormView({});
+      divMessages.appendChild(clientForm);
     }
     divWrapper.scroll(0, divWrapper.scrollHeight);
   });

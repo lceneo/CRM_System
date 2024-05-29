@@ -1,64 +1,24 @@
 
 <div class="wrapper">
+  <button class="addColumnBtn"
+          mat-mini-fab
+          [matTooltip]="'Новая колонка'"
+          (click)="openCreateColumnModal()"
+          >
+    <mat-icon>add</mat-icon>
+  </button>
 <section class="dashboards" cdkDropListGroup>
-    <!--New-->
-        <app-task-item
+      <ng-container *ngFor="let column of columns()">
+        <app-task-item *ngLet="(column.id | tasksByColumn) as tasks"
                 class="dashboard"
-                [tasks]="newTasks()"
-                [taskState]="TaskState.New"
+                [tasks]="tasks()"
+                [columnID]="column.id"
                 cdkDropList
-                [cdkDropListData]="newTasks()"
-                (cdkDropListDropped)="dropTask($event, TaskState.New)"
+                [cdkDropListData]="tasks()"
+                (cdkDropListDropped)="dropTask($event, column.id)"
                 [id]="TaskState.New.toString()"
         >
         </app-task-item>
-
-    <!--Pause-->
-    <app-task-item
-            class="dashboard"
-            [tasks]="pausedTasks()"
-            [taskState]="TaskState.Pause"
-            cdkDropList
-            [cdkDropListData]="pausedTasks()"
-            (cdkDropListDropped)="dropTask($event, TaskState.Pause)"
-            [id]="TaskState.Pause.toString()"
-    >
-    </app-task-item>
-
-    <!--InProgress-->
-    <app-task-item
-            class="dashboard"
-            [tasks]="inProgressTasks()"
-            [taskState]="TaskState.InProgress"
-            cdkDropList
-            [cdkDropListData]="inProgressTasks()"
-            (cdkDropListDropped)="dropTask($event, TaskState.InProgress)"
-            [id]="TaskState.InProgress.toString()"
-    >
-    </app-task-item>
-
-    <!--Done-->
-    <app-task-item
-            class="dashboard"
-            [tasks]="doneTasks()"
-            [taskState]="TaskState.Done"
-            cdkDropList
-            [cdkDropListData]="doneTasks()"
-            (cdkDropListDropped)="dropTask($event, TaskState.Done)"
-            [id]="TaskState.Done.toString()"
-    >
-    </app-task-item>
-
-    <!--Archived-->
-    <app-task-item
-            class="dashboard"
-            [tasks]="archivedTasks()"
-            [taskState]="TaskState.Archived"
-            cdkDropList
-            [cdkDropListData]="archivedTasks()"
-            (cdkDropListDropped)="dropTask($event, TaskState.Archived)"
-            [id]="TaskState.Archived.toString()"
-    >
-    </app-task-item>
+      </ng-container>
     </section>
 </div>

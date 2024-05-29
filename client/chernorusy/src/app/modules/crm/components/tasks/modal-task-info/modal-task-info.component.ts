@@ -31,13 +31,13 @@ export class ModalTaskInfoComponent implements OnInit {
     private profileS: ProfileService,
     private taskS: TaskService,
     private destroyRef: DestroyRef,
-    @Inject(MAT_DIALOG_DATA) protected taskInfo: ITaskInfoData
+    @Inject(MAT_DIALOG_DATA) protected taskId: string
   ) {}
 
 
-  protected task = this.taskS.getEntityAsync(this.taskInfo.taskID);
+  protected task = this.taskS.getEntityAsync(this.taskId);
   protected comments = computed(() =>
-      this.taskS.getTaskCommentsAsync(this.taskInfo.taskID)()?.sort((f, s) => new Date(f.createdAt).getTime() - new Date(s.createdAt).getTime()) as IComment[]);
+      this.taskS.getTaskCommentsAsync(this.taskId)()?.sort((f, s) => new Date(f.createdAt).getTime() - new Date(s.createdAt).getTime()) as IComment[]);
 
   protected savedFormValue = computed(() => {
     const currentTaskState = this.task();
@@ -83,7 +83,7 @@ export class ModalTaskInfoComponent implements OnInit {
   }
 
   protected saveChanges() {
-    const updatedTask = {...this.formGroup.value, id: this.taskInfo.taskID} as Partial<ITaskCreateOrUpdateDTO>
+    const updatedTask = {...this.formGroup.value, id: this.taskId} as Partial<ITaskCreateOrUpdateDTO>
     this.taskS.updateHTTP$(updatedTask)
         .pipe(
             tap(() => this.changeMod())
@@ -92,7 +92,7 @@ export class ModalTaskInfoComponent implements OnInit {
   }
   protected postComment() {
     if (this.commentControl.valid && this.commentControl.value) {
-        this.taskS.postCommentHTTP$(this.taskInfo.taskID, {text: this.commentControl.value})
+        this.taskS.postCommentHTTP$(this.taskId, {text: this.commentControl.value})
             .pipe(
                 tap(() => this.commentControl.setValue(''))
             )

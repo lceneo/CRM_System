@@ -1,0 +1,18 @@
+
+<section class="headerSection">
+  <h2 mat-dialog-title>{{header}}</h2>
+  <button mat-icon-button mat-dialog-close><mat-icon>close</mat-icon></button>
+</section>
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="formGroup" (ngSubmit)="createOrUpdateProduct()">
+    <mat-form-field class="titleField">
+      <mat-label>Цена</mat-label>
+      <input [type]="'number'" [formControlName]="'price'" matInput>
+    </mat-form-field>
+    <textarea
+      class="description form-control"
+      placeholder="Добавьте описание продукта..."
+      [formControlName]="'description'"></textarea>
+    <button class="submitBtn" [disabled] = "formGroup.invalid" mat-flat-button color="primary">{{btnSubmitText}}</button>
+  </form>
+</mat-dialog-content>

@@ -1,0 +1,28 @@
+
+<div class="wrapper" [ngStyle]="{
+  'border-color': color()
+}">
+  <section class="headerSection">
+    <h2 mat-dialog-title [ngStyle]="{
+  'color': color()
+}">{{header}}</h2>
+    <button mat-icon-button mat-dialog-close><mat-icon>close</mat-icon></button>
+  </section>
+  <mat-dialog-content class="mat-typography">
+    <form [formGroup]="formGroup" (ngSubmit)="createOrUpdateColumn()">
+      <mat-form-field class="titleField">
+        <mat-label>Наименование</mat-label>
+        <input [formControlName]="'name'" matInput>
+      </mat-form-field>
+      <div class="inputColorWrapper">
+        <label class="input__color-label" [for]="1">Цвет</label>
+        <input class="input__color" type="color"
+               [id]="1"
+               [formControlName]="'color'"
+        />
+      </div>
+
+      <button class="submitBtn" [disabled] = "formGroup.invalid" mat-flat-button color="primary">{{btnSubmitText}}</button>
+    </form>
+  </mat-dialog-content>
+</div>

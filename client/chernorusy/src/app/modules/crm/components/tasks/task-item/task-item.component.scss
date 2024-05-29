@@ -17,16 +17,27 @@
   align-items: center;
   position: sticky;
   top: 0;
-  border: 2px #dfe5eb solid;
+  border: 2px solid;
   border-right: none;
   border-left: none;
-  background-color: #ecf0f3;
   padding-left: 0.5rem;
   .title {
     font-size: 15px;
     margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.btnBox {
+  display: flex;
+  gap: 0.5em;
+  .btn {
+    height: 24px;
+    width: 24px;
+    font-size: 24px;
+    padding: 0;
   }
 }
 

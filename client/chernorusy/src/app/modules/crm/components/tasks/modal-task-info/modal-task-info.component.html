@@ -9,7 +9,7 @@
       <h1 *ngIf="currentMod() === 'view'" mat-dialog-title>{{task?.title}}</h1>
       <button mat-dialog-close class="closeBtn" mat-icon-button><mat-icon>close</mat-icon></button>
     </div>
-    <span mat-card-subtitle>В колонке "{{taskInfo.header}}"</span>
+    <span mat-card-subtitle>В колонке "{{task?.column?.name}}"</span>
   </section>
   <section mat-dialog-content>
     <form class="form" [formGroup]="formGroup">

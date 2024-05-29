@@ -15,4 +15,23 @@
   .datatable-body {
     overflow-x: hidden !important;
   }
+  .footer {
+    padding: 0 1em;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    .addProductBtn {
+      background-color: transparent;
+    }
+  }
+
+  .btn {
+    height: 24px;
+    width: 24px;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+  }
 }
