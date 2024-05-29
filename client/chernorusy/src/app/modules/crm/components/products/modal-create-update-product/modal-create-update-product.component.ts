@@ -26,9 +26,10 @@ export class ModalCreateUpdateProductComponent implements OnInit{
   })
 
   protected header?: string;
+  protected btnSubmitText?: string;
 
   ngOnInit() {
-    this.setHeader(this.productData);
+    this.setHeaderAndBtnSubmitText(this.productData);
     if (this.productData.mode === 'edit') { this.setInitialFormValue(this.productData.productId!); }
   }
 
@@ -48,8 +49,14 @@ export class ModalCreateUpdateProductComponent implements OnInit{
     ).subscribe();
   }
 
-  private setHeader(modalData: IProductCreateOrUpdateModal) {
-    this.header = modalData.mode === 'edit' ? 'Изменить продукт' : 'Новый продукт';
+  private setHeaderAndBtnSubmitText(modalData: IProductCreateOrUpdateModal) {
+    if (modalData.mode === 'edit') {
+      this.header = 'Изменить продукт';
+      this.btnSubmitText = 'Сохранить';
+    } else {
+      this.header = 'Новый продукт';
+      this.btnSubmitText = 'Создать'
+    }
   }
 
   private setInitialFormValue(productId: string) {

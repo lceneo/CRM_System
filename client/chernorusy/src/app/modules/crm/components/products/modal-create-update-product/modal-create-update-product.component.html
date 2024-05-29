@@ -13,6 +13,6 @@
       class="description form-control"
       placeholder="Добавьте описание продукта..."
       [formControlName]="'description'"></textarea>
-    <button class="submitBtn" [disabled] = "formGroup.invalid" mat-flat-button color="primary">Создать</button>
+    <button class="submitBtn" [disabled] = "formGroup.invalid" mat-flat-button color="primary">{{btnSubmitText}}</button>
   </form>
 </mat-dialog-content>
