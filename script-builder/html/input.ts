@@ -1,56 +1,69 @@
 import { notNull } from "../helpers/notNull";
 import { cls } from "../helpers/cls";
 
-export function createInput({ placeholder, id, className, styles, onInput, type = 'string' }: {
-	placeholder?: string,
-	id?: string,
-	className?: string,
-	onInput?: (ev: InputEvent) => void,
-	type?: 'number' | 'string' | 'file'
-	styles?: Partial<CSSStyleDeclaration>
+export function createInput({
+  placeholder,
+  id,
+  className,
+  styles,
+  onInput,
+  realPlaceholder,
+  required = false,
+  type = "string",
+}: {
+  placeholder?: string;
+  realPlaceholder?: string;
+  id?: string;
+  className?: string;
+  onInput?: (ev: InputEvent) => void;
+  required?: boolean;
+  type?: "number" | "string" | "file";
+  styles?: Partial<CSSStyleDeclaration>;
 }): [HTMLInputElement, () => void, (show: boolean) => void] {
-	const input = document.createElement('input')
-	input.setAttribute('type', type);
-	if (onInput) {
-		input.addEventListener('input', (ev) => onInput(ev as InputEvent));
-	}
+  const input = document.createElement("input");
+  input.setAttribute("type", type);
+  input.setAttribute("required", required.toString());
+  if (onInput) {
+    input.addEventListener("input", (ev) => onInput(ev as InputEvent));
+  }
 
-	const listeners: (() => void)[] = [];
+  const listeners: (() => void)[] = [];
 
-	if (notNull(placeholder)) {
-		input.textContent = placeholder;
-	}
-	if (notNull(id)) {
-		input.id = id;
-	}
-	if (notNull(className)) {
-		input.classList.add(cls(className));
-	}
+  if (notNull(placeholder)) {
+    input.textContent = placeholder;
+  }
+  if (notNull(realPlaceholder)) {
+    input.setAttribute("placeholder", realPlaceholder);
+  }
+  if (notNull(id)) {
+    input.id = id;
+  }
+  if (notNull(className)) {
+    input.classList.add(cls(className));
+  }
 
-	const style = input.style;
-	dropInputStyles(style);
-	/*applyHeaderStyles(style);*/
-	Object.assign(style, styles);
+  const style = input.style;
+  dropInputStyles(style);
+  /*applyHeaderStyles(style);*/
+  Object.assign(style, styles);
 
+  const closeInput = () => {
+    document.body.removeChild(input);
+    if (listeners) {
+      listeners.forEach((l) => l());
+    }
+  };
 
-	const closeInput = () => {
-		document.body.removeChild(input)
-		if (listeners) {
-			listeners.forEach(l => l());
-		}
-	}
+  const showInput = (show: boolean) => {
+    if (show) {
+      input.style.visibility = "visible";
+    } else {
+      input.style.visibility = "hidden";
+    }
+  };
 
-	const showInput = (show: boolean) => {
-		if (show) {
-			input.style.visibility = 'visible';
-		} else {
-			input.style.visibility = 'hidden';
-		}
-	}
-
-	return [input, closeInput, showInput];
+  return [input, closeInput, showInput];
 }
-
 
 /*function applyHeaderStyles(style: CSSStyleDeclaration) {
 	Object.assign(style, initHeaderStyles);
@@ -66,7 +79,7 @@ const initHeaderStyles: Partial<CSSStyleDeclaration> = {
 }*/
 
 function dropInputStyles(style: CSSStyleDeclaration) {
-	style.cssText = ` display: block;
+  style.cssText = ` display: block;
   position: static;
   float: none;
   clear: none;
@@ -156,5 +169,5 @@ function dropInputStyles(style: CSSStyleDeclaration) {
   text-transform: none;
   direction: ltr;
   unicode-bidi: normal;
-  color: black;`
+  color: black;`;
 }

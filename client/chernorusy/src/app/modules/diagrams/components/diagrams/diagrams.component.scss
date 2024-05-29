@@ -43,9 +43,11 @@ input[type="time"]::-webkit-datetime-edit-minute-field {
 form {
   flex-direction: row;
   gap: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .buttons {
   display: flex;
 }
-

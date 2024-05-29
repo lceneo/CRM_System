@@ -1,11 +1,35 @@
 <div class="wrapper">
-  <div class="item okay">
+  <div class="item okay" *ngLet="avgTime$ | async as avgTimeMs">
     <h2 class="overflow-ellipsis">Среднее время ответа операторов</h2>
-    <h2 class="value">{{avgAnsTime ?? 0}} сек.</h2>
+    <ng-container
+      *ngTemplateOutlet="times; context: { avgTimeMs: avgTimeMs }"
+    ></ng-container>
   </div>
 
-  <div class="item bad">
-    <h2 class="overflow-ellipsis">Среднее время ответа операторов на первое сообщение</h2>
-    <h2 class="value">{{avgAnsTime || 2}} мин.</h2>
+  <div class="item bad" *ngLet="avgTimeFirst$ | async as avgTimeFirstMs">
+    <h2 class="overflow-ellipsis">
+      Среднее время ответа операторов на первое сообщение
+    </h2>
+    <ng-container
+      *ngTemplateOutlet="times; context: { avgTimeMs: avgTimeFirstMs }"
+    ></ng-container>
   </div>
 </div>
+
+<ng-template #times let-avgTimeMs="avgTimeMs">
+  <h2 class="value" *ngIf="avgTimeMs === null">-</h2>
+  <h2 class="value" *ngIf="avgTimeMs! < 1000">0 сек.</h2>
+  <h2 class="value" *ngIf="avgTimeMs! >= 1000 && avgTimeMs! < 1000 * 60">
+    {{ Math.floor(avgTimeMs! / 1000) }} сек.
+  </h2>
+  <h2
+    class="value"
+    *ngIf="avgTimeMs! >= 1000 * 60 && avgTimeMs! < 1000 * 60 * 60"
+  >
+    {{ Math.floor(avgTimeMs! / 1000 / 60) }} мин.
+  </h2>
+  <h2 class="value" *ngIf="avgTimeMs! >= 1000 * 60 * 60">
+    {{ Math.floor(avgTimeMs! / 1000 / 60 / 60) }} ч.
+    {{ Math.floor((avgTimeMs! / 1000 / 60) % 60) }} мин.
+  </h2>
+</ng-template>

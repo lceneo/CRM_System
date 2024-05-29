@@ -1,5 +1,5 @@
 <div class="wrapper">
-<!--<form>
+  <!--<form>
   <mat-select [formControl]="searchForm.controls['Ids']" [multiple]="true" [placeholder]="'Менеджеры'">
     <mat-option *ngFor="let manager of managersAll$ | async"
                 [value]="manager.id"
@@ -11,18 +11,24 @@
   Ids:{{searchForm.value.Ids}}
 </form>-->
 
-  <ngx-datatable class="table" [rows]="managers$ | async" [reorderable]="false" [columnMode]="ColumnMode.flex">
-    <ngx-datatable-column *ngFor="let column of columns"
-                          [cellTemplate]="column.cellTemplate"
-                          [prop]="column.prop!"
-                          [name]="column.name!"
-                          [width]="column.width!"
-                          [minWidth]="column.minWidth!"
-                          [canAutoResize]="column.canAutoResize!"
-                          [sortable]="true"
-                          [headerTemplate]="cellHeader"
-                          [flexGrow]="column.flexGrow! || 1"
-                          [resizeable]="true"
+  <ngx-datatable
+    class="table"
+    [rows]="managers$ | async"
+    [reorderable]="false"
+    [columnMode]="ColumnMode.flex"
+  >
+    <ngx-datatable-column
+      *ngFor="let column of columns"
+      [cellTemplate]="column.cellTemplate"
+      [prop]="column.prop!"
+      [name]="column.name!"
+      [width]="column.width!"
+      [minWidth]="column.minWidth!"
+      [canAutoResize]="column.canAutoResize!"
+      [sortable]="true"
+      [headerTemplate]="cellHeader"
+      [flexGrow]="column.flexGrow! || 1"
+      [resizeable]="true"
     >
     </ngx-datatable-column>
   </ngx-datatable>
@@ -31,13 +37,17 @@
 <ng-template #cellHeader ngx-datatable-header-template let-column="column">
   <div class="datatable-header-cell-template-wrap" [matTooltip]="column.name">
     <span class="datatable-header-cell-wrapper ng-star-inserted">
-      <span class="datatable-header-cell-label draggable">{{ column.name }}</span>
+      <span class="datatable-header-cell-label draggable">{{
+        column.name
+      }}</span>
     </span>
   </div>
 </ng-template>
 
 <ng-template #idTempl ngx-datatable-cell-template let-row="row">
-    <div class="overflow-ellipsis" [matTooltip]="getName(row)">{{getName(row)}}</div>
+  <div class="overflow-ellipsis" [matTooltip]="getName(row)">
+    {{ getName(row) }}
+  </div>
 </ng-template>
 
 <ng-template #ratingTempl ngx-datatable-cell-template let-row="row">
@@ -48,10 +58,33 @@
   <span>{{(allRatings$ | async)?.[row.id]?.count ?? '-'}}</span>
 </ng-template>
 
-<ng-template #chatCountTempl ngx-datatable-cell-template let-row="row" let-column="column">
-  <span>{{(chatCounts$ | async)?.[row.id]?.[column.prop] ?? '-'}}</span>
+<ng-template
+  #chatCountTempl
+  ngx-datatable-cell-template
+  let-row="row"
+  let-column="column"
+>
+  <span>{{(activityStats$ | async)?.[row.id] ?? '-'}}</span>
 </ng-template>
 
-<ng-template #ansTime ngx-datatable-cell-template let-row="row" let-column="column">
-  <span>{{(averageTimes$ | async)?.[row.id] ?? '-'}}</span>
+<ng-template
+  #ansTime
+  ngx-datatable-cell-template
+  let-row="row"
+  let-column="column"
+>
+  <ng-container *ngLet="(averageTimes$ | async)?.[row.id] as avgTimeMs">
+    <span *ngIf="avgTimeMs === null">-</span>
+    <span *ngIf="avgTimeMs! < 1000">0 сек.</span>
+    <span *ngIf="avgTimeMs! >= 1000 && avgTimeMs! < 1000 * 60">
+      {{ Math.floor(avgTimeMs! / 1000) }} сек.
+    </span>
+    <span *ngIf="avgTimeMs! >= 1000 * 60 && avgTimeMs! < 1000 * 60 * 60">
+      {{ Math.floor(avgTimeMs! / 1000 / 60) }} мин.
+    </span>
+    <span *ngIf="avgTimeMs! >= 1000 * 60 * 60">
+      {{ Math.floor(avgTimeMs! / 1000 / 60 / 60) }} ч.
+      {{ Math.floor((avgTimeMs! / 1000 / 60) % 60) }} мин.
+    </span>
+  </ng-container>
 </ng-template>

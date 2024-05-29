@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { ReceivedDialogsOverallComponent as ReceivedDialogsOverallChartComponent } from './chart/received-dialogs-overall.component';
-import { ReceivedDialogsOverallComponent as ReceivedDialogsOverallTableComponent } from './table/received-dialogs-overall.component';
+import { SendMessagesOverallComponent as SendMessagesOverallChartComponent } from './chart/send-messages-overall.component';
+import { SendMessagesOverallComponent as SendMessagesOverallTableComponent } from './table/send-messages-overall.component';
 import { ExternalComponents } from 'src/app/shared/decorators/external-components';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { MatMenuModule } from '@angular/material/menu';
@@ -13,8 +13,8 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 @NgModule({
   declarations: [
-    ReceivedDialogsOverallChartComponent,
-    ReceivedDialogsOverallTableComponent,
+    SendMessagesOverallChartComponent,
+    SendMessagesOverallTableComponent,
   ],
   imports: [
     CommonModule,
@@ -27,20 +27,20 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
   ],
   providers: [DatePipe],
   exports: [
-    ReceivedDialogsOverallChartComponent,
-    ReceivedDialogsOverallTableComponent,
+    SendMessagesOverallChartComponent,
+    SendMessagesOverallTableComponent,
   ],
 })
-@ChartDashboardMenu('Статистика диалогов', 'received-dialogs-overall', null, [
+@ChartDashboardMenu('Статистика сообщений', 'send-messages-overall', null, [
   {
     title: 'График',
-    dashboardTitle: 'Статистика диалогов (график)',
-    component: ReceivedDialogsOverallChartComponent,
+    dashboardTitle: 'Статистика сообщений (график)',
+    component: SendMessagesOverallChartComponent,
   },
   {
     title: 'Таблица',
-    dashboardTitle: 'Статистика диалогов (таблица)',
-    component: ReceivedDialogsOverallTableComponent,
+    dashboardTitle: 'Статистика сообщений (таблица)',
+    component: SendMessagesOverallTableComponent,
   },
 ])
-export class ReceivedDialogsOverallModule {}
+export class SendMessagesOverallModule {}
