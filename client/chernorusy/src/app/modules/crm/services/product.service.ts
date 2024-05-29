@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import {EntityStateManager} from "../../../shared/helpers/entityStateManager";
-import {ITask} from "../helpers/entities/ITask";
 import {IProduct} from "../helpers/entities/IProduct";
-import {ITaskCreateOrUpdateDTO} from "../helpers/DTO/request/ITaskCreateOrUpdateDTO";
 import {ICreateOrUpdateEntityDTO} from "../../../shared/helpers/DTO/response/ICreateOrUpdateEntityDTO";
 import {map, switchMap, tap} from "rxjs";
 import {IProductCreateOrUpdateDTO} from "../helpers/DTO/request/IProductCreateOrUpdateDTO";
@@ -38,8 +36,9 @@ export class ProductService extends EntityStateManager<IProduct>{
   }
 
   updateHTTP$(updatedProduct: Partial<IProductCreateOrUpdateDTO>) {
-    return this.httpS.post<ICreateOrUpdateEntityDTO>('/Crm/Tasks', updatedProduct)
+    return this.httpS.post<ICreateOrUpdateEntityDTO>('/Products', updatedProduct)
       .pipe(
+        switchMap((res) => this.getByIDHttp$(res.id)),
         tap((updatedProduct) => this.updateByID(updatedProduct.id, updatedProduct))
       );
   }

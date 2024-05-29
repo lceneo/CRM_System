@@ -21,7 +21,7 @@ export class ModalCreateTaskComponent {
     private profileS: ProfileService,
     private taskS: TaskService,
     private matDialogRef: MatDialogRef<any>,
-    @Inject(MAT_DIALOG_DATA) private taskState: TaskState
+    @Inject(MAT_DIALOG_DATA) private columnID: string
   ) {}
 
   protected formGroup = new FormGroup({
@@ -37,7 +37,7 @@ export class ModalCreateTaskComponent {
     );
 
   createTask() {
-    const taskToCreate = {...this.formGroup.value, state: this.taskState} as Omit<ITaskCreateOrUpdateDTO, 'id' | 'productIds'>;
+    const taskToCreate = {...this.formGroup.value, columnId: this.columnID} as Omit<ITaskCreateOrUpdateDTO, 'id' | 'productIds'>;
     this.taskS.createHTTP$(taskToCreate)
       .pipe(
         tap(() => this.matDialogRef.close())
