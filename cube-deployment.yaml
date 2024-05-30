@@ -33,6 +33,8 @@ spec:
             value: "chernorusy@mail.ru"
           - name: MAILBOX_PASSWORD
             value: "KGw9Q2bmFZpyptJ4xfKZ"
+      imagePullSecrets:
+        - name: application-secret
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -67,3 +69,5 @@ spec:
             value: "Hubs/Chats"
           - name: API_CRM_HUB_URL
             value: "Hubs/Crm"
+      imagePullSecrets:
+        - name: application-secret
