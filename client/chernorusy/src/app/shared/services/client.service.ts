@@ -13,7 +13,7 @@ export class ClientService extends EntityStateManager<Client> {
   ) => resp.items;
   constructor() {
     super();
-    this.getEntitiesSync;
+    this.initStore();
   }
 
   updateData$() {

@@ -1,0 +1,153 @@
+<section class="wrapper">
+  <h2 class="header">Информация о клиенте</h2>
+  <ng-container *ngLet="(settedClient?.() ?? null) as clientInfo">
+    <div class="client-info" *ngIf="clientInfo; else noClient">
+      <span>Фамилия: {{ clientInfo?.surname ?? "-" }}</span>
+      <span>Имя: {{ clientInfo?.name ?? "-" }}</span>
+      <span>Отчество: {{ clientInfo?.patronymic ?? "-" }}</span>
+      <span>Телефон: {{ clientInfo?.phone ?? "-" }}</span>
+      <span>Email: {{ clientInfo?.email ?? "-" }}</span>
+      <button
+        mat-button
+        style="margin-top: 10px"
+        (click)="openSelect(existingClientsSelect)"
+      >
+        Изменить
+      </button>
+      <ng-select
+        #existingClientsSelect
+        [items]="allClients()"
+        [ngModel]="selectedSetClient()"
+        (ngModelChange)="closeSelect(existingClientsSelect); setClient($event)"
+        (close)="closeSelect(existingClientsSelect)"
+        [bindValue]="'id'"
+        [searchFn]="searchClientFn"
+        [appendTo]="'body'"
+        class="closed"
+      >
+        <ng-template ng-option-tmp let-client="item" let-search="searchTerm">
+          <mat-card
+            class="client-search-item"
+            [style]="
+              client.id === selectedSetClient()?.id ? 'display: none' : ''
+            "
+            [ngClass]="{
+              maybeExisted:
+                !!existedClient() && existedClient()?.id === client.id
+            }"
+          >
+            <span>{{ getFio(client) }}</span>
+            <span *ngIf="!!client?.phone">Телефон: {{ client.phone }}</span>
+            <span *ngIf="!!client?.email">Email: {{ client.email }}</span>
+          </mat-card>
+        </ng-template>
+      </ng-select>
+      <button mat-button (click)="createClient()">Создать другого</button>
+    </div>
+
+    <ng-template #noClient>
+      <div class="no-client-info">
+        <div class="user-sent-info" *ngLet="sentClient() as sentClient">
+          <span *ngIf="!sentClient">Пользователь не отправил своих данных</span>
+          <ng-container *ngIf="!!sentClient">
+            <span>Фамилия: {{ sentClient?.surname ?? "-" }}</span>
+            <span>Имя: {{ sentClient?.name ?? "-" }}</span>
+            <span> Отчество: {{ sentClient?.patronymic ?? "-" }} </span>
+            <span> Телефон: {{ sentClient?.phone ?? "-" }} </span>
+            <span>Email: {{ sentClient?.email ?? "-" }}</span>
+          </ng-container>
+        </div>
+
+        <div class="user-existed" *ngIf="existedClient() as existedClient">
+          <span
+            >Возможно это
+            <button
+              mat-button
+              color="accent"
+              (click)="setClient(existedClient.id)"
+            >
+              {{ getFio(existedClient) }}
+            </button></span
+          >
+        </div>
+
+        <div class="buttons">
+          <button mat-button (click)="openSelect(existingClientsSelect)">
+            Добавить
+          </button>
+          <ng-select
+            #existingClientsSelect
+            [items]="allClients()"
+            [(ngModel)]="selectedSetClient"
+            (ngModelChange)="
+              closeSelect(existingClientsSelect); setClient($event)
+            "
+            (close)="closeSelect(existingClientsSelect)"
+            [bindValue]="'id'"
+            [searchFn]="searchClientFn"
+            [appendTo]="'body'"
+            class="closed"
+          >
+            <ng-template
+              ng-option-tmp
+              let-client="item"
+              let-search="searchTerm"
+            >
+              <mat-card
+                class="client-search-item"
+                [style]="
+                  client.id === selectedSetClient()?.id ? 'display: none' : ''
+                "
+                [ngClass]="{
+                  maybeExisted:
+                    !!existedClient() && existedClient()?.id === client.id
+                }"
+              >
+                <span>{{ getFio(client) }}</span>
+                <span *ngIf="!!client?.phone">Телефон: {{ client.phone }}</span>
+                <span *ngIf="!!client?.email">Email: {{ client.email }}</span>
+              </mat-card>
+            </ng-template>
+          </ng-select>
+          <button mat-button (click)="createClient()">Создать</button>
+        </div>
+      </div>
+    </ng-template>
+  </ng-container>
+</section>
+
+<ng-template #createClientModal>
+  <div class="dialog-wrap">
+    <button mat-icon-button mat-dialog-close>close</button>
+    <form [formGroup]="fg">
+      <mat-form-field>
+        <mat-label>Фамилия</mat-label>
+        <input matInput required formControlName="surname" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Имя</mat-label>
+        <input matInput required formControlName="name" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Отчество</mat-label>
+        <input matInput formControlName="patronymic" />
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Телефон</mat-label>
+        <input matInput formControlName="phone" />
+        <mat-error *ngIf="fg.hasError('emailOrPhone')"
+          >Должен быть телефон или email</mat-error
+        >
+      </mat-form-field>
+      <mat-form-field>
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" />
+        <mat-error *ngIf="fg.hasError('emailOrPhone')"
+          >Должен быть телефон или email</mat-error
+        >
+      </mat-form-field>
+
+      <button mat-button (click)="saveForm()">Сохранить</button>
+    </form>
+  </div>
+</ng-template>

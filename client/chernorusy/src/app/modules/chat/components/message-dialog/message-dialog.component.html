@@ -1,38 +1,53 @@
 <nav class="btn_container">
-  <i *ngIf = "chatType === 'Mine'"
-     [matTooltip]="'Покинуть'"
-     class="bi bi-box-arrow-in-left leaveBtn"
-     (click) = "leaveChat()"
+  <i
+    *ngIf="chatType === 'Mine'"
+    [matTooltip]="'Покинуть'"
+    class="bi bi-box-arrow-in-left leaveBtn"
+    (click)="leaveChat()"
   ></i>
 
-  <button mat-icon-button
-   *ngIf="chatType !== 'Archive' && chatType !== 'Inbox'"
-   [matTooltip]="chat?.()?.status === ChatStatus.Blocked ? 'Разблокировать' : 'Заблокировать'"
-   [ngClass]="{
+  <button
+    mat-icon-button
+    *ngIf="chatType !== 'Archive' && chatType !== 'Inbox'"
+    [matTooltip]="chat?.()?.status === ChatStatus.Blocked ? 'Разблокировать' : 'Заблокировать'"
+    [ngClass]="{
     unblockBtn: chat?.()?.status === ChatStatus.Blocked
    }"
-   class="blockBtn"
-   (click) = "toggleBlockStatus()"
+    class="blockBtn"
+    (click)="toggleBlockStatus()"
   >
-    <mat-icon>{{chat?.()?.status === ChatStatus.Blocked ? 'remove_circle' : 'block'}}</mat-icon>
+    <mat-icon
+      >{{chat?.()?.status === ChatStatus.Blocked ? 'remove_circle' : 'block'}}</mat-icon
+    >
   </button>
 
-  <button mat-icon-button
-          *ngIf="chatType !== 'Inbox' && chatType !== 'Block'"
-          [matTooltip]="chat?.()?.status === ChatStatus.Archive ? 'Разархивировать' : 'В архив'"
-          [ngClass]="{
+  <button
+    mat-icon-button
+    *ngIf="chatType !== 'Inbox' && chatType !== 'Block'"
+    [matTooltip]="chat?.()?.status === ChatStatus.Archive ? 'Разархивировать' : 'В архив'"
+    [ngClass]="{
           unblockBtn: chat?.()?.status === ChatStatus.Blocked
    }"
-          class="archiveBtn"
-          (click) = "toggleArchiveStatus()"
+    class="archiveBtn"
+    (click)="toggleArchiveStatus()"
   >
-    <mat-icon>{{chat?.()?.status === ChatStatus.Archive ? 'unarchive' : 'archive'}}</mat-icon>
+    <mat-icon
+      >{{chat?.()?.status === ChatStatus.Archive ? 'unarchive' : 'archive'}}</mat-icon
+    >
+  </button>
+
+  <button
+    mat-icon-button
+    [matTooltip]="'Клиент'"
+    (click)="clientInfoOpened = !clientInfoOpened"
+  >
+    <mat-icon>perm_contact_calendar</mat-icon>
   </button>
 
   <button
     mat-icon-button
     [matTooltip]="'Участники чата'"
-    (click) = "membersSectionOpened = !membersSectionOpened"
+    (click)="membersSectionOpened = !membersSectionOpened"
   >
     <mat-icon>people</mat-icon>
   </button>
@@ -41,36 +56,38 @@
     class="btn-close close pull-right"
     aria-label="Close"
     [matTooltip]="'Закрыть'"
-    (click) = "closeDialog()"
+    (click)="closeDialog()"
   >
     <span aria-hidden="true" class="visually-hidden">&times;</span>
   </button>
 </nav>
 
-
 <section class="chat">
-
   <mat-spinner
     *ngIf="loadingChat$ | async; else chatTemplate"
     class="spinner"
   ></mat-spinner>
   <ng-template #chatTemplate>
-
-    <section class="chatAndMembersWrapper"
-             [ngClass]="{
-                'membersOpened': membersSectionOpened
-             }"
+    <section
+      class="chatAndMembersWrapper"
+      [ngClass]="{
+        membersOpened: membersSectionOpened || clientInfoOpened,
+      }"
     >
-      <ul class="chat__messages" #msgList
-      (scroll)="scrollMessagesHandler($event)">
-        <li *ngFor="let message of messages()"
-            [id]="message.id"
-            class="chat__message card"
-            [ngClass]="{
-              'chat__myMsg': message.sender && message.mine,
-              'chat__companionMsg':  message.sender && !message.mine,
-              'chat__systemMsg': message.type === MessageType.System
-            }"
+      <ul
+        class="chat__messages"
+        #msgList
+        (scroll)="scrollMessagesHandler($event)"
+      >
+        <li
+          *ngFor="let message of messages()"
+          [id]="message.id"
+          class="chat__message card"
+          [ngClass]="{
+            chat__myMsg: message.sender && message.mine,
+            chat__companionMsg: message.sender && !message.mine,
+            chat__systemMsg: message.type === MessageType.System
+          }"
         >
           <app-message [message]="message"></app-message>
         </li>
@@ -80,114 +97,151 @@
         [chatID]="chatID!"
         [style.display]="membersSectionOpened ? 'block' : 'none'"
       ></app-chat-members>
+
+      <app-chat-client-info [chatID]="chatID!" [style.display]="clientInfoOpened ? 'block' : 'none'"> </app-chat-client-info>
     </section>
 
-  <ng-container
-    [ngSwitch]="chatType">
-
-    <div class="form-group textMsgArea"
-         [style.padding-right]="membersSectionOpened ? '200px' : '0'"
-         *ngSwitchCase="'Mine'"
-    >
-      <button mat-icon-button
-              [matMenuTriggerFor]="attachmentMenu"
-              [matBadge]="currentFiles.length"
-              [matBadgeHidden] = "!currentFiles.length"
-              [matTooltip]="'Файлы'"
-              [style.align-self]="'end'"
+    <ng-container [ngSwitch]="chatType">
+      <div
+        class="form-group textMsgArea"
+        [style.padding-right]="membersSectionOpened ? '200px' : '0'"
+        *ngSwitchCase="'Mine'"
       >
-        <mat-icon>attach_file</mat-icon>
-      </button>
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="attachmentMenu"
+          [matBadge]="currentFiles.length"
+          [matBadgeHidden]="!currentFiles.length"
+          [matTooltip]="'Файлы'"
+          [style.align-self]="'end'"
+        >
+          <mat-icon>attach_file</mat-icon>
+        </button>
 
-      <button mat-icon-button
-              [matMenuTriggerFor]="autoRepliesMenu"
-              [matTooltip]="'Быстрые ответы'"
-              [style.align-self]="'end'"
-      >
-        <mat-icon>menu</mat-icon>
-      </button>
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="autoRepliesMenu"
+          [matTooltip]="'Быстрые ответы'"
+          [style.align-self]="'end'"
+        >
+          <mat-icon>menu</mat-icon>
+        </button>
 
-      <textarea #message appTextareaResize
-                class="chat__sendMsg form-control"
-                (drop)="dropFiles($event)"
-                [(ngModel)] = "msgValue"
-                [placeholder]="'Введите сообщение...'"
-                (keydown)="pressKey($event)">
-      </textarea>
+        <textarea
+          #message
+          appTextareaResize
+          class="chat__sendMsg form-control"
+          (drop)="dropFiles($event)"
+          [(ngModel)]="msgValue"
+          [placeholder]="'Введите сообщение...'"
+          (keydown)="pressKey($event)"
+        >
+        </textarea>
 
-      <mat-icon #smileMenuTriggerer="matMenuTrigger" [svgIcon]="'smile'"
-                #smileIcon
-                [matMenuTriggerFor]="smileMenu"
-                (mouseenter) ="smileMenuTriggerer.openMenu()"
-                (menuOpened)="openSmileMenu(smileMenuTriggerer, smileIcon)"
-                class="smileIcon"
-                [ngClass]="{
-                  'openedSmileMenu': smileMenuTriggerer.menuOpen
-                }"
-      ></mat-icon>
+        <mat-icon
+          #smileMenuTriggerer="matMenuTrigger"
+          [svgIcon]="'smile'"
+          #smileIcon
+          [matMenuTriggerFor]="smileMenu"
+          (mouseenter)="smileMenuTriggerer.openMenu()"
+          (menuOpened)="openSmileMenu(smileMenuTriggerer, smileIcon)"
+          class="smileIcon"
+          [ngClass]="{
+            openedSmileMenu: smileMenuTriggerer.menuOpen
+          }"
+        ></mat-icon>
 
-      <i
-        class="bi bi-send sendMsgBtn"
-        [ngClass]="{
-          'msgNotEmpty': !!msgValue.trim().length || currentFiles.length
-        }"
-        [matTooltip]="'Отправить сообщение'"
-        [matTooltipDisabled] = "!msgValue.trim().length && !currentFiles.length"
-        (click) = "sendMsg()"></i>
-    </div>
+        <i
+          class="bi bi-send sendMsgBtn"
+          [ngClass]="{
+            msgNotEmpty: !!msgValue.trim().length || currentFiles.length
+          }"
+          [matTooltip]="'Отправить сообщение'"
+          [matTooltipDisabled]="!msgValue.trim().length && !currentFiles.length"
+          (click)="sendMsg()"
+        ></i>
+      </div>
 
-    <div class="chat__btnContainer"
-         *ngSwitchCase="'Inbox'"
-    >
-      <button
-        class="btn btn-success"
-        (click)="joinChat()"
-      >Принять</button>
-    </div>
-  </ng-container>
-</ng-template>
-
+      <div class="chat__btnContainer" *ngSwitchCase="'Inbox'">
+        <button class="btn btn-success" (click)="joinChat()">Принять</button>
+      </div>
+    </ng-container>
+  </ng-template>
 </section>
 
 <mat-menu #attachmentMenu>
-    <input #fileInput
-           style="display: none"
-           type="file"
-           maxlength="10"
-           (change)="onFileChange($event)"
-    >
-    <button mat-menu-item
-            [disabled] = "!!currentFiles.length"
-            [matTooltip]="'Не больше одного файла'"
-            [matTooltipDisabled] = "!currentFiles.length"
-            (click) = "fileInput.click()">Вложить</button>
+  <input
+    #fileInput
+    style="display: none"
+    type="file"
+    maxlength="10"
+    (change)="onFileChange($event)"
+  />
+  <button
+    mat-menu-item
+    [disabled]="!!currentFiles.length"
+    [matTooltip]="'Не больше одного файла'"
+    [matTooltipDisabled]="!currentFiles.length"
+    (click)="fileInput.click()"
+  >
+    Вложить
+  </button>
 
-    <button mat-menu-item
-            (click) = "currentFiles = []; fileInput.value = '';"
-            [disabled] = "!currentFiles.length"
-    >Удалить</button>
+  <button
+    mat-menu-item
+    (click)="currentFiles = []; fileInput.value = ''"
+    [disabled]="!currentFiles.length"
+  >
+    Удалить
+  </button>
 </mat-menu>
 
 <mat-menu class="smileMenu" #smileMenu>
   <ng-template matMenuContent>
-    <p (click) = "addIconToMsg($event, smile)" *ngFor="let smile of smiles">{{smile}}</p>
+    <p (click)="addIconToMsg($event, smile)" *ngFor="let smile of smiles">
+      {{ smile }}
+    </p>
   </ng-template>
 </mat-menu>
 
 <mat-menu class="autoRepliesMenu" #autoRepliesMenu>
   <ng-template matMenuContent>
     <mat-chip-set aria-label="Dog selection">
-      <mat-chip #first (click)="this.msgValue = first._elementRef.nativeElement.innerText; sendMsg()">
+      <mat-chip
+        #first
+        (click)="
+          this.msgValue = first._elementRef.nativeElement.innerText; sendMsg()
+        "
+      >
         Вы можете задать мне свой вопрос, и я отвечу Вам в кратчайшие сроки
       </mat-chip>
-      <mat-chip color="primary" #second (click)="this.msgValue = second._elementRef.nativeElement.innerText; sendMsg()">
+      <mat-chip
+        color="primary"
+        #second
+        (click)="
+          this.msgValue = second._elementRef.nativeElement.innerText; sendMsg()
+        "
+      >
         Напишите свой вопрос, и я постараюсь дать вам наиболее полезный ответ.
       </mat-chip>
-      <mat-chip color="primary" #trird (click)="this.msgValue = trird._elementRef.nativeElement.innerText; sendMsg()">
+      <mat-chip
+        color="primary"
+        #trird
+        (click)="
+          this.msgValue = trird._elementRef.nativeElement.innerText; sendMsg()
+        "
+      >
         Добро пожаловать! Я готов помочь вам со всеми вопросами и проблемами.
       </mat-chip>
-      <mat-chip color="primary" #fourth (click)="this.msgValue = fourth._elementRef.nativeElement.innerText; sendMsg()">
-        Привет! Я здесь, чтобы помочь. Если у вас есть вопросы или требуется консультация, обратитесь ко мне.
+      <mat-chip
+        color="primary"
+        #fourth
+        (click)="
+          this.msgValue = fourth._elementRef.nativeElement.innerText; sendMsg()
+        "
+      >
+        Привет! Я здесь, чтобы помочь. Если у вас есть вопросы или требуется
+        консультация, обратитесь ко мне.
       </mat-chip>
     </mat-chip-set>
   </ng-template>

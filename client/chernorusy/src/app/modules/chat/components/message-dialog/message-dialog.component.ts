@@ -57,6 +57,7 @@ export class MessageDialogComponent implements OnChanges, OnInit, OnDestroy {
   @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
 
   protected membersSectionOpened = false;
+  protected clientInfoOpened = false;
   protected msgValue = '';
   protected currentFiles: File[] = [];
   private maxFilesCount = 1;

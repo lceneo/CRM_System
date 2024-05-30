@@ -1,0 +1,52 @@
+:host {
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.wrapper,
+.client-info,
+.no-client-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wrapper {
+  gap: 10px;
+}
+
+.client-info,
+.no-client-info {
+  width: 100%;
+  padding-inline: 5px;
+  & > span {
+    align-self: flex-start;
+  }
+}
+
+.header {
+  font-size: 18px;
+  margin: 5px;
+  text-wrap: pretty;
+  font-size: 1rem;
+}
+
+.client-search-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.closed {
+  visibility: hidden;
+  height: 0;
+}
+
+ng-select {
+  align-self: stretch;
+}
+
+mat-card {
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}

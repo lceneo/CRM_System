@@ -10,6 +10,7 @@
 @import "./assets/styles/mat-tab";
 @import "./assets/styles/ngx-datatable";
 @import "./assets/styles/gridster";
+@import "./assets/styles/ng-select";
 @import "../node_modules/@swimlane/ngx-datatable/index.scss";
 @import "../node_modules/@swimlane/ngx-datatable/themes/material.scss";
 @import "../node_modules/@swimlane/ngx-datatable/assets/icons.css";
@@ -21,6 +22,7 @@
 @include mat-button();
 @include textArea();
 @include gridster();
+@include ng-select();
 
 body {
   .icon {
