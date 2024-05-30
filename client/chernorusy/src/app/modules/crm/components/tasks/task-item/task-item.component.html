@@ -1,7 +1,14 @@
 
-<div class="titleWrapper">
-    <h2 class="title">{{column?.name}}</h2>
-    <button mat-icon-button [matTooltip]="'Добавить задачу'" (click)="openModalCreateTask()"><mat-icon>add</mat-icon></button>
+<div class="titleWrapper" [ngStyle]="{
+  'background-color': headerBgColor,
+  'border-color': headerBorderColor
+}">
+    <h2 class="title" [matTooltip]="column?.name ?? ''">{{column?.name}}</h2>
+    <div class="btnBox">
+      <button class="btn" mat-icon-button [matTooltip]="'Изменить'" (click)="openModalEditColumn(column!.id)"><mat-icon>edit</mat-icon></button>
+      <button class="btn" mat-icon-button [matTooltip]="'Удалить'" (click)="openModalDeleteColumn(column!.id)"><mat-icon>delete</mat-icon></button>
+      <button class="btn" mat-icon-button [matTooltip]="'Добавить задачу'" (click)="openModalCreateTask()"><mat-icon>add</mat-icon></button>
+    </div>
 </div>
 
 <ul [ngClass]="{

@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges} from '@angular/core';
+import {ChangeDetectionStrategy, Component, HostBinding, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {ITask} from "../../../helpers/entities/ITask";
 import {TaskState} from "../../../helpers/enums/TaskState";
 import {TaskOrderType, TaskService} from "../../../services/task.service";
@@ -9,6 +9,12 @@ import {ModalCreateTaskComponent} from "../modal-create-task/modal-create-task.c
 import {ModalTaskInfoComponent} from "../modal-task-info/modal-task-info.component";
 import {IColumn} from "../../../helpers/entities/IColumn";
 import {ColumnService} from "../../../services/column.service";
+import {ColorConverterService} from "../../../../../shared/services/color-converter.service";
+import {ModalDeleteColumnComponent} from "../modal-delete-column/modal-delete-column.component";
+import {
+  ModalCreateUpdateProductComponent
+} from "../../products/modal-create-update-product/modal-create-update-product.component";
+import {ModalCreateUpdateColumnComponent} from "../modal-create-update-column/modal-create-update-column.component";
 
 @Component({
   selector: 'app-task-item',
@@ -21,15 +27,23 @@ export class TaskItemComponent  {
   constructor(
     private columnS: ColumnService,
     private taskS: TaskService,
+    private colorConverterS: ColorConverterService,
     private matDialog: MatDialog
   ) {}
 
  @Input({required: true}) tasks: ITask[] = [];
  @Input({required: true}) set columnID(id: string) {
    this.column = this.columnS.getByID(id);
+   this.headerBgColor = this.colorConverterS.hex2rgba(this.column!.color,1);
+   this.headerBorderColor = this.colorConverterS.hex2rgba(this.column!.color,0.9);
+   this.columnBgColor = this.colorConverterS.hex2rgba(this.column!.color,0.3);
  }
 
  protected column?: IColumn;
+ @HostBinding('style.backgroundColor')
+ protected columnBgColor?: string;
+ protected headerBgColor?: string;
+ protected headerBorderColor?: string;
   openModalCreateTask() {
    this.matDialog.open(ModalCreateTaskComponent, {disableClose: true, autoFocus: false, data: this.column?.id});
   }
@@ -44,6 +58,16 @@ export class TaskItemComponent  {
 
   openModalTaskInfo(task: ITask) {
     this.matDialog.open(ModalTaskInfoComponent, { autoFocus: false, disableClose: true, data: task.id });
+  }
+  openModalEditColumn(columnId: string) {
+    this.matDialog.open(ModalCreateUpdateColumnComponent, {
+      data: { mode: 'edit', columnId },
+      autoFocus: false
+    });
+  }
+
+  openModalDeleteColumn(columnId: string) {
+    this.matDialog.open(ModalDeleteColumnComponent, { data: columnId, autoFocus: false });
   }
    trackTask(index : number, task: ITask) {
     return task.id;

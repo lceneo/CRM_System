@@ -4,6 +4,12 @@ import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag
 import {TaskService} from "../../../services/task.service";
 import {ITask} from "../../../helpers/entities/ITask";
 import {ColumnService} from "../../../services/column.service";
+import {
+  ModalCreateUpdateProductComponent
+} from "../../products/modal-create-update-product/modal-create-update-product.component";
+import {ModalDeleteProductComponent} from "../../products/modal-delete-product/modal-delete-product.component";
+import {MatDialog} from "@angular/material/dialog";
+import {ModalCreateUpdateColumnComponent} from "../modal-create-update-column/modal-create-update-column.component";
 
 @Component({
   selector: 'app-tasks-dashboard',
@@ -15,7 +21,8 @@ export class TasksDashboardComponent {
 
   constructor(
       private columnS: ColumnService,
-      private taskS: TaskService
+      private taskS: TaskService,
+      private matDialog: MatDialog
   ) {}
 
   protected columns = this.columnS.getEntitiesSortedAsync();
@@ -33,6 +40,24 @@ export class TasksDashboardComponent {
       );
       this.taskS.updateHTTP$({id: event.item.data.id, columnId: newColumnId}).subscribe();
     }
+  }
+
+  openCreateColumnModal() {
+    this.matDialog.open(ModalCreateUpdateColumnComponent, {
+      data: { mode: 'create' },
+      autoFocus: false
+    });
+  }
+
+  openUpdateColumnModal(columnId: string) {
+    this.matDialog.open(ModalCreateUpdateColumnComponent, {
+      data: { mode: 'edit', columnId },
+      autoFocus: false
+    });
+  }
+
+  openDeleteColumnModal(columnId: string) {
+    this.matDialog.open(ModalDeleteProductComponent, {data: columnId, autoFocus: false});
   }
 
   protected readonly TaskState = TaskState;

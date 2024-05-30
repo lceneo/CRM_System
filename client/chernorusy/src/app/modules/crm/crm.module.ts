@@ -28,6 +28,8 @@ import {NgxDatatableModule} from "@swimlane/ngx-datatable";
 import {TasksByColumnPipe} from "./pipes/tasks-by-column.pipe";
 import { ModalCreateUpdateProductComponent } from './components/products/modal-create-update-product/modal-create-update-product.component';
 import { ModalDeleteProductComponent } from './components/products/modal-delete-product/modal-delete-product.component';
+import { ModalCreateUpdateColumnComponent } from './components/tasks/modal-create-update-column/modal-create-update-column.component';
+import { ModalDeleteColumnComponent } from './components/tasks/modal-delete-column/modal-delete-column.component';
 
 const routes: Routes =
 [
@@ -46,7 +48,9 @@ const routes: Routes =
     ModalDeleteTaskCommentComponent,
     ProductsTableComponent,
     ModalCreateUpdateProductComponent,
-    ModalDeleteProductComponent
+    ModalDeleteProductComponent,
+    ModalCreateUpdateColumnComponent,
+    ModalDeleteColumnComponent
   ],
     imports: [
         CommonModule,

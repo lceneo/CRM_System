@@ -20,7 +20,8 @@ export class ColumnService extends EntityStateManager<IColumn>{
   override httpInitMethod: 'get' | 'post' = 'post';
   override httpInitBody = {};
 
-  override mapFn = (columnItems: {items: IColumn[]}): IColumn[] => columnItems.items;
+  override mapFn = (columnItems: {items: IColumn[]}): IColumn[] => columnItems.items
+    .map(column => ({...column, color: column.color || '#ecf0f3'}));
 
 
   protected override initial() {
@@ -41,12 +42,13 @@ export class ColumnService extends EntityStateManager<IColumn>{
   updateHTTP$(updatedColumn: Partial<IColumnCreateOrUpdateDTO>) {
     return this.httpS.post<ICreateOrUpdateEntityDTO>('/Crm/Tasks/Columns', updatedColumn)
       .pipe(
+        switchMap((res) => this.getByIDHttp$(res.id)),
         tap((updatedColumn) => this.updateByID(updatedColumn.id, updatedColumn))
       );
   }
 
   deleteByIDHTTP$(columnID: string) {
-    return this.httpS.delete(`/Crm/Tasks/Columns${columnID}`)
+    return this.httpS.delete(`/Crm/Tasks/Columns/${columnID}`)
       .pipe(
         tap(res => {
           this.removeByID(columnID);

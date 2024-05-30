@@ -1,0 +1,59 @@
+.wrapper {
+  border: 2px solid;
+}
+
+.headerSection {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  .closeBtn {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}
+
+.titleField {
+  width: 100%;
+}
+
+.mat-mdc-dialog-content {
+  width: 40vw;
+}
+
+.submitBtn {
+  margin-top: 2rem;
+  width: 100%;
+}
+
+.input {
+  &__color {
+    position: relative;
+    top: 3px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 3em;
+    height: 3em;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+
+
+    &-label {
+      margin-right: 0.5em;
+    }
+
+    &::-webkit-color-swatch {
+      border-radius: 0.4em;
+      border: none;
+    }
+
+    &::-moz-color-swatch {
+      border-radius: 0.4em;
+      border: none;
+    }
+  }
+}
+
+
