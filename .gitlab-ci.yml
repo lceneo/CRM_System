@@ -1,3 +1,37 @@
+variables:
+  BACKEND_LATEST: $CI_REGISTRY_IMAGE/backend:latest
+  FRONTEND_LATEST: $CI_REGISTRY_IMAGE/frontend:latest
+
+.before script docker registry login: &before-script-docker-registry-login
+  - mkdir ~/.docker
+  - cat $CR_CONFIG > ~/.docker/config.json
+
+make_back_docker_image:
+  stage: make_docker_image
+  image: docker:latest
+  before_script:
+    - *before-script-docker-registry-login
+  script:
+    - cd ./API
+    - docker build --pull -t $BACKEND_LATEST .
+    - docker push $BACKEND_LATEST
+  when: manual
+  only:
+    - main
+
+make_front_docker_image:
+  stage: make_docker_image
+  image: docker:latest
+  before_script:
+    - *before-script-docker-registry-login
+  script:
+    - cd ./client/chernorusy
+    - docker build --pull -t $FRONTEND_LATEST .
+    - docker push $FRONTEND_LATEST
+  when: manual
+  only:
+    - main
+
 k8s_deploy_default:
   stage: deploy
   image: hub.66bit.ru/shared/stk8s:1.26.2

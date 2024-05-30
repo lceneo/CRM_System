@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: application-back
-          image: fnatikjk/back_crm_66bit:latest
+          image: hub.66bit.ru/urfu-2023-rtf/chernorusy/chernorusy/backend:latest
           ports:
             - containerPort: 80
           env:
@@ -55,7 +55,7 @@ spec:
     spec:
       containers:
         - name: application-front
-          image: iceneo/chernorusy-fron1:latest
+          image: hub.66bit.ru/urfu-2023-rtf/chernorusy/chernorusy/frontend:latest
           ports:
             - containerPort: 80
           env:
