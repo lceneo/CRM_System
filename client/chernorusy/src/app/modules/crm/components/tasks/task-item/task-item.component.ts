@@ -4,7 +4,7 @@ import {TaskState} from "../../../helpers/enums/TaskState";
 import {TaskOrderType, TaskService} from "../../../services/task.service";
 import {MatDialog} from "@angular/material/dialog";
 import {ModalDeleteTaskComponent} from "../modal-delete-task/modal-delete-task.component";
-import {filter, switchMap} from "rxjs";
+import {filter, Subject, switchMap} from "rxjs";
 import {ModalCreateTaskComponent} from "../modal-create-task/modal-create-task.component";
 import {ModalTaskInfoComponent} from "../modal-task-info/modal-task-info.component";
 import {IColumn} from "../../../helpers/entities/IColumn";
@@ -37,12 +37,14 @@ export class TaskItemComponent  {
    this.headerBgColor = this.colorConverterS.hex2rgba(this.column!.color,1);
    this.headerBorderColor = this.colorConverterS.hex2rgba(this.column!.color,0.9);
    this.columnBgColor = this.colorConverterS.hex2rgba(this.column!.color,0.3);
+   this.headerBgColorChanged$.next();
  }
 
  protected column?: IColumn;
  @HostBinding('style.backgroundColor')
  protected columnBgColor?: string;
  protected headerBgColor?: string;
+ protected headerBgColorChanged$ = new Subject<void>();
  protected headerBorderColor?: string;
   openModalCreateTask() {
    this.matDialog.open(ModalCreateTaskComponent, {disableClose: true, autoFocus: false, data: this.column?.id});
