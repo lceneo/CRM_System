@@ -34,16 +34,6 @@ spec:
           value: CRM66bit
         - name: PGDATA
           value: /var/lib/postgresql/data/pgdata
-      initContainers:
-      - name: db-rights-to-data
-        image: busybox
-        command: ["sh","-c","mkdir -p /var/lib/postgresql/data/pgdata && chown -R 999:999 /var/lib/postgresql/data/pgdata"]
-        securityContext:
-          runAsUser: 0
-          privileged: true
-        volumeMounts:
-        - name: postgres-db
-          mountPath: /var/lib/postgresql/data
   volumeClaimTemplates:
   - metadata:
       name: postgres-db
