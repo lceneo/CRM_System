@@ -7,7 +7,6 @@ variables:
   - cat $CR_CONFIG > ~/.docker/config.json
 
 make_back_docker_image:
-  stage: make_docker_image
   image: docker:latest
   before_script:
     - *before-script-docker-registry-login
@@ -20,7 +19,6 @@ make_back_docker_image:
     - main
 
 make_front_docker_image:
-  stage: make_docker_image
   image: docker:latest
   before_script:
     - *before-script-docker-registry-login
