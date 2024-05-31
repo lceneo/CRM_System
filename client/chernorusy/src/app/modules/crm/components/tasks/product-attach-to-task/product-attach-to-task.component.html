@@ -6,6 +6,7 @@
   <div class="attachProduct">
       <button class="attachProductBtn" mat-icon-button
               (click)="productsSelect.open()"
+              [disabled]="mode === 'view'"
               [matTooltip]="'Прикрепить товар'"
       >
         <mat-icon>attach_file</mat-icon>
@@ -13,7 +14,7 @@
 
     <mat-select class="productsSelect" #productsSelect
                 [multiple]="true"
-                (selectionChange)="selectProduct($event)"
+                [formControl]="selectedProductsID"
     >
       <mat-option *ngFor="let product of allProducts()"
                   [value]="product.id"
