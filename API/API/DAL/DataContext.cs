@@ -40,7 +40,7 @@ public class DataContext : DbContext
         modelBuilder.Entity<TaskColumnEntity>()
             .HasMany(c => c.Tasks)
             .WithOne(t => t.Column)
-            .OnDelete(DeleteBehavior.SetNull);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 
     public DbSet<AccountEntity> Accounts => Set<AccountEntity>();
