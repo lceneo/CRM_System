@@ -66,7 +66,9 @@ export class TasksDashboardComponent {
     }
     if (this.selectedProductIds.length) {
       const productIds = new Set(this.selectedProductIds);
-      tasks = tasks.filter((task) => productIds.has(task.id));
+      tasks = tasks.filter((task) =>
+        task.products.some((product) => productIds.has(product.id))
+      );
     }
     return tasks;
   });
