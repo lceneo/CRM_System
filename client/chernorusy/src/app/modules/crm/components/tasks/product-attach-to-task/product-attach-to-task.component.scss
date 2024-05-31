@@ -8,9 +8,30 @@
   flex-direction: column;
 }
 
+.attachProduct {
+  width: 100%;
+}
+
 .table {
+  height: 57vh;
+  margin-bottom: 0;
+}
+
+.productsSelect {
+  visibility: hidden;
+}
+
+.cellText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.footer {
+  width: 100%;
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
-  height: calc(100% - 3rem);
+}
+
+.footerText {
+  font-weight: 600;
 }

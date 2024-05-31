@@ -31,6 +31,7 @@ export class ModalCreateTaskComponent {
     title: new FormControl<string>('', [Validators.required, Validators.minLength(3), Validators.maxLength(25)]),
     clientId: new FormControl<string>('', [Validators.required]),
     assignedTo: new FormControl<string>('', [Validators.required]),
+    productIds: new FormControl<string[]>([]),
     descrption: new FormControl<string>('', [Validators.required, Validators.minLength(5), Validators.maxLength(255)])
   })
 

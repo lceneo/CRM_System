@@ -2,16 +2,63 @@
 
 <div class="wrapper">
   <h2 class="title">Список закреплённых продуктов</h2>
-  <div class="table">
-    <section>
-      <p>Тест</p>
-      <p>Тест</p>
-      <p>Тест</p>
-      <p>Тест</p>
-    </section>
-    <section class="footer">
-      <span>Итого:</span>
-    </section>
+
+  <div class="attachProduct">
+      <button class="attachProductBtn" mat-icon-button
+              (click)="productsSelect.open()"
+              [matTooltip]="'Прикрепить товар'"
+      >
+        <mat-icon>attach_file</mat-icon>
+      </button>
+
+    <mat-select class="productsSelect" #productsSelect
+                [multiple]="true"
+                (selectionChange)="selectProduct($event)"
+    >
+      <mat-option *ngFor="let product of allProducts()"
+                  [value]="product.id"
+      >
+          {{product.id}}
+      </mat-option>
+    </mat-select>
   </div>
+
+  <ngx-datatable
+        class="material table"
+        [columnMode]="'flex'"
+        [headerHeight]="50"
+        [footerHeight]="50"
+        [rowHeight]="50"
+        [scrollbarV]="true"
+        [scrollbarH]="true"
+        [rows]="selectedProductsList()"
+        [messages]="{
+      emptyMessage: '',
+      totalMessage: 'Всего продуктов'
+    }"
+      >
+        <ngx-datatable-column [prop]="'id'" name="Идентификатор" [cellTemplate]="textTemplate" [flexGrow]="1" [resizeable]="false" [sortable]="false"> </ngx-datatable-column>
+        <ngx-datatable-column [prop]="'description'" name="Описание" [cellTemplate]="textTemplate" [flexGrow]="1" [resizeable]="false" [sortable]="false"> </ngx-datatable-column>
+        <ngx-datatable-column [prop]="'price'" name="Цена" [cellTemplate]="priceTemplate" [flexGrow]="1" [resizeable]="false"></ngx-datatable-column>
+        <ngx-datatable-footer [template]="footerTemplate"></ngx-datatable-footer>
+  </ngx-datatable>
 </div>
 
+
+<ng-template #textTemplate let-row="row" let-value="value">
+  <span class="cellText" [matTooltip]="value">{{value}}</span>
+</ng-template>
+
+<ng-template #priceTemplate let-row="row" let-value="value">
+  <span class="cellText" [matTooltip]="value + '₽'">{{value + '₽'}}</span>
+</ng-template>
+
+<ng-template #footerTemplate
+             ngx-datatable-footer-template
+             let-rowCount="rowCount"
+>
+  <section class="footer">
+    <span class="footerText">Всего продуктов: {{ rowCount }} шт.</span>
+    <span class="footerText">Общая стоимость: {{ selectedProductsList() | totalProductPrice}}₽</span>
+  </section>
+</ng-template>
