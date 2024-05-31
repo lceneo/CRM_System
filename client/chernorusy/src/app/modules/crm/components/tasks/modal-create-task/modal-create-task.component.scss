@@ -28,4 +28,38 @@
   width: 100%;
 }
 
+.peopleSection, .identificationSection, .desctiptionWrapper {
+  width: 100%;
+}
+
+.peopleSection__tile, .identificationSection__tile {
+  display: flex;
+  column-gap: 1rem;
+}
+
+.titleField {
+  width: calc(100% - (1rem + 24px + 24px));
+  margin-left: calc(24px + 1rem);
+  align-self: flex-start;
+}
+
+.descriptionTitle {
+  display: flex;
+  column-gap: 1rem;
+}
+
+.description {
+  height: 10vh;
+  width: calc(100% - (1rem + 24px + 24px));
+  margin-left: calc(24px + 1rem);
+  padding: 0;
+  resize:none;
+}
+
+
+:host ::ng-deep {
+  .mat-icon {
+    color: black !important;
+  }
+}
 

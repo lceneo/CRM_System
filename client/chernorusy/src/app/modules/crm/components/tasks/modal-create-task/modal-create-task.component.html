@@ -5,20 +5,51 @@
 </section>
 <mat-dialog-content class="mat-typography">
   <form [formGroup]="formGroup" (ngSubmit)="createTask()">
-    <mat-form-field class="titleField">
-      <mat-label>Наименование</mat-label>
-      <input [formControlName]="'title'" matInput>
-    </mat-form-field>
-    <mat-form-field class="titleField">
-      <mat-label>Ответственный</mat-label>
-      <mat-select [formControlName]="'assignedTo'">
-        <mat-option *ngFor="let profile of profiles$ | async; trackBy trackProfile" [value]="profile.id">{{profile.name}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <textarea
-              class="description form-control"
-              placeholder="Добавьте описание задаче..."
-              [formControlName]="'descrption'"></textarea>
+
+    <div class="identificationSection">
+      <div class="identificationSection__tile">
+        <mat-icon matPrefix>folder</mat-icon>
+        <p>Идентификатор</p>
+      </div>
+      <mat-form-field class="titleField">
+        <mat-label>Наименование</mat-label>
+        <input [formControlName]="'title'" matInput>
+      </mat-form-field>
+    </div>
+
+
+    <section class="peopleSection">
+      <div class="peopleSection__tile">
+        <mat-icon matPrefix>person</mat-icon>
+        <p>Люди</p>
+      </div>
+        <mat-form-field class="titleField">
+          <mat-label>Клиент</mat-label>
+          <mat-select [formControlName]="'clientId'">
+            <mat-option
+              *ngFor="let client of clients()"
+              [value]="client.id"
+            >{{getFio(client)}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="titleField">
+          <mat-label>Ответственный</mat-label>
+          <mat-select [formControlName]="'assignedTo'">
+            <mat-option *ngFor="let profile of profiles$ | async; trackBy trackProfile" [value]="profile.id">{{profile.name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+    </section>
+    <div class="desctiptionWrapper">
+      <div class="descriptionTitle">
+        <mat-icon>view_headline</mat-icon>
+        <p>Описание</p>
+      </div>
+      <textarea
+        class="description form-control"
+        placeholder="Добавьте описание задаче..."
+        [formControlName]="'descrption'"></textarea>
+    </div>
 
     <button class="submitBtn" [disabled] = "formGroup.invalid" mat-flat-button color="primary">Создать</button>
   </form>
