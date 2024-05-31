@@ -77,7 +77,8 @@
   <mat-divider [vertical]="true"></mat-divider>
   <app-product-attach-to-task
     class="productsList"
-    [modeInfo]="{mode: 'edit'}"
+    (selectedProductsChange)="formGroup.controls.productIds.setValue($event)"
+    [modeInfo]="{mode: 'create'}"
     [ngStyle]="{
       display: attachedProductsListHidden() ? 'none' : 'block'
     }"
