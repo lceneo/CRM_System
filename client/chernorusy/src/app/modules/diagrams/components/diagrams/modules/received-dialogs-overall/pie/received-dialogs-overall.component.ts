@@ -206,6 +206,10 @@ export class ReceivedDialogsOverallComponent extends ChartItem {
           radius: '55%',
           center: ['40%', '50%'],
           data: values,
+          label: {
+            formatter: '{c}',
+            position: 'inside',
+          },
           emphasis: {
             itemStyle: {
               shadowBlur: 10,
