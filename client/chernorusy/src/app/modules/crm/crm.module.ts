@@ -32,6 +32,7 @@ import { ModalCreateUpdateColumnComponent } from './components/tasks/modal-creat
 import { ModalDeleteColumnComponent } from './components/tasks/modal-delete-column/modal-delete-column.component';
 import { AutoTextColorDirective } from 'src/app/shared/directives/autoTextColor.directive';
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
+import { ProductAttachToTaskComponent } from './components/tasks/product-attach-to-task/product-attach-to-task.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: CrmComponent },
@@ -52,6 +53,7 @@ const routes: Routes = [
     ModalDeleteProductComponent,
     ModalCreateUpdateColumnComponent,
     ModalDeleteColumnComponent,
+    ProductAttachToTaskComponent,
   ],
   imports: [
     CommonModule,

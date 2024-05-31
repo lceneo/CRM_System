@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, Inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Inject, signal} from '@angular/core';
 import {ProfileService} from "../../../../../shared/services/profile.service";
 import {map, tap} from "rxjs";
 import {AccountRole} from "../../../../profile/enums/AccountRole";
@@ -40,6 +40,8 @@ export class ModalCreateTaskComponent {
       map(profiles =>
         profiles.items.filter(profile => profile.role === AccountRole.Admin || profile.role === AccountRole.Manager))
     );
+
+  protected attachedProductsListHidden = signal(true);
 
   createTask() {
     const taskToCreate = {...this.formGroup.value, columnId: this.columnID} as Omit<ITaskCreateOrUpdateDTO, 'id' | 'productIds'>;
