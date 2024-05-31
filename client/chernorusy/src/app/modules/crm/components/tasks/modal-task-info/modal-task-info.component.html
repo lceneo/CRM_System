@@ -18,15 +18,33 @@
               mat-icon-button
               (click) = "changeMod()">
         <mat-icon>{{currentMod() === 'view' ? 'edit' : 'exit_to_app'}}</mat-icon></button>
-      <mat-form-field class="titleField">
-        <mat-label>Ответственный</mat-label>
-        <mat-select [formControlName]="'assignedTo'">
-          <mat-option
-            *ngFor="let profile of profiles$ | async; trackBy trackProfile"
-            [value]="profile.id"
-          >{{profile.name}}</mat-option>
-        </mat-select>
-      </mat-form-field>
+
+      <section class="peopleSection">
+        <div class="peopleSection__tile">
+          <mat-icon matPrefix>person</mat-icon>
+          <p>Люди</p>
+        </div>
+        <mat-form-field class="titleField">
+          <mat-label>Клиент</mat-label>
+          <mat-select [formControlName]="'clientId'">
+            <mat-option
+              *ngFor="let client of clients()"
+              [value]="client.id"
+            >{{getFio(client)}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field class="titleField">
+          <mat-label>Ответственный</mat-label>
+          <mat-select [formControlName]="'assignedTo'">
+            <mat-option
+              *ngFor="let profile of profiles$ | async; trackBy trackProfile"
+              [value]="profile.id"
+            >{{getFio(profile)}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </section>
+
       <div class="desctiptionWrapper">
         <div class="descriptionTitle">
           <mat-icon>view_headline</mat-icon>

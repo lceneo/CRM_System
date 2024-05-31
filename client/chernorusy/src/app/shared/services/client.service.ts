@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from './http.service';
 import { catchError, map, of, tap } from 'rxjs';
 import { EntityStateManager } from '../helpers/entityStateManager';
 
