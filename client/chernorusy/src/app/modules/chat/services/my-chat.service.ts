@@ -11,6 +11,7 @@ import {
   map,
   merge,
   Observable,
+  of,
   Subject,
   switchMap,
   tap,
@@ -22,6 +23,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { IMessageInChat } from '../helpers/entities/MessageInChat';
 import { ChatHubService } from './chat-hub.service';
 import { Client } from 'src/app/shared/services/client.service';
+import { ProfileService } from 'src/app/shared/services/profile.service';
 
 @Injectable({
   providedIn: 'root',
@@ -42,6 +44,7 @@ export class MyChatService
 
   protected chatSocketS = inject(ChatHubService);
   private chatSearchS = inject(ChatSearchService);
+  private profileS = inject(ProfileService);
   private readonly localStorageSendInfoKey = 'user-send-info-saved';
   constructor(
     private messageS: MessageService,
@@ -140,15 +143,18 @@ export class MyChatService
   }): Observable<{
     id: string;
     isCreated: boolean;
-  }> {
+  } | null> {
     return this.httpS.patch('/Chats', newData).pipe(
       switchMap((resp: any) => {
+        if (!resp) {
+          return of(null);
+        }
         const { id, isCreated } = resp as unknown as {
           id: string;
           isCreated: boolean;
         };
         return this.updateChatFn$([id]).pipe(map(() => ({ id, isCreated })));
-      })
+      }) as any
     );
   }
 
@@ -251,8 +257,8 @@ export class MyChatService
       });
     };
 
-    const updateChatFn = (chatIds: string[]) => {
-      this.updateChatFn$(chatIds).subscribe();
+    const updateChatFn = (chatId: string) => {
+      this.updateChatFn$([chatId]).subscribe();
     };
 
     const addSendUserDataFn = (data: SetClientResponse) => {
@@ -268,9 +274,24 @@ export class MyChatService
     this.chatSocketS.listenMethod('SetClient', addSendUserDataFn);
   }
 
-  private updateChatFn$ = (chatIds: string[]) => {
+  private updateChatFn$ = (
+    chatIds: string[]
+  ): Observable<
+    | null
+    | {
+        totalCount: number;
+        items: IChatResponseDTO[];
+      }
+    | {
+        totalCount: number;
+        items: IChatResponseDTO[];
+      }
+  > => {
+    if (!this.profileS.profile()) {
+      return of(null);
+    }
     return this.chatSearchS
-      .getById$(chatIds)
+      .search$({ ids: chatIds, userIds: [this.profileS.profile()!.id] })
       .pipe(tap((resp) => this.upsertEntities(resp.items)));
   };
 }

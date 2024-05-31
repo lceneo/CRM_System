@@ -98,17 +98,16 @@ export class FreeChatService extends EntityStateManager<IChatResponseDTO> {
       });
     };
 
-    const updateChatFn = (chatIds: string[]) => {
-        this.chatSearchS
-        .getById$(chatIds)
-        .pipe(
-          tap(resp => this.upsertEntities(resp.items))
-          ).subscribe();
-    }
+    const updateChatFn = (chatIds: string) => {
+      this.chatSearchS
+        .getById$([chatIds])
+        .pipe(tap((resp) => this.upsertEntities(resp.items)))
+        .subscribe();
+    };
 
     this.chatSocketS.listenMethod('UpdateFreeChats', updateFreeChatsFn);
     this.chatSocketS.listenMethod('ActiveStatus', activeStatusFn);
-    this.chatSocketS.listenMethod('ChangeChat',  updateChatFn);
+    this.chatSocketS.listenMethod('ChangeChat', updateChatFn);
   }
 
   public isPendingJoin(chatID: string) {
