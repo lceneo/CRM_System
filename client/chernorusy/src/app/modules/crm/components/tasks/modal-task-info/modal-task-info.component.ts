@@ -45,7 +45,12 @@ export class ModalTaskInfoComponent implements OnInit {
 
   protected savedFormValue = computed(() => {
     const currentTaskState = this.task();
-    return {title: currentTaskState?.title, assignedTo: currentTaskState?.assignedTo.id, clientId: currentTaskState?.client.id, descrption: currentTaskState?.descrption}
+    return {
+      title: currentTaskState?.title,
+      assignedTo: currentTaskState?.assignedTo.id,
+      clientId: currentTaskState?.client.id,
+      productIds: currentTaskState?.products.map(prod => prod.id),
+      descrption: currentTaskState?.descrption}
   })
 
   // @ts-ignore
@@ -55,6 +60,7 @@ export class ModalTaskInfoComponent implements OnInit {
     title: new FormControl<string>((this.task())?.title ?? '', [Validators.required, Validators.minLength(3), Validators.maxLength(25)]),
     assignedTo: new FormControl<string>((this.task())?.assignedTo.id ?? '', [Validators.required]),
     clientId:  new FormControl<string>((this.task())?.client.id ?? '', [Validators.required]),
+    productIds:  new FormControl<string[]>(this.task()?.products.map(prod => prod.id) ?? []),
     descrption: new FormControl<string>((this.task())?.descrption ?? '', [Validators.required, Validators.minLength(5), Validators.maxLength(255)])
   })
 
@@ -66,8 +72,9 @@ export class ModalTaskInfoComponent implements OnInit {
         profiles.items.filter(profile => profile.role === AccountRole.Admin || profile.role === AccountRole.Manager))
     );
 
-  protected currentMod: WritableSignal<TaskInfoMod> = signal('view');
+  protected currentMode: WritableSignal<TaskInfoMod> = signal('view');
   protected saveChangesBtnDisabled = signal(true);
+  protected attachedProductsListHidden = signal(true);
 
 
   ngOnInit(): void {
@@ -76,11 +83,11 @@ export class ModalTaskInfoComponent implements OnInit {
   }
 
   protected changeMod() {
-    if (this.currentMod() === 'view') {
-      this.currentMod.set('edit');
+    if (this.currentMode() === 'view') {
+      this.currentMode.set('edit');
       this.formGroup.enable();
     } else {
-      this.currentMod.set('view');
+      this.currentMode.set('view');
       //@ts-ignore
       this.formGroup.setValue(this.savedFormValue());
       this.formGroup.disable();
