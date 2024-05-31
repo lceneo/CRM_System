@@ -18,6 +18,8 @@ import {TaskService} from "../../../services/task.service";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
 import {ITaskCreateOrUpdateDTO} from "../../../helpers/DTO/request/ITaskCreateOrUpdateDTO";
 import {IComment} from "../../../helpers/entities/IComment";
+import {ClientService} from "../../../../../shared/services/client.service";
+import {getFio} from "../../../../../shared/helpers/get-fio";
 
 
 @Component({
@@ -30,6 +32,7 @@ export class ModalTaskInfoComponent implements OnInit {
   constructor(
     private profileS: ProfileService,
     private taskS: TaskService,
+    private clientS: ClientService,
     private destroyRef: DestroyRef,
     @Inject(MAT_DIALOG_DATA) protected taskId: string
   ) {}
@@ -38,10 +41,11 @@ export class ModalTaskInfoComponent implements OnInit {
   protected task = this.taskS.getEntityAsync(this.taskId);
   protected comments = computed(() =>
       this.taskS.getTaskCommentsAsync(this.taskId)()?.sort((f, s) => new Date(f.createdAt).getTime() - new Date(s.createdAt).getTime()) as IComment[]);
+  protected clients = this.clientS.getEntitiesAsync();
 
   protected savedFormValue = computed(() => {
     const currentTaskState = this.task();
-    return {title: currentTaskState?.title, assignedTo: currentTaskState?.assignedTo.id, descrption: currentTaskState?.descrption}
+    return {title: currentTaskState?.title, assignedTo: currentTaskState?.assignedTo.id, clientId: currentTaskState?.client.id, descrption: currentTaskState?.descrption}
   })
 
   // @ts-ignore
@@ -50,6 +54,7 @@ export class ModalTaskInfoComponent implements OnInit {
   protected formGroup = new FormGroup({
     title: new FormControl<string>((this.task())?.title ?? '', [Validators.required, Validators.minLength(3), Validators.maxLength(25)]),
     assignedTo: new FormControl<string>((this.task())?.assignedTo.id ?? '', [Validators.required]),
+    clientId:  new FormControl<string>((this.task())?.client.id ?? '', [Validators.required]),
     descrption: new FormControl<string>((this.task())?.descrption ?? '', [Validators.required, Validators.minLength(5), Validators.maxLength(255)])
   })
 
@@ -119,6 +124,8 @@ export class ModalTaskInfoComponent implements OnInit {
           takeUntilDestroyed(this.destroyRef)
     ).subscribe();
   }
+
+  protected readonly getFio = getFio;
 }
 
 interface ITaskInfoData {

@@ -1,0 +1,16 @@
+:host {
+  position: relative;
+}
+
+.wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.table {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: calc(100% - 3rem);
+}

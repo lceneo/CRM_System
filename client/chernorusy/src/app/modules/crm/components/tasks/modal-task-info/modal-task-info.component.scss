@@ -58,13 +58,13 @@
 }
 
 .mat-mdc-dialog-content {
-  max-height: 70vh;
+  max-height: 80vh;
 }
 
 .titleField {
   width: calc(100% - (1rem + 24px + 24px));
-  align-self: flex-start;
   margin-left: calc(24px + 1rem);
+  align-self: flex-start;
 }
 
 .desctiptionWrapper {
@@ -139,4 +139,13 @@
   .saveChangesBtn {
     flex-grow: 1;
   }
+}
+
+.peopleSection {
+  width: 100%;
+}
+
+.peopleSection__tile {
+  display: flex;
+  column-gap: 1rem;
 }
