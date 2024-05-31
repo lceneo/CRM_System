@@ -1,7 +1,64 @@
 <div class="wrapper">
   <div class="settings-row">
-    <ng-select [items]="taskExecutioners()"></ng-select>
-    <ng-select [items]="clientsOnTasks()"></ng-select>
+    <ng-select
+      [items]="taskExecutioners()"
+      [bindValue]="'id'"
+      [searchFn]="executionerSearchFn"
+      appendTo="body"
+      placeholder="Исполнитель"
+      [(ngModel)]="selectedTaskExecutionerId"
+      (ngModelChange)="doFilter$.next()"
+      *ngLet="selectedTaskExecutionerIdName() as tooltip"
+      [matTooltip]="tooltip!"
+      [matTooltipDisabled]="!tooltip"
+    >
+      <ng-template ng-label-tmp let-item="item"
+        ><span>{{ getFio(item) }}</span></ng-template
+      >
+      <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+        <span
+          [matTooltip]="getFio(item)"
+          matTooltipClass="no-events"
+          [ngOptionHighlight]="search"
+          >{{ getFio(item) }}</span
+        >
+      </ng-template>
+    </ng-select>
+    <ng-select
+      [items]="clientsOnTasks()"
+      [bindValue]="'id'"
+      [searchFn]="clientSearchFn"
+      appendTo="body"
+      placeholder="Клиент"
+      [(ngModel)]="selectedClientOnTaskId"
+      (ngModelChange)="doFilter$.next()"
+      *ngLet="selectedClientOnTaskIdName() as tooltip"
+      [matTooltip]="tooltip!"
+      [matTooltipDisabled]="!tooltip"
+    >
+      <ng-template ng-label-tmp let-item="item"
+        ><span>{{ getFio(item) }}</span></ng-template
+      >
+      <ng-template ng-option-tmp let-item="item" let-search="searchTerm">
+        <span
+          [matTooltip]="getFio(item)"
+          matTooltipClass="no-events"
+          [ngOptionHighlight]="search"
+          >{{ getFio(item) }}</span
+        >
+      </ng-template>
+    </ng-select>
+    <ng-select
+      [items]="productsOnTasks()"
+      [bindValue]="'id'"
+      [bindLabel]="'description'"
+      [multiple]="true"
+      [closeOnSelect]="false"
+      placeholder="Товары"
+      appendTo="body"
+      [(ngModel)]="selectedProductIds"
+      (ngModelChange)="doFilter$.next()"
+    ></ng-select>
     <button
       class="addColumnBtn"
       mat-mini-fab
@@ -16,7 +73,7 @@
       <app-task-item
         *ngLet="column.id | tasksByColumn as tasks"
         class="dashboard"
-        [tasks]="tasks()"
+        [tasks]="tasksFiltered()"
         [columnID]="column.id"
         cdkDropList
         [cdkDropListData]="tasks()"

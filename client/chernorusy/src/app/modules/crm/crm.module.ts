@@ -33,7 +33,8 @@ import { ModalDeleteColumnComponent } from './components/tasks/modal-delete-colu
 import { AutoTextColorDirective } from 'src/app/shared/directives/autoTextColor.directive';
 import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 import { ProductAttachToTaskComponent } from './components/tasks/product-attach-to-task/product-attach-to-task.component';
-import {TotalProductPricePipe} from "./pipes/total-product-price.pipe";
+import { TotalProductPricePipe } from './pipes/total-product-price.pipe';
+import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: CrmComponent },
@@ -81,6 +82,7 @@ const routes: Routes = [
     AutoTextColorDirective,
     NgSelectModule,
     TotalProductPricePipe,
+    NgOptionHighlightModule,
   ],
 })
 export class CrmModule {}
