@@ -118,15 +118,26 @@
 
 <ng-template #createClientModal>
   <div class="dialog-wrap">
-    <button mat-icon-button mat-dialog-close>close</button>
+    <div class="dialog-heading">
+      <h3>Создание клиента</h3>
+      <button mat-icon-button mat-dialog-close>
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
     <form [formGroup]="fg">
       <mat-form-field>
         <mat-label>Фамилия</mat-label>
         <input matInput required formControlName="surname" />
+        <mat-error *ngIf="fg.controls['surname'].hasError('required')"
+          >Поле не заполнено</mat-error
+        >
       </mat-form-field>
       <mat-form-field>
         <mat-label>Имя</mat-label>
         <input matInput required formControlName="name" />
+        <mat-error *ngIf="fg.controls['name'].hasError('required')"
+          >Поле не заполнено</mat-error
+        >
       </mat-form-field>
       <mat-form-field>
         <mat-label>Отчество</mat-label>
@@ -135,19 +146,24 @@
       <mat-form-field>
         <mat-label>Телефон</mat-label>
         <input matInput formControlName="phone" />
-        <mat-error *ngIf="fg.hasError('emailOrPhone')"
-          >Должен быть телефон или email</mat-error
+        <mat-error *ngIf="fg.controls['phone'].hasError('pattern')"
+          >Неправильный формат</mat-error
         >
       </mat-form-field>
       <mat-form-field>
         <mat-label>Email</mat-label>
         <input matInput formControlName="email" />
-        <mat-error *ngIf="fg.hasError('emailOrPhone')"
-          >Должен быть телефон или email</mat-error
+        <mat-error *ngIf="fg.controls['email'].hasError('pattern')"
+          >Неправильный формат</mat-error
         >
       </mat-form-field>
 
-      <button mat-button (click)="saveForm()">Сохранить</button>
+      <button mat-button (click)="saveForm()" [disabled]="fg.invalid">
+        Сохранить
+      </button>
+      <mat-error *ngIf="fg.hasError('phoneOrEmail')" style="font-size: 11px"
+        >Должен быть телефон или email</mat-error
+      >
     </form>
   </div>
 </ng-template>

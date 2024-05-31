@@ -16,7 +16,9 @@ import { NgSelectComponent } from '@ng-select/ng-select';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import {
   FormBuilder,
+  FormControl,
   FormGroup,
+  FormRecord,
   ValidationErrors,
   ValidatorFn,
   Validators,
@@ -148,8 +150,8 @@ export class ChatClientInfoComponent {
 
   fg = this.fb.group(
     {
-      surname: ['', Validators.required, Validators.minLength(3)],
-      name: ['', Validators.required, Validators.minLength(3)],
+      surname: ['', [Validators.required, Validators.minLength(3)]],
+      name: ['', [Validators.required, Validators.minLength(3)]],
       patronymic: [],
       phone: [
         '',
@@ -170,7 +172,7 @@ export class ChatClientInfoComponent {
   saveForm() {
     const newClient = this.fg.value;
     Object.keys(newClient).forEach(
-      (key) => (newClient[key] = newClient[key].trim())
+      (key) => (newClient[key] = newClient[key]?.trim())
     );
     this.dialogRef?.close();
     this.clientS
@@ -192,7 +194,8 @@ export class ChatClientInfoComponent {
 }
 
 const phoneOrEmailValidator = (group: FormGroup): ValidationErrors | null => {
-  if (!!group.value.phone.trim().length && !!group.value.email.trim().length) {
+  console.log('groupErrors', group.errors, group.hasError('phoneOrEmail'));
+  if (!group.value.phone.trim().length && !group.value.email.trim().length) {
     return { phoneOrEmail: true };
   }
   return null;

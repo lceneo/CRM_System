@@ -18,9 +18,14 @@
 .no-client-info {
   width: 100%;
   padding-inline: 5px;
+  align-items: stretch;
   & > span {
     align-self: flex-start;
   }
+}
+
+.no-client-info {
+  gap: 10px;
 }
 
 .header {
@@ -49,4 +54,28 @@ ng-select {
 
 mat-card {
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.buttons {
+  flex-direction: column;
+  display: flex;
+  width: 100%;
+}
+
+.dialog-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  padding: 10px;
+}
+
+.dialog-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+h3 {
+  margin: 0;
 }

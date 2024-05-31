@@ -26,6 +26,7 @@ import { UnreadChatsPipe } from './pipes/unread-chats.pipe';
 import { ChatClientInfoComponent } from './components/chat-client-info/chat-client-info.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: MainChatPageComponent },
@@ -64,6 +65,7 @@ const routes: Routes = [
     UnreadChatsPipe,
     NgSelectModule,
     MatFormFieldModule,
+    MatInputModule,
   ],
 })
 export class ChatModule {}

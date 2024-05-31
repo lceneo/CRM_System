@@ -39,7 +39,7 @@
   <button
     mat-icon-button
     [matTooltip]="'Клиент'"
-    (click)="clientInfoOpened = !clientInfoOpened"
+    (click)="clientInfoOpened = !clientInfoOpened; membersSectionOpened = false"
   >
     <mat-icon>perm_contact_calendar</mat-icon>
   </button>
@@ -47,7 +47,9 @@
   <button
     mat-icon-button
     [matTooltip]="'Участники чата'"
-    (click)="membersSectionOpened = !membersSectionOpened"
+    (click)="
+      membersSectionOpened = !membersSectionOpened; clientInfoOpened = false
+    "
   >
     <mat-icon>people</mat-icon>
   </button>
@@ -98,13 +100,19 @@
         [style.display]="membersSectionOpened ? 'block' : 'none'"
       ></app-chat-members>
 
-      <app-chat-client-info [chatID]="chatID!" [style.display]="clientInfoOpened ? 'block' : 'none'"> </app-chat-client-info>
+      <app-chat-client-info
+        [chatID]="chatID!"
+        [style.display]="clientInfoOpened ? 'block' : 'none'"
+      >
+      </app-chat-client-info>
     </section>
 
     <ng-container [ngSwitch]="chatType">
       <div
         class="form-group textMsgArea"
-        [style.padding-right]="membersSectionOpened ? '200px' : '0'"
+        [style.padding-right]="
+          membersSectionOpened || clientInfoOpened ? '200px' : '0'
+        "
         *ngSwitchCase="'Mine'"
       >
         <button
