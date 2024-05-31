@@ -23,20 +23,20 @@
         [bindValue]="'id'"
         [searchFn]="searchClientFn"
         [appendTo]="'body'"
-        class="closed"
+        class="closed hide-selected-force"
       >
         <ng-template ng-option-tmp let-client="item" let-search="searchTerm">
           <mat-card
             class="client-search-item"
-            [style]="
-              client.id === selectedSetClient()?.id ? 'display: none' : ''
-            "
+            appearance="outlined"
             [ngClass]="{
-              maybeExisted:
-                !!existedClient() && existedClient()?.id === client.id
-            }"
+                  maybeExisted:!!existedClient() && existedClient()?.id === client.id,
+                  selected: client.id === selectedSetClient()?.id,
+                }"
           >
-            <span>{{ getFio(client) }}</span>
+            <span
+              ><b>{{ getFio(client) }}</b></span
+            >
             <span *ngIf="!!client?.phone">Телефон: {{ client.phone }}</span>
             <span *ngIf="!!client?.email">Email: {{ client.email }}</span>
           </mat-card>
@@ -52,8 +52,8 @@
           <ng-container *ngIf="!!sentClient">
             <span>Фамилия: {{ sentClient?.surname ?? "-" }}</span>
             <span>Имя: {{ sentClient?.name ?? "-" }}</span>
-            <span> Отчество: {{ sentClient?.patronymic ?? "-" }} </span>
-            <span> Телефон: {{ sentClient?.phone ?? "-" }} </span>
+            <span>Отчество: {{ sentClient?.patronymic ?? "-" }} </span>
+            <span>Телефон: {{ sentClient?.phone ?? "-" }} </span>
             <span>Email: {{ sentClient?.email ?? "-" }}</span>
           </ng-container>
         </div>
@@ -86,7 +86,7 @@
             [bindValue]="'id'"
             [searchFn]="searchClientFn"
             [appendTo]="'body'"
-            class="closed"
+            class="closed hide-selected-force"
           >
             <ng-template
               ng-option-tmp
@@ -95,15 +95,15 @@
             >
               <mat-card
                 class="client-search-item"
-                [style]="
-                  client.id === selectedSetClient()?.id ? 'display: none' : ''
-                "
+                appearance="raised"
                 [ngClass]="{
-                  maybeExisted:
-                    !!existedClient() && existedClient()?.id === client.id
+                  maybeExisted:!!existedClient() && existedClient()?.id === client.id,
+                  selected: client.id === selectedSetClient()?.id,
                 }"
               >
-                <span>{{ getFio(client) }}</span>
+                <span
+                  ><b>{{ getFio(client) }}</b></span
+                >
                 <span *ngIf="!!client?.phone">Телефон: {{ client.phone }}</span>
                 <span *ngIf="!!client?.email">Email: {{ client.email }}</span>
               </mat-card>

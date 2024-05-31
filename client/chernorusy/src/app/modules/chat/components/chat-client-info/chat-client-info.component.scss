@@ -39,8 +39,10 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
-  margin-top: 5px;
-  margin-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
 }
 
 .closed {
@@ -53,7 +55,7 @@ ng-select {
 }
 
 mat-card {
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  line-height: 1.8;
 }
 
 .buttons {
@@ -78,4 +80,8 @@ mat-card {
 
 h3 {
   margin: 0;
+}
+
+.maybeExisted {
+  border: 1px solid yellow;
 }

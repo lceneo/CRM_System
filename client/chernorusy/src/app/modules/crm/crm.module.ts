@@ -31,6 +31,7 @@ import { ModalDeleteProductComponent } from './components/products/modal-delete-
 import { ModalCreateUpdateColumnComponent } from './components/tasks/modal-create-update-column/modal-create-update-column.component';
 import { ModalDeleteColumnComponent } from './components/tasks/modal-delete-column/modal-delete-column.component';
 import { AutoTextColorDirective } from 'src/app/shared/directives/autoTextColor.directive';
+import { NgSelectComponent, NgSelectModule } from '@ng-select/ng-select';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: CrmComponent },
@@ -75,6 +76,7 @@ const routes: Routes = [
     NgxDatatableModule,
     TasksByColumnPipe,
     AutoTextColorDirective,
+    NgSelectModule,
   ],
 })
 export class CrmModule {}

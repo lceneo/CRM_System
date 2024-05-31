@@ -1,24 +1,29 @@
-
 <div class="wrapper">
-  <button class="addColumnBtn"
-          mat-mini-fab
-          [matTooltip]="'Новая колонка'"
-          (click)="openCreateColumnModal()"
-          >
-    <mat-icon>add</mat-icon>
-  </button>
-<section class="dashboards" cdkDropListGroup>
-      <ng-container *ngFor="let column of columns()">
-        <app-task-item *ngLet="(column.id | tasksByColumn) as tasks"
-                class="dashboard"
-                [tasks]="tasks()"
-                [columnID]="column.id"
-                cdkDropList
-                [cdkDropListData]="tasks()"
-                (cdkDropListDropped)="dropTask($event, column.id)"
-                [id]="TaskState.New.toString()"
-        >
-        </app-task-item>
-      </ng-container>
-    </section>
+  <div class="settings-row">
+    <ng-select [items]="taskExecutioners()"></ng-select>
+    <ng-select [items]="clientsOnTasks()"></ng-select>
+    <button
+      class="addColumnBtn"
+      mat-mini-fab
+      [matTooltip]="'Новая колонка'"
+      (click)="openCreateColumnModal()"
+    >
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
+  <section class="dashboards" cdkDropListGroup>
+    <ng-container *ngFor="let column of columns()">
+      <app-task-item
+        *ngLet="column.id | tasksByColumn as tasks"
+        class="dashboard"
+        [tasks]="tasks()"
+        [columnID]="column.id"
+        cdkDropList
+        [cdkDropListData]="tasks()"
+        (cdkDropListDropped)="dropTask($event, column.id)"
+        [id]="TaskState.New.toString()"
+      >
+      </app-task-item>
+    </ng-container>
+  </section>
 </div>

@@ -137,6 +137,14 @@
           }
         }
       }
+
+      &.hide-selected-force {
+        .ng-dropdown-panel-items {
+          .ng-option:has(> .selected) {
+            display: none;
+          }
+        }
+      }
     }
   }
 }

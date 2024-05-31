@@ -23,6 +23,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
+import { getFio } from 'src/app/shared/helpers/get-fio';
 
 @Component({
   selector: 'app-chat-client-info',
@@ -74,18 +75,6 @@ export class ChatClientInfoComponent {
 
   existedClient = signal<Client | null>(null);
   sentClient = signal<Omit<Client, 'id'> | null>(null);
-
-  getFio(
-    client: {
-      surname: string | null;
-      name: string | null;
-      patronymic: string | null;
-    } | null
-  ): string {
-    return [client?.surname, client?.name, client?.patronymic]
-      .filter(Boolean)
-      .join(' ');
-  }
 
   allClients = this.clientS.getEntitiesAsync();
   ngOnInit() {
@@ -191,6 +180,8 @@ export class ChatClientInfoComponent {
     private matDialog: MatDialog,
     private fb: FormBuilder
   ) {}
+
+  protected readonly getFio = getFio;
 }
 
 const phoneOrEmailValidator = (group: FormGroup): ValidationErrors | null => {
