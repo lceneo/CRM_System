@@ -58,6 +58,12 @@ export class SocketService {
 
     this.hub.on("Recieve", (data) => {
       const msg = data.message?.toString();
+      console.log("datamessage", msg?.endsWith("вошел в чат"), data);
+      console.log(
+        "dataMessage",
+        data.message,
+        data.message === "Чат архивирован менеджером"
+      );
 
       if (!data.sender && msg === "Чат архивирован менеджером") {
         events.trigger("archive");

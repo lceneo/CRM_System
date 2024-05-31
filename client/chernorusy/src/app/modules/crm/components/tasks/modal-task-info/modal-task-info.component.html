@@ -1,78 +1,132 @@
 <div class="wrapper" *ngLet="task() as task">
-  <section class="headerSection">
-    <div class="titleAndCloseBtn">
+  <section class="mainInfo">
+    <section class="headerSection">
+      <div class="titleAndCloseBtn">
 
-      <mat-form-field class="titleInput" *ngIf="currentMod() === 'edit'">
-        <input matInput [formControl]="formGroup.controls.title">
-      </mat-form-field>
+        <mat-form-field class="titleInput" *ngIf="currentMode() === 'edit'">
+          <input matInput [formControl]="formGroup.controls.title">
+        </mat-form-field>
 
-      <h1 *ngIf="currentMod() === 'view'" mat-dialog-title>{{task?.title}}</h1>
-      <button mat-dialog-close class="closeBtn" mat-icon-button><mat-icon>close</mat-icon></button>
-    </div>
-    <span mat-card-subtitle>В колонке "{{task?.column?.name}}"</span>
-  </section>
-  <section mat-dialog-content>
-    <form class="form" [formGroup]="formGroup">
-      <button class="changeModBtn"
-              [matTooltip]="currentMod() === 'view' ? 'Редактировать' : 'Режим просмотра'"
-              mat-icon-button
-              (click) = "changeMod()">
-        <mat-icon>{{currentMod() === 'view' ? 'edit' : 'exit_to_app'}}</mat-icon></button>
-      <mat-form-field class="titleField">
-        <mat-label>Ответственный</mat-label>
-        <mat-select [formControlName]="'assignedTo'">
-          <mat-option
-            *ngFor="let profile of profiles$ | async; trackBy trackProfile"
-            [value]="profile.id"
-          >{{profile.name}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <div class="desctiptionWrapper">
-        <div class="descriptionTitle">
-          <mat-icon>view_headline</mat-icon>
-          <p>Описание</p>
-        </div>
-        <textarea
-          class="description form-control"
-          placeholder="Добавьте описание задаче..."
-          [formControlName]="'descrption'"></textarea>
+        <h1 *ngIf="currentMode() === 'view'" mat-dialog-title>{{task?.title}}</h1>
+        <button mat-dialog-close class="closeBtn" mat-icon-button><mat-icon>close</mat-icon></button>
       </div>
-    </form>
+      <span mat-card-subtitle>В колонке "{{task?.column?.name}}"</span>
+    </section>
+    <section mat-dialog-content>
+      <form class="form" [formGroup]="formGroup">
+        <button class="changeModBtn"
+                [matTooltip]="currentMode() === 'view' ? 'Редактировать' : 'Режим просмотра'"
+                mat-icon-button
+                (click) = "changeMod()">
+          <mat-icon>{{currentMode() === 'view' ? 'edit' : 'exit_to_app'}}</mat-icon></button>
 
-      <section class="commentsSection">
-        <div class="commentsTitleWrapper">
-          <mat-icon>insert_comment</mat-icon>
-          <p class="commentsTitle" [matBadge]="comments()?.length" [matBadgeSize]="'small'">Комментарии</p>
+        <section class="peopleSection">
+          <div class="peopleSection__tile">
+            <mat-icon matPrefix>person</mat-icon>
+            <p>Люди</p>
+          </div>
+
+          <mat-form-field class="titleField">
+            <mat-label>Клиент</mat-label>
+            <mat-select [formControlName]="'clientId'">
+              <mat-option
+                *ngFor="let client of clients()"
+                [value]="client.id"
+              >{{getFio(client)}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field class="titleField">
+            <mat-label>Ответственный</mat-label>
+            <mat-select [formControlName]="'assignedTo'">
+              <mat-option
+                *ngFor="let profile of profiles$ | async; trackBy trackProfile"
+                [value]="profile.id"
+              >{{getFio(profile)}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </section>
+
+        <section class="productsSection">
+          <div class="productsSection__tile">
+            <mat-icon>attach_money</mat-icon>
+            <p>Продукты</p>
+          </div>
+          <button class="addProductBtn"
+                  (click) = "attachedProductsListHidden.set(false)"
+                  [disabled]="!attachedProductsListHidden()"
+                  mat-mini-fab
+                  type="button"
+                  [matTooltip]="'Продукты'"
+          >
+            <mat-icon>add</mat-icon>
+          </button>
+        </section>
+
+        <div class="desctiptionWrapper">
+          <div class="descriptionTitle">
+            <mat-icon>view_headline</mat-icon>
+            <p>Описание</p>
+          </div>
+          <textarea
+            class="description form-control"
+            placeholder="Добавьте описание задаче..."
+            [formControlName]="'descrption'"></textarea>
         </div>
-        <mat-list>
-          <mat-list-item *ngFor="let comment of comments()">
-            <app-task-comment [taskID]="task?.id" [comment]="comment"></app-task-comment>
-          </mat-list-item>
-        </mat-list>
-        <div class="textAreaBlock">
-          <textarea appTextareaResize
-            class="comment form-control"
-            placeholder="Напишите комментарий"
-            [formControl]="commentControl"
-            (keydown)="pressKey($event)"
-            ></textarea>
-          <i
-            class="bi bi-send sendMsgBtn"
-            [ngClass]="{
-            'msgNotEmpty': commentControl.value?.length && commentControl.valid
-          }"
-            [matTooltip]="'Отправить сообщение'"
-            [matTooltipDisabled] = "commentControl.invalid"
-            (click) = "postComment()"
-            ></i>
-        </div>
-      </section>
+      </form>
+
+        <section class="commentsSection">
+          <div class="commentsTitleWrapper">
+            <mat-icon>insert_comment</mat-icon>
+            <p class="commentsTitle" [matBadge]="comments()?.length" [matBadgeSize]="'small'">Комментарии</p>
+          </div>
+          <mat-list>
+            <mat-list-item *ngFor="let comment of comments()">
+              <app-task-comment [taskID]="task?.id" [comment]="comment"></app-task-comment>
+            </mat-list-item>
+          </mat-list>
+          <div class="textAreaBlock">
+            <textarea appTextareaResize
+              class="comment form-control"
+              placeholder="Напишите комментарий"
+              [formControl]="commentControl"
+              (keydown)="pressKey($event)"
+              ></textarea>
+            <i
+              class="bi bi-send sendMsgBtn"
+              [ngClass]="{
+              'msgNotEmpty': commentControl.value?.length && commentControl.valid
+            }"
+              [matTooltip]="'Отправить сообщение'"
+              [matTooltipDisabled] = "commentControl.invalid"
+              (click) = "postComment()"
+              ></i>
+          </div>
+        </section>
+    </section>
+    <section class="btnSection" mat-dialog-actions>
+      <button class="saveChangesBtn"
+              color="primary" mat-flat-button
+              [disabled] = "saveChangesBtnDisabled()"
+              (click) = "saveChanges()"
+      >Сохранить изменения</button>
+    </section>
   </section>
-  <section class="btnSection" mat-dialog-actions>
-    <button class="saveChangesBtn"
-            color="primary" mat-flat-button
-            [disabled] = "saveChangesBtnDisabled()"
-            (click) = "saveChanges()"
-    >Сохранить изменения</button>
-  </section>
+  <mat-divider [vertical]="true"></mat-divider>
+
+  <app-product-attach-to-task
+    class="productsList"
+    (selectedProductsChange)="formGroup.controls.productIds.setValue($event)"
+    [modeInfo]="{mode: currentMode(), taskId: taskId}"
+    [ngStyle]="{
+      display: attachedProductsListHidden() ? 'none' : 'block'
+    }"
+  >
+    <button mat-icon-button
+            class="closeAttachedProductsBtn"
+            (click)="attachedProductsListHidden.set(true)"
+            [matTooltip]="'Свернуть панель'">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+  </app-product-attach-to-task>
 </div>

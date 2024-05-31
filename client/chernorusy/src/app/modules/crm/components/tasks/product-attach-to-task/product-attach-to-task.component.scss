@@ -1,0 +1,36 @@
+:host {
+  position: relative;
+}
+
+.wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.attachProduct {
+  width: 100%;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.productsSelect {
+  visibility: hidden;
+}
+
+.cellText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.footerText {
+  font-weight: 600;
+}

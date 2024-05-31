@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { HttpService } from './http.service';
 import { catchError, map, of, tap } from 'rxjs';
 import { EntityStateManager } from '../helpers/entityStateManager';
 
@@ -13,7 +12,7 @@ export class ClientService extends EntityStateManager<Client> {
   ) => resp.items;
   constructor() {
     super();
-    this.getEntitiesSync;
+    this.initStore();
   }
 
   updateData$() {

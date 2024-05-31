@@ -19,6 +19,17 @@
   }
 }
 
+.settings-row {
+  display: flex;
+  justify-content: flex-start;
+  & > *:not(:first-child) {
+    margin-left: 10px;
+  }
+  & ng-select {
+    min-width: 20%;
+  }
+}
+
 .addColumnBtn {
   background-color: transparent;
   align-self: center;

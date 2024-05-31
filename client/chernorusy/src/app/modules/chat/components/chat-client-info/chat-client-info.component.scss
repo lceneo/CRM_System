@@ -1,0 +1,87 @@
+:host {
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.wrapper,
+.client-info,
+.no-client-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wrapper {
+  gap: 10px;
+}
+
+.client-info,
+.no-client-info {
+  width: 100%;
+  padding-inline: 5px;
+  align-items: stretch;
+  & > span {
+    align-self: flex-start;
+  }
+}
+
+.no-client-info {
+  gap: 10px;
+}
+
+.header {
+  font-size: 18px;
+  margin: 5px;
+  text-wrap: pretty;
+  font-size: 1rem;
+}
+
+.client-search-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+.closed {
+  visibility: hidden;
+  height: 0;
+}
+
+ng-select {
+  align-self: stretch;
+}
+
+mat-card {
+  line-height: 1.8;
+}
+
+.buttons {
+  flex-direction: column;
+  display: flex;
+  width: 100%;
+}
+
+.dialog-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  padding: 10px;
+}
+
+.dialog-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+h3 {
+  margin: 0;
+}
+
+.maybeExisted {
+  border: 1px solid yellow;
+}

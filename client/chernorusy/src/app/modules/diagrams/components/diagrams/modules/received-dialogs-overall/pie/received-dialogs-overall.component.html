@@ -1,0 +1,19 @@
+<echarts #chart [options]="options" (chartInit)="setInstance($event)"></echarts>
+
+<ng-template #managerChoseBtn>
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>settings</mat-icon>
+  </button>
+</ng-template>
+
+<mat-menu #menu (closed)="deselectedManagers$.next(deselectedManagers$.value)">
+  <mat-selection-list #managerSelectionList (click)="$event.stopPropagation()">
+    <mat-list-option
+      [selected]="!deselectedManagers$.value.has(manager.id)"
+      (selectedChange)="changeSelection(manager, $event)"
+      togglePosition="before"
+      *ngFor="let manager of managers$ | async"
+      >{{ manager.name }} {{ manager.surname }}
+    </mat-list-option>
+  </mat-selection-list>
+</mat-menu>

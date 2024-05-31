@@ -10,9 +10,11 @@
 @import "./assets/styles/mat-tab";
 @import "./assets/styles/ngx-datatable";
 @import "./assets/styles/gridster";
+@import "./assets/styles/ng-select";
 @import "../node_modules/@swimlane/ngx-datatable/index.scss";
 @import "../node_modules/@swimlane/ngx-datatable/themes/material.scss";
 @import "../node_modules/@swimlane/ngx-datatable/assets/icons.css";
+@import "../node_modules/@ng-select/ng-select/themes/material.theme.css";
 
 @include form();
 @include modal();
@@ -21,6 +23,7 @@
 @include mat-button();
 @include textArea();
 @include gridster();
+@include ng-select();
 
 body {
   .icon {
@@ -46,4 +49,9 @@ body {
 .disable-backdrop-click
   .cdk-overlay-backdrop.cdk-overlay-transparent-backdrop.cdk-overlay-backdrop-showing {
   pointer-events: none;
+}
+
+.no-events {
+  pointer-events: none;
+  user-select: none;
 }

@@ -56,6 +56,8 @@ export class ManagersStatisticPanelComponent
   @ViewChild('ratingTempl', { static: true }) ratingTempl!: ElementRef;
   @ViewChild('ratingCountTempl', { static: true }) countTempl!: ElementRef;
   @ViewChild('chatCountTempl', { static: true }) chatCountTempl!: ElementRef;
+  @ViewChild('chatCurCountTempl', { static: true })
+  chatCurCountTempl!: ElementRef;
   @ViewChild('ansTime', { static: true }) ansTime!: ElementRef;
   @ViewChild(DatatableComponent) table!: DatatableComponent;
 
@@ -124,7 +126,7 @@ export class ManagersStatisticPanelComponent
       },
       {
         prop: 'active',
-        cellTemplate: this.chatCountTempl,
+        cellTemplate: this.chatCurCountTempl,
         width: col,
         flexGrow: 1,
         name: 'Кол-во активных чатов',
@@ -212,6 +214,26 @@ export class ManagersStatisticPanelComponent
         return managers;
       }
       return managers.filter((manager) => selectedIds.includes(manager.id));
+    })
+  );
+
+  chatsByManager$ = combineLatest([
+    this.managersAll$,
+    this.chatSearchS.search$(),
+  ]).pipe(
+    map(([managers, chats]) => {
+      const byManager = {} as { [managerId: string]: number };
+      managers.forEach((manager) => (byManager[manager.id] = 0));
+      chats.items.forEach((chat) => {
+        const manager = chat.profiles.find(
+          (profile) => typeof byManager[profile.id] === 'number'
+        );
+        if (!manager) {
+          return;
+        }
+        byManager[manager.id]++;
+      });
+      return byManager;
     })
   );
 

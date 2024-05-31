@@ -68,6 +68,15 @@
 </ng-template>
 
 <ng-template
+  #chatCurCountTempl
+  ngx-datatable-cell-template
+  let-row="row"
+  let-column="column"
+>
+  <span>{{(chatsByManager$ | async)?.[row.id] ?? '-'}}</span>
+</ng-template>
+
+<ng-template
   #ansTime
   ngx-datatable-cell-template
   let-row="row"

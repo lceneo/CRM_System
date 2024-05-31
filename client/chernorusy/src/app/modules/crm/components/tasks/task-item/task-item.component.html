@@ -1,43 +1,98 @@
-
-<div class="titleWrapper" [ngStyle]="{
-  'background-color': headerBgColor,
-  'border-color': headerBorderColor
-}">
-    <h2 class="title" [matTooltip]="column?.name ?? ''">{{column?.name}}</h2>
-    <div class="btnBox">
-      <button class="btn" mat-icon-button [matTooltip]="'Изменить'" (click)="openModalEditColumn(column!.id)"><mat-icon>edit</mat-icon></button>
-      <button class="btn" mat-icon-button [matTooltip]="'Удалить'" (click)="openModalDeleteColumn(column!.id)"><mat-icon>delete</mat-icon></button>
-      <button class="btn" mat-icon-button [matTooltip]="'Добавить задачу'" (click)="openModalCreateTask()"><mat-icon>add</mat-icon></button>
-    </div>
+<div
+  class="titleWrapper"
+  [ngStyle]="{
+    'background-color': headerBgColor,
+    'border-color': headerBorderColor
+  }"
+  app-auto-text-color
+>
+  <h2 class="title" [matTooltip]="column?.name ?? ''">{{ column?.name }}</h2>
+  <div class="btnBox">
+    <button
+      class="btn"
+      mat-icon-button
+      [matTooltip]="'Изменить'"
+      (click)="openModalEditColumn(column!.id)"
+    >
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button
+      class="btn"
+      mat-icon-button
+      [matTooltip]="'Удалить'"
+      (click)="openModalDeleteColumn(column!.id)"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+    <button
+      class="btn"
+      mat-icon-button
+      [matTooltip]="'Добавить задачу'"
+      (click)="openModalCreateTask()"
+    >
+      <mat-icon>add</mat-icon>
+    </button>
+  </div>
 </div>
 
-<ul [ngClass]="{
+<ul
+  [ngClass]="{
     emptyList: !tasks.length,
     tasksList: tasks.length
-   }
-">
-    <li *ngFor="let task of tasks; trackBy: trackTask"
-        cdkDrag
-        [cdkDragData]="task"
-    >
-        <mat-card class="example-card" (dblclick)="openModalTaskInfo(task)">
-          <mat-card-header>
-              <mat-card-title>{{task.title}}</mat-card-title>
-              <mat-card-subtitle>{{task.creation.dateTime | date: 'dd LLLL YYYY'}}</mat-card-subtitle>
-              <button class="deleteTaskBtn" mat-icon-button
-                      (click) = "deleteTask(task.id)"
-              ><mat-icon>delete</mat-icon></button>
-          </mat-card-header>
-          <mat-card-content>
-              <span class="description__title">Исполнитель:</span>
-              <p class="description__text">{{task.assignedTo.name}}</p>
-              <mat-divider></mat-divider>
-          </mat-card-content>
-          <mat-card-actions>
-              <button color="primary" class="detailedCardInfoBtn" mat-flat-button (click) = "openModalTaskInfo(task)">Открыть</button>
-          </mat-card-actions>
-          <mat-card-footer>
-          </mat-card-footer>
+  }"
+>
+  <li
+    *ngFor="let task of tasks; trackBy: trackTask"
+    cdkDrag
+    [cdkDragData]="task"
+  >
+    <mat-card class="example-card" (dblclick)="openModalTaskInfo(task)">
+      <mat-card-header>
+        <mat-card-title>{{ task.title }}</mat-card-title>
+        <mat-card-subtitle>{{
+          task.creation.dateTime | date : "dd LLLL YYYY"
+        }}</mat-card-subtitle>
+        <button
+          class="deleteTaskBtn"
+          mat-icon-button
+          (click)="deleteTask(task.id)"
+        >
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="description__wrapper">
+          <div
+            class="description__item"
+            [matTooltip]="getFio(task.assignedTo)"
+            matTooltipClass="no-events"
+          >
+            <span class="description__title">Исполнитель:</span>
+            <p class="description__text">{{ getFio(task.assignedTo) }}</p>
+          </div>
+          <div
+            class="description__item"
+            *ngIf="!!task.client"
+            [matTooltip]="getFio(task.client)"
+            matTooltipClass="no-events"
+          >
+            <span class="description__title">Клиент:</span>
+            <p class="description__text">{{ getFio(task.client) }}</p>
+          </div>
+          <mat-divider></mat-divider>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button
+          color="primary"
+          class="detailedCardInfoBtn"
+          mat-flat-button
+          (click)="openModalTaskInfo(task)"
+        >
+          Открыть
+        </button>
+      </mat-card-actions>
+      <mat-card-footer> </mat-card-footer>
     </mat-card>
-    </li>
+  </li>
 </ul>
