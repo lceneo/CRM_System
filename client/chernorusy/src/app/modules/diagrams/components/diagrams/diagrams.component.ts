@@ -21,7 +21,6 @@ import {
   shareReplay,
   startWith,
   Subject,
-  tap,
 } from 'rxjs';
 import { charts } from './charts';
 import { dateRangeChangesSymb, panelResizedSymb } from './chart-item';
@@ -85,10 +84,7 @@ export class DiagramsComponent implements OnDestroy {
     },
   ];
 
-  ngAfterViewInit() {
-    console.log(this.menu.lazyContent);
-    console.log(this.charts);
-  }
+  ngAfterViewInit() {}
 
   addChart(id: number) {
     const item: GridsterItem = {
@@ -109,7 +105,7 @@ export class DiagramsComponent implements OnDestroy {
     }
     const { curHeight, el } = this.gridster;
     const rowHeight = curHeight / 33;
-    console.log(rowHeight, curHeight);
+
     el.style.setProperty('height', curHeight + rowHeight + 'px');
     this.gridster.getNextPossiblePosition(item);
     this.dashboard.push(item);
@@ -171,7 +167,7 @@ export class DiagramsComponent implements OnDestroy {
       item.resizeEnabled = true;
       item.dragEnabled = true;
       item.layerIndex = 1;
-      console.log(item['prevPosition']);
+
       if (item['prevPosition']) {
         const { x, y, cols, rows } = item['prevPosition'];
         item.x = x;
@@ -182,17 +178,6 @@ export class DiagramsComponent implements OnDestroy {
         this.gridster.getNextPossiblePosition(item);
       }
     }
-
-    console.log(
-      item.layerIndex,
-      item.resizeEnabled,
-      item.dragEnabled,
-      item.x,
-      item.y,
-      item.cols,
-      item.rows
-    );
-    console.log(this.gridster.grid);
 
     this.options?.api?.optionsChanged?.();
     setTimeout(
@@ -233,7 +218,7 @@ export class DiagramsComponent implements OnDestroy {
   dateRangeChanges$: Observable<[from: Date, to: Date]> =
     this.dateForm.valueChanges.pipe(
       startWith(this.dateForm.value),
-      tap((v) => console.log('start', v)),
+
       filter((value) => !!value.dateEnd && !!value.dateStart),
       map((value) => {
         const [startH, startM] = (
@@ -261,8 +246,7 @@ export class DiagramsComponent implements OnDestroy {
           to: Date
         ];
       }),
-      shareReplay(),
-      tap((v) => console.log('end', v))
+      shareReplay()
     );
 
   charts = charts;

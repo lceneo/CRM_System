@@ -21,6 +21,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { SendMessagesOverallComponent } from './components/diagrams/modules/send-messages-overall/chart/send-messages-overall.component';
 import { SendMessagesOverallModule } from './components/diagrams/modules/send-messages-overall/send-messages-overall.module';
+import { ReceivedDialogsAndSendMessagesModule } from './components/diagrams/modules/received-dialogs-and-send-messages/received-dialogs-and-send-messages.module';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: DiagramsComponent },
@@ -45,6 +46,7 @@ const routes: Routes = [
     NgxEchartsModule.forRoot({ echarts: () => import('echarts') }),
     ReceivedDialogsOverallModule,
     SendMessagesOverallModule,
+    ReceivedDialogsAndSendMessagesModule,
   ],
 })
 export class DiagramsModule {}

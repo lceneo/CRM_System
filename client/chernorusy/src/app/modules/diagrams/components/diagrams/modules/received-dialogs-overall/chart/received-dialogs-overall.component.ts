@@ -40,7 +40,6 @@ export class ReceivedDialogsOverallComponent {
 
   instance: ECharts | null = null;
   setInstance(ev: any) {
-    console.log('setInstance', ev);
     this.instance = ev;
   }
 
@@ -177,7 +176,6 @@ export class ReceivedDialogsOverallComponent {
         (this.options.series as any) = values;
 
         this.updateOptions();
-        console.log(this.options);
       });
   }
 
@@ -205,7 +203,7 @@ export class ReceivedDialogsOverallComponent {
       localStorage.getItem('app-received-dialogs-overall-chart') ??
         '{deselectedManagers: []}'
     );
-    console.log('deselected', deselectedManagers);
+
     deselectedManagers.deselectedManagers.forEach((managerId: string) =>
       this.deselectedManagers$.value.add(managerId)
     );
@@ -215,7 +213,6 @@ export class ReceivedDialogsOverallComponent {
   updateOptions() {
     if (this.instance) {
       this.instance.setOption(this.options, true);
-      console.log('options updated');
     } else {
       setTimeout(() => this.updateOptions());
     }
@@ -227,7 +224,6 @@ export class ReceivedDialogsOverallComponent {
   }
 
   getData$(dateFrom: Date, dateTo: Date) {
-    console.log('getData$', dateFrom, dateTo);
     const names = {} as {
       [managerId: string]: { name: string; surname: string };
     };

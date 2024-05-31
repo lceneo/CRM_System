@@ -113,11 +113,6 @@ export class ReceivedDialogsOverallComponent extends ChartItem {
         this.data = data;
         this.setColumns();
         this.setRows();
-        console.log(
-          'table rows',
-          this.rows,
-          this.dates.map((d) => d.toISOString())
-        );
         this.cdr.detectChanges();
       });
   }
@@ -146,14 +141,13 @@ export class ReceivedDialogsOverallComponent extends ChartItem {
       localStorage.getItem('app-received-dialogs-overall-table') ??
         '{deselectedManagers: []}'
     );
-    console.log('deselected', deselectedManagers);
+
     deselectedManagers.deselectedManagers.forEach((managerId: string) =>
       this.deselectedManagers$.value.add(managerId)
     );
     this.deselectedManagers$.next(this.deselectedManagers$.value);
 
     this.panelResized$.subscribe(() => {
-      console.log('size updated');
       this.table.recalculate();
     });
   }
@@ -191,7 +185,6 @@ export class ReceivedDialogsOverallComponent extends ChartItem {
   }
 
   getData$(dateFrom: Date, dateTo: Date) {
-    console.log('getData$', dateFrom, dateTo);
     const names = {} as {
       [managerId: string]: { name: string; surname: string };
     };
