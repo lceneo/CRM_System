@@ -43,35 +43,6 @@ export class TasksDashboardComponent {
   doFilter$ = new Subject<void>();
 
   tasks = this.taskS.getEntitiesAsync();
-  private i = 0;
-  doFilter = toSignal(this.doFilter$.pipe(map(() => this.i++)));
-  tasksFiltered = computed(() => {
-    console.log('мы в tasksFiltered');
-    console.log('filters', {
-      client: this.selectedClientOnTaskId,
-      assigny: this.selectedTaskExecutionerId,
-      products: this.selectedProductIds,
-    });
-    this.doFilter();
-    let tasks = this.tasks();
-    if (this.selectedClientOnTaskId) {
-      tasks = tasks.filter(
-        (task) => task.client?.id === this.selectedClientOnTaskId
-      );
-    }
-    if (this.selectedTaskExecutionerId) {
-      tasks = tasks.filter(
-        (task) => task.assignedTo?.id === this.selectedTaskExecutionerId
-      );
-    }
-    if (this.selectedProductIds.length) {
-      const productIds = new Set(this.selectedProductIds);
-      tasks = tasks.filter((task) =>
-        task.products.some((product) => productIds.has(product.id))
-      );
-    }
-    return tasks;
-  });
 
   clientsOnTasks = computed(() => {
     const clientIds = new Set<string>();
@@ -133,7 +104,6 @@ export class TasksDashboardComponent {
 
   selectedClientOnTaskId: string | null = null;
   selectedClientOnTaskIdName = computed(() => {
-    this.doFilter();
     if (
       !this.selectedClientOnTaskId ||
       !this.clientS.getByID(this.selectedClientOnTaskId)
@@ -144,7 +114,6 @@ export class TasksDashboardComponent {
   });
   selectedTaskExecutionerId: string | null = null;
   selectedTaskExecutionerIdName = computed(() => {
-    this.doFilter();
     if (!this.selectedTaskExecutionerId) {
       return null;
     }
