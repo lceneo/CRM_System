@@ -71,12 +71,13 @@
   <section class="dashboards" cdkDropListGroup>
     <ng-container *ngFor="let column of columns()">
       <app-task-item
-        *ngLet="column.id | tasksByColumn as tasks"
+        *ngLet="(column.id | tasksByColumn)()
+         | filteredTasks : {selectedClientOnTaskId, selectedTaskExecutionerId, selectedProductIds} as filteredTasks"
         class="dashboard"
-        [tasks]="tasksFiltered()"
+        [tasks]="filteredTasks"
         [columnID]="column.id"
         cdkDropList
-        [cdkDropListData]="tasks()"
+        [cdkDropListData]="filteredTasks"
         (cdkDropListDropped)="dropTask($event, column.id)"
         [id]="TaskState.New.toString()"
       >

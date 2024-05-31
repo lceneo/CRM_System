@@ -37,6 +37,10 @@ public class DataContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<TaskColumnEntity>()
+            .HasMany(c => c.Tasks)
+            .WithOne(t => t.Column)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 
     public DbSet<AccountEntity> Accounts => Set<AccountEntity>();
