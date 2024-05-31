@@ -56,27 +56,20 @@ export class MyChatService
     const savedSendInfo = JSON.parse(
       localStorage.getItem(this.localStorageSendInfoKey) ?? '{}'
     );
-    Object.keys(savedSendInfo)
-      .filter(
-        (chatId) =>
-          Date.now() - savedSendInfo[chatId].timestampSent > fiveDaysMS
-      )
-      .forEach((chatId) => delete savedSendInfo[chatId]);
     Object.keys(savedSendInfo).forEach((chatId) => {
       this.userSendInfo$.value[chatId] = savedSendInfo[chatId];
     });
     this.userSendInfo$.next(this.userSendInfo$.value);
 
-    merge([fromEvent(window, 'beforeUnload'), this.destroy$]).subscribe(() => {
-      Object.keys(this.userSendInfo$.value)
-        .filter(
-          (chatId) =>
-            Date.now() - savedSendInfo[chatId].timestampSent > fiveDaysMS
-        )
-        .forEach((chatId) => delete this.userSendInfo$.value[chatId]);
+    merge([fromEvent(window, 'beforeunload'), this.destroy$]).subscribe(() => {
       localStorage.setItem(
         this.localStorageSendInfoKey,
         JSON.stringify(this.userSendInfo$.value)
+      );
+      console.log(
+        'saved',
+        this.userSendInfo$.value,
+        localStorage.getItem(this.localStorageSendInfoKey)
       );
     });
   }

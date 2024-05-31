@@ -43,7 +43,6 @@ export class SendMessagesOverallComponent {
 
   instance: ECharts | null = null;
   setInstance(ev: any) {
-    console.log('setInstance', ev);
     this.instance = ev;
   }
 
@@ -93,7 +92,7 @@ export class SendMessagesOverallComponent {
   private tooltipFormatter(params: any) {
     const managerName = params.seriesName;
     const [date, count] = params.value;
-    console.log('tooltip', { managerName, date, count });
+
     return `<time>${this.dateP.transform(date, 'yyyy-MM-dd')}</time>
     <hr>
     <b>${managerName}</b> сообщений: ${count}`;
@@ -180,7 +179,6 @@ export class SendMessagesOverallComponent {
         (this.options.series as any) = values;
 
         this.updateOptions();
-        console.log(this.options);
       });
   }
 
@@ -208,7 +206,7 @@ export class SendMessagesOverallComponent {
       localStorage.getItem('app-received-dialogs-overall-chart') ??
         '{deselectedManagers: []}'
     );
-    console.log('deselected', deselectedManagers);
+
     deselectedManagers.deselectedManagers.forEach((managerId: string) =>
       this.deselectedManagers$.value.add(managerId)
     );
@@ -218,7 +216,6 @@ export class SendMessagesOverallComponent {
   updateOptions() {
     if (this.instance) {
       this.instance.setOption(this.options, true);
-      console.log('options updated');
     } else {
       setTimeout(() => this.updateOptions());
     }
@@ -230,7 +227,6 @@ export class SendMessagesOverallComponent {
   }
 
   getData$(dateFrom: Date, dateTo: Date) {
-    console.log('getData$', dateFrom, dateTo);
     const names = {} as {
       [managerId: string]: { name: string; surname: string };
     };

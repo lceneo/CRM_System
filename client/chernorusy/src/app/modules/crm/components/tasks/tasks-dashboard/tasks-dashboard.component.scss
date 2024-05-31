@@ -5,6 +5,7 @@
 
 .wrapper {
   height: 100%;
+  width: max-content;
   display: flex;
   flex-direction: column;
   row-gap: 1em;
@@ -22,11 +23,17 @@
 .settings-row {
   display: flex;
   justify-content: flex-start;
+  flex-direction: row;
+  align-items: center;
+  position: sticky;
+  left: 10px;
+  width: fit-content;
   & > *:not(:first-child) {
     margin-left: 10px;
   }
   & ng-select {
-    min-width: 20%;
+    min-width: 200px;
+    max-width: 300px;
   }
 }
 

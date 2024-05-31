@@ -15,7 +15,7 @@ import {
   GetActivityStatsResponse,
   StatisticsService,
 } from 'src/app/shared/services/statistics.service';
-import { ECharts, EChartsOption, PieSeriesOption } from 'echarts';
+import { BarSeriesOption, ECharts, EChartsOption } from 'echarts';
 import { ChartDashboardItem } from '../../../charts';
 import { DatePipe } from '@angular/common';
 import {
@@ -28,12 +28,12 @@ import { IProfileResponseDTO } from 'src/app/modules/profile/DTO/response/Profil
 import { getFio } from 'src/app/shared/helpers/get-fio';
 
 @Component({
-  selector: 'app-received-dialogs-overall-pie',
-  templateUrl: './received-dialogs-overall.component.html',
-  styleUrls: ['./received-dialogs-overall.component.scss'],
+  selector: 'app-received-dialogs-and-send-messages-histogram',
+  templateUrl: './received-dialogs-and-send-messages.component.html',
+  styleUrls: ['./received-dialogs-and-send-messages.component.scss'],
 })
 @ChartDashboardItem('Кол-во диалогов по менеджерам', 'received-dialogs-overall')
-export class ReceivedDialogsOverallComponent extends ChartItem {
+export class ReceivedDialogsAndSendMessagesComponent extends ChartItem {
   @ViewChildren('managerChoseBtn') managerChoseBtn!: TemplateRef<any>;
 
   instance: ECharts | null = null;
@@ -42,55 +42,53 @@ export class ReceivedDialogsOverallComponent extends ChartItem {
   }
 
   options: EChartsOption = {
-    // grid: {
-    //   bottom: 20,
-    //   right: 20,
-    // },
+    grid: {
+      bottom: 20,
+      right: 20,
+    },
     legend: {
-      type: 'scroll',
       show: true,
+      data: ['Диалоги', 'Сообщения'],
       textStyle: {
         color: '#AAAAAA',
       },
-      right: 10,
-      top: 20,
-      bottom: 20,
     },
-    // xAxis: [
-    //   {
-    //     type: 'time',
-    //     min: 'dataMin',
-    //     max: 'dataMax',
-    //     axisLabel: {
-    //       showMinLabel: true,
-    //       showMaxLabel: true,
-    //       hideOverlap: true,
-    //     },
-    //     splitLine: { show: false },
-    //   },
-    // ],
-    // yAxis: [
-    //   {
-    //     type: 'value',
-    //     minInterval: 1,
-    //   },
-    // ],
+    xAxis: [
+      //Подгрузить имена манагеров
+      {
+        type: 'category',
+        axisLabel: {
+          hideOverlap: true,
+        },
+        splitLine: { show: false },
+      },
+    ],
+    yAxis: [
+      {
+        type: 'value',
+        minInterval: 1,
+      },
+    ],
     tooltip: {
-      confine: true,
-      trigger: 'item',
+      trigger: 'axis',
+      //formatter: this.tooltipFormatter.bind(this),
       axisPointer: {
         type: 'shadow',
+        label: {
+          show: true,
+        },
       },
-      appendTo: 'body',
-      formatter: this.tooltipFormatter.bind(this),
     },
     series: [],
-    // dataZoom: [{ type: 'inside', filterMode: 'filter' }],
+    dataZoom: [{ type: 'inside', filterMode: 'filter' }],
   };
 
   private tooltipFormatter(params: any) {
-    const { value, name } = params.data;
-    return `<b>${name}</b><br> диалогов: ${value}`;
+    const name = params[0].name;
+    const dialogsCount = params[0].data;
+    const messagesCount = params[1].data;
+
+    return `<b>${name}</b><br><span>Диалоги: ${dialogsCount}</span><br><span>Сообщения: ${messagesCount}</span>`;
   }
 
   destroy$ = new Subject<void>();
@@ -135,7 +133,7 @@ export class ReceivedDialogsOverallComponent extends ChartItem {
           }
           grouped[cur.managerId].push(...cur.dailyStat);
           return grouped;
-        }, {} as { [managerId: string]: { date: string; dialogsCount: number }[] });
+        }, {} as { [managerId: string]: { date: string; dialogsCount: number; messagesCount: number }[] });
 
         Object.keys(byManagerId).forEach((managerId) => {
           const stats = byManagerId[managerId];
@@ -146,19 +144,36 @@ export class ReceivedDialogsOverallComponent extends ChartItem {
             const day = date.getDate();
             const dayStr = `${year}::${month}::${day}`;
             if (!grouped[dayStr]) {
-              grouped[dayStr] = [];
+              grouped[dayStr] = { dialogsCount: [], messagesCount: [] };
             }
-            grouped[dayStr].push(cur.dialogsCount);
+            grouped[dayStr].dialogsCount.push(cur.dialogsCount);
+            grouped[dayStr].messagesCount.push(cur.messagesCount);
             return grouped;
-          }, {} as Record<string, number[]>);
+          }, {} as Record<string, { dialogsCount: number[]; messagesCount: number[] }>);
           const finalData = Object.keys(groupedByDayDialogsCount)
             .map((dateString) => {
               const counts = groupedByDayDialogsCount[dateString];
-              const countsSum = counts.reduce((acc, cur) => (acc += cur), 0);
-              const meanCount = Math.ceil(countsSum / counts.length);
+              const countsSum = counts.dialogsCount.reduce(
+                (acc, cur) => (acc += cur),
+                0
+              );
+              const meanCount = Math.ceil(
+                countsSum / counts.dialogsCount.length
+              );
+              const messagesSum = counts.messagesCount.reduce(
+                (acc, cur) => (acc += cur),
+                0
+              );
+              const meanMessages = Math.ceil(
+                messagesSum / counts.messagesCount.length
+              );
               const [year, month, day] = dateString.split('::').map(Number);
               const date = new Date(year, month, day, 0, 0, 0, 0).toISOString();
-              return { date, dialogsCount: meanCount };
+              return {
+                date,
+                dialogsCount: meanCount,
+                messagesCount: meanMessages,
+              };
             })
             .sort(
               (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
@@ -167,53 +182,60 @@ export class ReceivedDialogsOverallComponent extends ChartItem {
           byManagerId[managerId] = finalData;
         });
 
-        const values = Object.keys(byManagerId).map<PieSeriesOption>(
-          (managerId) => {
-            const meanCount =
-              byManagerId[managerId].length === 0
-                ? 0
-                : Math.floor(
-                    byManagerId[managerId].reduce(
-                      (acc, cur) => (acc += cur.dialogsCount),
-                      0
-                    ) / byManagerId[managerId].length
-                  );
-
-            // value: d.dialogsCount,
-            // ['name']: getFio(this.managerNames[managerId]),
-            return {
-              value: meanCount,
-              name: getFio(this.managerNames[managerId]),
-            };
+        const dialogValues = Object.keys(byManagerId).reduce((g, managerId) => {
+          if (!byManagerId[managerId].length) {
+            g.push(0);
+            return g;
           }
+          const sum = byManagerId[managerId].reduce(
+            (acc: number, cur) => (acc += cur.dialogsCount),
+            0
+          );
+          const mean = Math.floor(sum / byManagerId[managerId].length);
+          g.push(mean);
+          return g;
+        }, [] as number[]);
+
+        const dialogSeries = {
+          name: 'Диалоги',
+          type: 'bar',
+          data: dialogValues,
+        } satisfies BarSeriesOption;
+
+        const messagesValues = Object.keys(byManagerId).reduce(
+          (g, managerId) => {
+            if (!byManagerId[managerId].length) {
+              g.push(0);
+              return g;
+            }
+            const sum = byManagerId[managerId].reduce(
+              (acc: number, cur) => (acc += cur.messagesCount),
+              0
+            );
+            const mean = Math.floor(sum / byManagerId[managerId].length);
+            g.push(mean);
+            return g;
+          },
+          [] as number[]
         );
 
-        (this.options.series as any) = {
-          type: 'pie',
-          radius: '55%',
-          center: ['40%', '50%'],
-          data: values,
-          label: {
-            formatter: '{c}',
-            position: 'inside',
-          },
-          emphasis: {
-            itemStyle: {
-              shadowBlur: 10,
-              shadowOffsetX: 0,
-              shadowColor: 'rgba(0, 0, 0, 0.5)',
-            },
-          },
-        };
-        const legend = this.options.legend as any;
-        if (legend) {
-          const managersLegend = Object.keys(this.managerNames).map(
-            (managerId) => {
-              return getFio(this.managerNames[managerId]);
-            }
-          );
-          legend.data = managersLegend;
-        }
+        const messagesSeries = {
+          name: 'Сообщения',
+          type: 'bar',
+          data: messagesValues,
+        } satisfies BarSeriesOption;
+        //   (managerId) =>
+        //     ({
+        //       name: 'Сообщения',
+        //       type: 'bar',
+        //       data: byManagerId[managerId].map((d) => d.messagesCount),
+        //     } satisfies BarSeriesOption)
+        // );
+
+        (this.options.series as any) = [dialogSeries, messagesSeries];
+        (this.options.xAxis as any)[0].data = Object.keys(
+          this.managerNames
+        ).map((managerId) => getFio(this.managerNames[managerId]));
 
         this.updateOptions();
       });
