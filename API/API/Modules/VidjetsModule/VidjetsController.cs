@@ -52,10 +52,11 @@ public class VidjetsController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet("Script")]
+    [Produces("application/json")]
     public async Task<ActionResult> GetScript()
     {
         using var provider = new PhysicalFileProvider(Config.PathToStatic);
-        return Content(provider.GetFileInfo("Script.js").ReadAll(), "text/html");
+        return Content(provider.GetFileInfo("Script.js").ReadAll(), "application/json");
     }
 
     [AllowAnonymous]
