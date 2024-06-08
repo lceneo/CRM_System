@@ -195,41 +195,27 @@ public class ChatsHub : Hub, IHub
             await log.Error($"Hub. Не найден чат: {request.ChatId}");
             return;
         }
-        
-        var createReq = mapper.Map<CreateOrUpdateClientRequest>(request);
-        var response = await clientsService.CreateOrUpdateClient(createReq, true);
-        if (!response.IsSuccess)
-        {
-            await Clients.Caller.SendAsync("Error", response.Error);
-            return;
-        }
 
-        if (!response.Value.IsCreated)
+        var othersInGroup = chat.Profiles.Where(p => p.Account.Role
+            is AccountRole.Manager
+            or AccountRole.Admin);
+        if (othersInGroup.Any())
         {
-            var clientSearch = await clientsService.Search(new SearchClientsRequest() {Ids = new() {response.Value.Id}});
-            var client = clientSearch.Value.Items.First();
-            var othersInGroup = chat.Profiles.Where(p => p.Account.Role == AccountRole.Manager
-                                                         || p.Account.Role == AccountRole.Admin);
-            if (othersInGroup.Any())
+            foreach (var user in othersInGroup)
             {
-                foreach (var user in othersInGroup)
+                try
                 {
-                    try
+                    await Clients.Group(user.Id.ToString()).SendAsync("SetClient", new
                     {
-                        await Clients.Group(user.Id.ToString()).SendAsync("SetClient", new
-                            {
-                                Existed = client,
-                                Request = request,
-                            });
-                    }
-                    catch{}
+                        Request = request,
+                    });
                 }
+                catch{}
             }
 
             return;
         }
 
-        await Managers.SendAsync("ChangeChat", chat.Id);
         await log.Info($"Клиент заполнил информацию о себе в chat: [{request.ChatId}]");
     }
 
