@@ -56,7 +56,7 @@ public class VidjetsController : ControllerBase
     public async Task<ActionResult> GetScript()
     {
         using var provider = new PhysicalFileProvider(Config.PathToStatic);
-        return Content(provider.GetFileInfo("Script.js").ReadAll(), "application/json");
+        return Content(provider.GetFileInfo("Script.js").ReadAll(), "application/json", System.Text.Encoding.UTF8);
     }
 
     [AllowAnonymous]
