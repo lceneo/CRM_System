@@ -13,7 +13,11 @@ import {FormControl} from "@angular/forms";
 import {IProduct} from "../../../helpers/entities/IProduct";
 import {ProductService} from "../../../services/product.service";
 import {takeUntilDestroyed} from "@angular/core/rxjs-interop";
-import {map} from "rxjs";
+import {filter, map, tap} from "rxjs";
+import {
+  ModalCreateUpdateProductComponent
+} from "../../products/modal-create-update-product/modal-create-update-product.component";
+import {MatDialog} from "@angular/material/dialog";
 
 @Component({
   selector: 'app-product-attach-to-task',
@@ -26,6 +30,7 @@ export class ProductAttachToTaskComponent implements OnInit {
   constructor(
     private taskS: TaskService,
     private productS: ProductService,
+    private matDialog: MatDialog,
     private destroyRef: DestroyRef
   ) {}
 
@@ -66,6 +71,18 @@ export class ProductAttachToTaskComponent implements OnInit {
         this.selectedProductsChange.emit(selectedProducts.map(prod => prod.id));
       })
   };
+
+  protected openCreateProductModal() {
+    this.matDialog.open(ModalCreateUpdateProductComponent, {
+      data: { mode: 'create' },
+      autoFocus: false
+    })
+      .afterClosed()
+      .pipe(
+        filter(product => !!product),
+        tap((product: IProduct) => this.selectedProductsID.setValue([...(this.selectedProductsID.value as string[]), product.id]))
+      ).subscribe()
+  }
 }
 
 

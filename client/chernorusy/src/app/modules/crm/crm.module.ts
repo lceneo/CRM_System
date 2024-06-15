@@ -36,6 +36,7 @@ import { ProductAttachToTaskComponent } from './components/tasks/product-attach-
 import { TotalProductPricePipe } from './pipes/total-product-price.pipe';
 import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
 import {FilteredTasksPipe} from "./pipes/filtered-tasks.pipe";
+import { ModalCloseTaskCreationComponent } from './components/tasks/modal-close-task-creation/modal-close-task-creation.component';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: CrmComponent },
@@ -57,6 +58,7 @@ const routes: Routes = [
     ModalCreateUpdateColumnComponent,
     ModalDeleteColumnComponent,
     ProductAttachToTaskComponent,
+    ModalCloseTaskCreationComponent,
   ],
     imports: [
         CommonModule,

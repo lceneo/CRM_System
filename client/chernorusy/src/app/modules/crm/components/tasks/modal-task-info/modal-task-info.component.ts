@@ -61,7 +61,7 @@ export class ModalTaskInfoComponent implements OnInit {
     assignedTo: new FormControl<string>((this.task())?.assignedTo.id ?? '', [Validators.required]),
     clientId:  new FormControl<string>((this.task())?.client.id ?? '', [Validators.required]),
     productIds:  new FormControl<string[]>(this.task()?.products.map(prod => prod.id) ?? []),
-    descrption: new FormControl<string>((this.task())?.descrption ?? '', [Validators.required, Validators.minLength(5), Validators.maxLength(255)])
+    descrption: new FormControl<string>((this.task())?.descrption ?? '')
   })
 
   protected commentControl = new FormControl<string>('', Validators.minLength(1));

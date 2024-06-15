@@ -45,7 +45,7 @@ export class ModalCreateUpdateProductComponent implements OnInit{
     }
     obs
       .pipe(
-        tap(() => this.matDialogRef.close())
+        tap((product: IProduct) => this.matDialogRef.close(product))
     ).subscribe();
   }
 
