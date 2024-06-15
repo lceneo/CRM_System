@@ -52,7 +52,7 @@ export class DiagramsComponent implements OnDestroy {
     disableScrollVertical: true,
     compactType: 'none',
     displayGrid: 'none',
-    minCols: 10,
+    minCols: window.screen.width / 350, //вычисляем размер колонки
     minRows: 1,
     maxCols: 100,
     maxRows: 100,
@@ -89,8 +89,8 @@ export class DiagramsComponent implements OnDestroy {
   addChart(id: number) {
     const item: GridsterItem = {
       chartId: id,
-      cols: 2,
-      rows: 2,
+      cols: 1,
+      rows: 1,
       x: 0,
       y: 0,
       [dateRangeChangesSymb]: this.dateRangeChanges$,
