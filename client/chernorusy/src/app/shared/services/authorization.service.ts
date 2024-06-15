@@ -11,6 +11,7 @@ import {AccountRole} from "../../modules/profile/enums/AccountRole";
 import {ChatHubService} from "../../modules/chat/services/chat-hub.service";
 import {CustomErrorHandlerService} from "./custom-error-handler.service";
 import {CrmHubService} from "../../modules/crm/services/crm-hub.service";
+import {Router} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,8 @@ export class AuthorizationService {
     private httpS: HttpService,
     private chatSocketS: ChatHubService,
     private crmSocketS: CrmHubService,
-    private errorHandlerS: CustomErrorHandlerService
+    private errorHandlerS: CustomErrorHandlerService,
+    private router: Router
   ) {
     setTimeout(() => this.initAccountInfo());
     this._token = localStorage.getItem('jwtToken') ?? undefined;
@@ -75,6 +77,11 @@ export class AuthorizationService {
           this.token = loginResponse.jwtToken;
           if (!this.chatSocketS.isConnected()) { this.chatSocketS.init(); }
           if (!this.crmSocketS.isConnected()) { this.crmSocketS.init(); }
+          if (loginResponse.role === AccountRole.Client) {
+            setTimeout(() => {
+              this.router.navigate(['vidjets']);
+            })
+          }
         }),
         catchError(err => {
           this.errorHandlerS.handleError(err);
@@ -119,6 +126,9 @@ export class AuthorizationService {
           this.token = loginResponse.jwtToken;
           if (!this.chatSocketS.isConnected()) { this.chatSocketS.init(); }
           if (!this.crmSocketS.isConnected()) { this.crmSocketS.init(); }
+          if (loginResponse.role === AccountRole.Client) {
+            this.router.navigate(['vidjets']);
+          }
         })
       )
   }
