@@ -2,6 +2,7 @@
   height: -webkit-fill-available;
 }
 
+
 .itemGridster_wrapp {
   height: inherit;
   width: inherit;
@@ -45,7 +46,10 @@ form {
   gap: 5px;
   display: flex;
   align-items: center;
-  justify-content: space-around;
+
+  .mat-mdc-form-field {
+    flex-grow: 1;
+  }
 }
 
 .buttons {
