@@ -1,6 +1,9 @@
 @mixin gridster() {
   $resize-size: 5px;
   gridster-item.itemGridster {
+    min-width: 300px;
+    min-height: 300px;
+
     .gridster-item-resizable-handler {
       &.handle-w,
       &.handle-e {
