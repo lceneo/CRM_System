@@ -37,6 +37,7 @@ export class ReceivedDialogsAndSendMessagesComponent extends ChartItem {
   @ViewChildren('managerChoseBtn') managerChoseBtn!: TemplateRef<any>;
 
   instance: ECharts | null = null;
+  private shrinkFullNameMap: {[shrinkName: string]: string} = {};
   setInstance(ev: any) {
     this.instance = ev;
   }
@@ -76,6 +77,9 @@ export class ReceivedDialogsAndSendMessagesComponent extends ChartItem {
         type: 'shadow',
         label: {
           show: true,
+          formatter: v => {
+            return this.shrinkFullNameMap[v.value as any as string]
+          }
         },
       },
     },
@@ -235,7 +239,12 @@ export class ReceivedDialogsAndSendMessagesComponent extends ChartItem {
         (this.options.series as any) = [dialogSeries, messagesSeries];
         (this.options.xAxis as any)[0].data = Object.keys(
           this.managerNames
-        ).map((managerId) => getFio(this.managerNames[managerId]));
+        ).map((managerId) => {
+          const name = getFio(this.managerNames[managerId]);
+          const shrinkedName = name.length < 12 ? name : `${name.substring(0, 12)}...`;
+          this.shrinkFullNameMap[shrinkedName] = name;
+          return shrinkedName;
+        });
 
         this.updateOptions();
       });

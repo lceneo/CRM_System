@@ -92,7 +92,7 @@ export class DiagramsComponent implements OnDestroy {
   addChart(id: number) {
     const item: GridsterItem = {
       chartId: id,
-      cols: 1,
+      cols: 2,
       rows: 1,
       x: 0,
       y: 0,

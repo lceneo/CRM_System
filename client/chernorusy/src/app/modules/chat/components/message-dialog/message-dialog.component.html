@@ -206,7 +206,7 @@
 
 <mat-menu class="smileMenu" #smileMenu>
   <ng-template matMenuContent>
-    <p (click)="addIconToMsg($event, smile)" *ngFor="let smile of smiles">
+    <p class="smile" (click)="addIconToMsg($event, smile)" *ngFor="let smile of smiles">
       {{ smile }}
     </p>
   </ng-template>
