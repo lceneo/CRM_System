@@ -48,17 +48,17 @@
 
 
     <div class="formControl">
-      <mat-form-field hintLabel="Максимум 255 символов">
+      <mat-form-field hintLabel="Максимум 400 символов">
         <mat-label>О себе</mat-label>
         <textarea
           #aboutControl
           formControlName = "about"
           matInput
           rows="10"
-          maxlength="255"
+          maxlength="400"
           [style.resize]="'none'"
         ></textarea>
-        <mat-hint align="end">{{aboutControl.value.length}}/255</mat-hint>
+        <mat-hint align="end">{{aboutControl.value.length}}/400</mat-hint>
       </mat-form-field>
     </div>
 

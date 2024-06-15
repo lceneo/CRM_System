@@ -30,8 +30,8 @@
     </div>
   </nav>
 
-  <div class="wrapperForSideBarAndContent">
-    <div class="sidebar" *ngIf="isAuthorized">
+  <div class="wrapperForSideBarAndContent" *ngLet="role$ | async as role">
+    <div class="sidebar" *ngIf="isAuthorized && role !== AccountRole.Client">
       <button class="disabledBtnLink" mat-icon-button
               [routerLink]="['main']" [routerLinkActive]="'activeBtnLink'"
               [matTooltip]="'Диалоги'"
@@ -44,13 +44,13 @@
       >
         <mat-icon>computer</mat-icon>
       </button>
-      <button class="disabledBtnLink" mat-icon-button
+      <button class="disabledBtnLink" mat-icon-button *ngIf="role === AccountRole.Admin"
               [routerLink]="['statistic']" [routerLinkActive]="'activeBtnLink'"
               [matTooltip]="'Статистика'"
       >
         <mat-icon>bar_chart</mat-icon>
       </button>
-      <button class="disabledBtnLink" mat-icon-button
+      <button class="disabledBtnLink" mat-icon-button *ngIf="role === AccountRole.Admin"
               [routerLink]="['diagrams']" [routerLinkActive]="'activeBtnLink'"
               [matTooltip]="'Диаграммы'"
       >
