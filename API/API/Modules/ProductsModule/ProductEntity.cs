@@ -8,7 +8,7 @@ public class ProductEntity : IEntity
 {
     [Key]
     public Guid Id { get; set; }
-    public int Price { get; set; }
+    public double Price { get; set; }
     public string Description { get; set; }
     public HashSet<TaskEntity> Tasks { get; set; }
 }

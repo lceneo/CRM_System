@@ -6,15 +6,15 @@ public class SearchProductsRequest
     /// <summary>
     /// Ищет по равенству цены
     /// </summary>
-    public int? PriceEq { get; set; }
+    public double? PriceEq { get; set; }
     /// <summary>
     /// Ищет чтобы цена была больше
     /// </summary>
-    public int? PriceHigher { get; set; }
+    public double? PriceHigher { get; set; }
     /// <summary>
     /// Ищет чтобы цена была меньше
     /// </summary>
-    public int? PriceLower { get; set; }
+    public double? PriceLower { get; set; }
     public string? Description { get; set; }
     public HashSet<Guid>? TaskIds { get; set; }
 }
