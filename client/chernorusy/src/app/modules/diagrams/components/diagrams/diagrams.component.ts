@@ -101,6 +101,10 @@ export class DiagramsComponent implements OnDestroy {
       [panelResizedSymb]: new Subject<{ fullscreen?: boolean } | void>(),
     };
     const foundSpace = this.gridster.getNextPossiblePosition(item);
+
+    const fullscreenItem = this.dashboard.find(item => item.layerIndex === 2);
+    if (fullscreenItem) { this.toggleFullscreen(null as any as MouseEvent, fullscreenItem); }
+
     if (foundSpace) {
       this.dashboard.push(item);
       this.cdr.detectChanges();
