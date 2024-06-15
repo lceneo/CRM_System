@@ -102,6 +102,7 @@ export class ManagersStatisticPanelComponent
         width: col,
         flexGrow: 1,
         name: 'Рейтинг',
+        sortable: false,
       },
       {
         prop: '1',
@@ -109,6 +110,7 @@ export class ManagersStatisticPanelComponent
         width: col,
         flexGrow: 1,
         name: 'Кол-во оценок',
+        sortable: false,
       },
       {
         prop: 'avgAnsTime',
@@ -116,6 +118,7 @@ export class ManagersStatisticPanelComponent
         width: col,
         flexGrow: 1,
         name: 'Сред. время ответа',
+        sortable: false,
       },
       {
         prop: 'all',
@@ -123,6 +126,7 @@ export class ManagersStatisticPanelComponent
         width: col,
         flexGrow: 1,
         name: 'Кол-во чатов',
+        sortable: false
       },
       {
         prop: 'active',
@@ -130,6 +134,7 @@ export class ManagersStatisticPanelComponent
         width: col,
         flexGrow: 1,
         name: 'Кол-во активных чатов',
+        sortable: false
       },
     ];
 

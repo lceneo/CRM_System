@@ -25,7 +25,7 @@
       [width]="column.width!"
       [minWidth]="column.minWidth!"
       [canAutoResize]="column.canAutoResize!"
-      [sortable]="true"
+      [sortable]="column.sortable ?? false"
       [headerTemplate]="cellHeader"
       [flexGrow]="column.flexGrow! || 1"
       [resizeable]="true"
