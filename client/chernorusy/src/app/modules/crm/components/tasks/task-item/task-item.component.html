@@ -45,6 +45,7 @@
     *ngFor="let task of tasks; trackBy: trackTask"
     cdkDrag
     [cdkDragData]="task"
+    [cdkDragPreviewClass]="'cdkDragPreviewClass'"
   >
     <mat-card class="example-card" (dblclick)="openModalTaskInfo(task)">
       <mat-card-header>
