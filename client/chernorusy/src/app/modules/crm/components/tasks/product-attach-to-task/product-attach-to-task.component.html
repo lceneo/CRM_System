@@ -12,6 +12,14 @@
         <mat-icon>attach_file</mat-icon>
       </button>
 
+    <button mat-icon-button
+            (click)="openCreateProductModal()"
+            [disabled]="mode === 'view'"
+            [matTooltip]="'Создать товар'"
+    >
+      <mat-icon>add</mat-icon>
+    </button>
+
     <mat-select class="productsSelect" #productsSelect
                 [multiple]="true"
                 [formControl]="selectedProductsID"
