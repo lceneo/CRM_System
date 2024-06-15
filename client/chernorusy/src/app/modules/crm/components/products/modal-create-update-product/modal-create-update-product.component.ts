@@ -23,7 +23,7 @@ export class ModalCreateUpdateProductComponent implements OnInit{
   ) {}
 
   protected formGroup = new FormGroup({
-    price: new FormControl<number>(10, [Validators.required]),
+    price: new FormControl<number>(10, [Validators.required, Validators.min(1)]),
     description: new FormControl<string>('', Validators.required)
   })
 
