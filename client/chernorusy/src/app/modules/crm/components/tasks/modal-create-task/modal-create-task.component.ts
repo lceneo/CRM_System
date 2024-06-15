@@ -32,7 +32,7 @@ export class ModalCreateTaskComponent {
     clientId: new FormControl<string>('', [Validators.required]),
     assignedTo: new FormControl<string>('', [Validators.required]),
     productIds: new FormControl<string[]>([]),
-    descrption: new FormControl<string>('', [Validators.required, Validators.minLength(5), Validators.maxLength(255)])
+    descrption: new FormControl<string>('')
   })
 
   protected clients = this.clientS.getEntitiesAsync();
