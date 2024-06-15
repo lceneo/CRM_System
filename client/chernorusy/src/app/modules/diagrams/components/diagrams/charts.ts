@@ -25,7 +25,7 @@ export function ChartDashboardMenu(
       dashboardTitle,
       import: () => import(`./modules/${module}/${module}.module`),
     };
-    charts.unshift(menu);
+    charts.push(menu);
   }
   if (config) {
     config.forEach((subMenu) => {
