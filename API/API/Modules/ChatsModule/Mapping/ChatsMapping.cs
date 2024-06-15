@@ -1,4 +1,5 @@
-﻿using API.Modules.ChatsModule.DTO;
+﻿using System.Text.RegularExpressions;
+using API.Modules.ChatsModule.DTO;
 using API.Modules.ChatsModule.Entities;
 using API.Modules.ProfilesModule.Entities;
 using AutoMapper;
@@ -18,10 +19,12 @@ public class ChatsMapping : Profile
         CreateMap<ChatEntity, ChatShortDTO>();
     }
 
+    private static Regex typicalChatName = new Regex(@"^№\d*$");
+
     private string GetChatName(ChatEntity src, ChatOutDTO dest, string _, ResolutionContext context)
     {
         ProfileEntity? profile = null;
-        if (src.Name != null)
+        if (src.Name != null && !typicalChatName.IsMatch(src.Name))
             return src.Name;
         if (src.Client != null)
             return $"{src.Client.Surname} {src.Client.Name}";
