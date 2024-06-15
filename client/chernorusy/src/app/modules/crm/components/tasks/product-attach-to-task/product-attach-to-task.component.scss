@@ -20,6 +20,31 @@
   visibility: hidden;
 }
 
+.productOption {
+  ::ng-deep {
+    .mdc-list-item__primary-text {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+  }
+}
+
+.name {
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.price {
+  color: grey;
+  max-width: 40%;
+  text-wrap: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .cellText {
   overflow: hidden;
   text-overflow: ellipsis;

@@ -24,10 +24,11 @@
                 [multiple]="true"
                 [formControl]="selectedProductsID"
     >
-      <mat-option *ngFor="let product of allProducts()"
+      <mat-option class="productOption" *ngFor="let product of allProducts()"
                   [value]="product.id"
       >
-          {{product.id}}
+        <span class="name">{{product.description}}</span>
+        <span class="price">{{'Цена: ' + product.price + '₽'}}</span>
       </mat-option>
     </mat-select>
   </div>
@@ -47,7 +48,7 @@
     }"
       >
         <ngx-datatable-column [prop]="'id'" name="Идентификатор" [cellTemplate]="textTemplate" [flexGrow]="1" [resizeable]="false" [sortable]="false"> </ngx-datatable-column>
-        <ngx-datatable-column [prop]="'description'" name="Описание" [cellTemplate]="textTemplate" [flexGrow]="1" [resizeable]="false" [sortable]="false"> </ngx-datatable-column>
+        <ngx-datatable-column [prop]="'description'" name="Название" [cellTemplate]="textTemplate" [flexGrow]="1" [resizeable]="false" [sortable]="false"> </ngx-datatable-column>
         <ngx-datatable-column [prop]="'price'" name="Цена" [cellTemplate]="priceTemplate" [flexGrow]="1" [resizeable]="false"></ngx-datatable-column>
         <ngx-datatable-footer [template]="footerTemplate"></ngx-datatable-footer>
   </ngx-datatable>

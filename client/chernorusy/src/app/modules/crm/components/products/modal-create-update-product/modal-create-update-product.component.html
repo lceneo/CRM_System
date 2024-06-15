@@ -9,10 +9,10 @@
       <mat-label>Цена</mat-label>
       <input [type]="'number'" [formControlName]="'price'" matInput>
     </mat-form-field>
-    <textarea
-      class="description form-control"
-      placeholder="Добавьте описание продукта..."
-      [formControlName]="'description'"></textarea>
+    <mat-form-field class="titleField">
+      <mat-label>Название</mat-label>
+      <input [formControlName]="'description'" matInput>
+    </mat-form-field>
     <button class="submitBtn" [disabled] = "formGroup.invalid" mat-flat-button color="primary">{{btnSubmitText}}</button>
   </form>
 </mat-dialog-content>
