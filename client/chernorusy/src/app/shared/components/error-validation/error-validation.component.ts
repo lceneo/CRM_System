@@ -63,6 +63,9 @@ export class ErrorValidationComponent {
         case 'uniqueProductName':
           errorsArr.push('Продукт с таким именем уже существует');
           break;
+        case 'sameValuesValidator':
+          errorsArr.push('Пароли должны совпадать');
+          break;
       }
     }
 

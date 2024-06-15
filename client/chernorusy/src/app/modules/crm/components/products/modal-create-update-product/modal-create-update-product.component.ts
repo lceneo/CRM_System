@@ -33,7 +33,7 @@ export class ModalCreateUpdateProductComponent implements OnInit{
   ngOnInit() {
     this.setHeaderAndBtnSubmitText(this.productData);
     if (this.productData.mode === 'edit') { this.setInitialFormValue(this.productData.productId!); }
-    else { this.formGroup.controls.description.addValidators(this.myValidatorsS.uniqueProductName({type: 'create'}));}
+    else { this.formGroup.controls.description.addValidators(this.myValidatorsS.uniqueProductName(this.getUniqueProductNamesForDuplicateValidator()));}
   }
 
   createOrUpdateProduct() {
@@ -65,7 +65,14 @@ export class ModalCreateUpdateProductComponent implements OnInit{
   private setInitialFormValue(productId: string) {
     const product = this.productS.getByID(productId) as IProduct;
     this.formGroup.setValue({price: product.price, description: product.description}, {emitEvent: false});
-    this.formGroup.controls.description.addValidators(this.myValidatorsS.uniqueProductName({type: 'edit', editId: productId}));
+    this.formGroup.controls.description.addValidators(this.myValidatorsS.uniqueProductName(this.getUniqueProductNamesForDuplicateValidator()));
+  }
+
+  private getUniqueProductNamesForDuplicateValidator() {
+    return (this.productData.mode === 'edit' ?
+      this.productS.getEntitiesSync().filter(p => p.id !== this.productData.productId) :
+      this.productS.getEntitiesSync())
+      .map(product => product.description);
   }
 }
 

@@ -22,6 +22,8 @@ export class SetPasswordComponent implements OnInit {
   @Output() passwordSet$ = new EventEmitter<boolean>();
 
   protected passwordControl = new FormControl("", [Validators.required,this.myValidatorS.minMaxLengthValidator(3, 15), this.myValidatorS.passwordValidator]);
+  protected repeatPasswordControl = new FormControl("", [Validators.required, this.myValidatorS.sameValuesValidator(this.passwordControl)]);
+
   protected userRecoverID?: string;
 
   protected changePasswordForm = new FormGroup({
@@ -45,7 +47,8 @@ export class SetPasswordComponent implements OnInit {
           this.mode = this.route.snapshot.data.mode
         }
 
-        if (this.mode === 'recover') {
+        if (this.mode === 'create') { this.setupControlsForCreate(); }
+        else if (this.mode === 'recover') {
           this.route.paramMap
             .pipe(
               takeUntilDestroyed(this.destroyRef)
@@ -79,6 +82,14 @@ export class SetPasswordComponent implements OnInit {
         )
         .subscribe();
     }
+  }
+
+  private setupControlsForCreate() {
+    this.passwordControl.valueChanges
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap(() => this.repeatPasswordControl.updateValueAndValidity())
+      ).subscribe();
   }
 
   protected changePasswordVisibility(passwordInput: HTMLInputElement) {

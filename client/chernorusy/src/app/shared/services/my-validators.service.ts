@@ -1,15 +1,12 @@
 import { Injectable } from '@angular/core';
 import {AbstractControl} from "@angular/forms";
-import {ProductService} from "../../modules/crm/services/product.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class MyValidatorsService {
 
-  constructor(
-    private productS: ProductService
-  ) { }
+  constructor() { }
 
   public minMaxLengthValidator(minLength: number, maxLength: number) {
     return (control: AbstractControl) => {
@@ -40,16 +37,19 @@ export class MyValidatorsService {
     return /^[а-яА-ЯёЁa-zA-Z]+$/.test(control.value) ? null : { onlyLetters: true };
   }
 
-  public uniqueProductName(productInfo: UniqueProductNameSettingsType) {
-    const products = (productInfo.type === 'edit' ?
-      this.productS.getEntitiesSync().filter(p => p.id !== productInfo.editId) :
-      this.productS.getEntitiesSync());
+  public uniqueProductName(productNames: string[]) {
 
     return (control: AbstractControl) => {
-      return products
-        .find(p => p.description === control.value) ? { 'uniqueProductName': true } : null;
+      return productNames
+        .find(name => name === control.value) ? { 'uniqueProductName': true } : null;
     }
 
+  }
+
+  public sameValuesValidator(controlToCheckValueWith: AbstractControl) {
+    return (control: AbstractControl) => {
+      return control.value === controlToCheckValueWith.value ? null : { 'sameValuesValidator': true }
+    }
   }
 }
 
