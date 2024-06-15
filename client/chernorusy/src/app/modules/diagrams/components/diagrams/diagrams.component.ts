@@ -44,7 +44,7 @@ export class DiagramsComponent implements OnDestroy {
     defaultLayerIndex: 1,
     baseLayerIndex: 2,
     maxLayerIndex: 2,
-    disableAutoPositionOnConflict: true,
+    disableAutoPositionOnConflict: false,
     resizable: {
       enabled: true,
     },
@@ -89,8 +89,8 @@ export class DiagramsComponent implements OnDestroy {
   addChart(id: number) {
     const item: GridsterItem = {
       chartId: id,
-      cols: 1,
-      rows: 1,
+      cols: 2,
+      rows: 2,
       x: 0,
       y: 0,
       [dateRangeChangesSymb]: this.dateRangeChanges$,
