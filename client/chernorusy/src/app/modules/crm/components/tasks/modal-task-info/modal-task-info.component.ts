@@ -57,7 +57,7 @@ export class ModalTaskInfoComponent implements OnInit {
   protected effectChangegFormValue = effect(() => this.formGroup.setValue(this.savedFormValue()), {allowSignalWrites: true})
 
   protected formGroup = new FormGroup({
-    title: new FormControl<string>((this.task())?.title ?? '', [Validators.required, Validators.minLength(3), Validators.maxLength(25)]),
+    title: new FormControl<string>((this.task())?.title ?? '', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]),
     assignedTo: new FormControl<string>((this.task())?.assignedTo.id ?? '', [Validators.required]),
     clientId:  new FormControl<string>((this.task())?.client.id ?? '', [Validators.required]),
     productIds:  new FormControl<string[]>(this.task()?.products.map(prod => prod.id) ?? []),

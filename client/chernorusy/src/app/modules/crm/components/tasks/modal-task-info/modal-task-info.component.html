@@ -7,7 +7,7 @@
           <input matInput [formControl]="formGroup.controls.title">
         </mat-form-field>
 
-        <h1 *ngIf="currentMode() === 'view'" mat-dialog-title>{{task?.title}}</h1>
+        <h1 class="title" *ngIf="currentMode() === 'view'" [matTooltip]="task?.title ?? ''" mat-dialog-title>{{task?.title}}</h1>
         <button mat-dialog-close class="closeBtn" mat-icon-button><mat-icon>close</mat-icon></button>
       </div>
       <span mat-card-subtitle>В колонке "{{task?.column?.name}}"</span>

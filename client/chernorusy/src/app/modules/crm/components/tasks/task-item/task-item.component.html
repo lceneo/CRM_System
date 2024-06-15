@@ -48,7 +48,7 @@
   >
     <mat-card class="example-card" (dblclick)="openModalTaskInfo(task)">
       <mat-card-header>
-        <mat-card-title>{{ task.title }}</mat-card-title>
+        <mat-card-title class="cardTitle" [matTooltip]="task.title">{{ task.title }}</mat-card-title>
         <mat-card-subtitle>{{
           task.creation.dateTime | date : "dd LLLL YYYY"
         }}</mat-card-subtitle>

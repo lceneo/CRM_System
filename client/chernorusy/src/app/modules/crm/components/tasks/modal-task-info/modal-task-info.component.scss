@@ -6,6 +6,15 @@
   display: flex;
 }
 
+.title {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  &::before {
+    content: none;
+  }
+}
+
 .mainInfo {
   flex-basis: 55%;
   flex-grow: 1;
@@ -18,6 +27,7 @@
 
 .headerSection {
   padding-left: 24px;
+  padding-top: 0.5em;
 }
 
 .titleInput {

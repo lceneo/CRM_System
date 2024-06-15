@@ -11,6 +11,12 @@
   }
 }
 
+.cardTitle {
+  max-width: 80%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .titleWrapper {
   display: flex;
   justify-content: space-between;

@@ -30,7 +30,7 @@ export class ModalCreateTaskComponent {
   ) {}
 
   protected formGroup = new FormGroup({
-    title: new FormControl<string>('', [Validators.required, Validators.minLength(3), Validators.maxLength(25)]),
+    title: new FormControl<string>('', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]),
     clientId: new FormControl<string>('', [Validators.required]),
     assignedTo: new FormControl<string>('', [Validators.required]),
     productIds: new FormControl<string[]>([]),
