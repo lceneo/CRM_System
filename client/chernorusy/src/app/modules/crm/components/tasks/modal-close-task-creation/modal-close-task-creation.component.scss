@@ -1,0 +1,18 @@
+.headerSection {
+  position: relative;
+  .closeBtn {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}
+
+
+.btnSection {
+  display: flex;
+  button {
+    flex-grow: 1;
+  }
+}
+
+

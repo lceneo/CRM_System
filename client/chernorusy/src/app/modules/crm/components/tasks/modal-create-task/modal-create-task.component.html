@@ -3,7 +3,7 @@
   <section class="mainInfo">
     <section class="headerSection">
       <h2 mat-dialog-title>Новая задача</h2>
-      <button mat-icon-button mat-dialog-close><mat-icon>close</mat-icon></button>
+      <button mat-icon-button (click)="closeModal()"><mat-icon>close</mat-icon></button>
     </section>
     <mat-dialog-content class="mat-typography">
       <form [formGroup]="formGroup" (ngSubmit)="createTask()">
