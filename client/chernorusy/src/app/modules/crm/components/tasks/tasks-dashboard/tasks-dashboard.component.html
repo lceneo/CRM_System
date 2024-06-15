@@ -1,5 +1,15 @@
 <div class="wrapper">
   <div class="settings-row">
+
+    <button
+      class="addColumnBtn"
+      mat-mini-fab
+      [matTooltip]="'Новая колонка'"
+      (click)="openCreateColumnModal()"
+    >
+      <mat-icon>add</mat-icon>
+    </button>
+
     <ng-select
       [items]="taskExecutioners()"
       [bindValue]="'id'"
@@ -59,14 +69,7 @@
       [(ngModel)]="selectedProductIds"
       (ngModelChange)="doFilter$.next()"
     ></ng-select>
-    <button
-      class="addColumnBtn"
-      mat-mini-fab
-      [matTooltip]="'Новая колонка'"
-      (click)="openCreateColumnModal()"
-    >
-      <mat-icon>add</mat-icon>
-    </button>
+
   </div>
   <section class="dashboards" cdkDropListGroup>
     <ng-container *ngFor="let column of columns()">
