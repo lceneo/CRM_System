@@ -39,6 +39,9 @@ export class DiagramsComponent implements OnDestroy {
   destroy$ = new Subject<void>();
 
   options: GridsterConfig = {
+    pushItems: true, // whether to push other items out of the way
+    floating: true,
+    margins: [10, 10],
     gridType: GridType.ScrollVertical,
     allowMultiLayer: true,
     defaultLayerIndex: 1,
