@@ -60,6 +60,9 @@ export class ErrorValidationComponent {
         case 'onlyLetters':
           errorsArr.push('Разрешены только буквенные символы');
           break;
+        case 'uniqueProductName':
+          errorsArr.push('Продукт с таким именем уже существует');
+          break;
       }
     }
 

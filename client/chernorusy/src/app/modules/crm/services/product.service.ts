@@ -18,7 +18,11 @@ export class ProductService extends EntityStateManager<IProduct>{
   protected override initMethod = '/Products/Search';
   override httpInitMethod: 'get' | 'post' = 'post';
   override httpInitBody = {};
-  override mapFn = (productItems: {items: IProduct[]}) => productItems.items;
+  override mapFn = (productItems: {items: IProduct[]}) => productItems.items.map(product =>  {
+    let description = product.description;
+    if (description.includes('\n')) { description = description.trim(); }
+    return {...product, description: description}
+  });
 
   protected override initial() {
     this.initStore();

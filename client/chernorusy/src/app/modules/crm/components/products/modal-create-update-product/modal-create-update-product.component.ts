@@ -5,6 +5,7 @@ import {IProductCreateOrUpdateDTO} from "../../../helpers/DTO/request/IProductCr
 import {Observable, tap} from "rxjs";
 import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material/dialog";
 import {IProduct} from "../../../helpers/entities/IProduct";
+import {MyValidatorsService} from "../../../../../shared/services/my-validators.service";
 
 @Component({
   selector: 'app-modal-create-update-product',
@@ -17,6 +18,7 @@ export class ModalCreateUpdateProductComponent implements OnInit{
   constructor(
     private productS: ProductService,
     private matDialogRef: MatDialogRef<any>,
+    private myValidatorsS: MyValidatorsService,
     @Inject(MAT_DIALOG_DATA) protected productData: IProductCreateOrUpdateModal
   ) {}
 
@@ -31,6 +33,7 @@ export class ModalCreateUpdateProductComponent implements OnInit{
   ngOnInit() {
     this.setHeaderAndBtnSubmitText(this.productData);
     if (this.productData.mode === 'edit') { this.setInitialFormValue(this.productData.productId!); }
+    else { this.formGroup.controls.description.addValidators(this.myValidatorsS.uniqueProductName({type: 'create'}));}
   }
 
   createOrUpdateProduct() {
@@ -61,7 +64,8 @@ export class ModalCreateUpdateProductComponent implements OnInit{
 
   private setInitialFormValue(productId: string) {
     const product = this.productS.getByID(productId) as IProduct;
-    this.formGroup.setValue({price: product.price, description: product.description}, {emitEvent: false})
+    this.formGroup.setValue({price: product.price, description: product.description}, {emitEvent: false});
+    this.formGroup.controls.description.addValidators(this.myValidatorsS.uniqueProductName({type: 'edit', editId: productId}));
   }
 }
 

@@ -9,10 +9,12 @@
       <mat-label>Цена</mat-label>
       <input [type]="'number'" [formControlName]="'price'" matInput>
     </mat-form-field>
-    <mat-form-field class="titleField">
+    <mat-form-field class="titleField productName">
       <mat-label>Название</mat-label>
       <input [formControlName]="'description'" matInput>
     </mat-form-field>
+    <app-error-validation *ngIf="formGroup.get('description')?.invalid && formGroup.get('description')?.dirty"
+                          [errors]="formGroup.get('description')?.errors"></app-error-validation>
     <button class="submitBtn" [disabled] = "formGroup.invalid" mat-flat-button color="primary">{{btnSubmitText}}</button>
   </form>
 </mat-dialog-content>

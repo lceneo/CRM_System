@@ -37,6 +37,7 @@ import { TotalProductPricePipe } from './pipes/total-product-price.pipe';
 import { NgOptionHighlightModule } from '@ng-select/ng-option-highlight';
 import {FilteredTasksPipe} from "./pipes/filtered-tasks.pipe";
 import { ModalCloseTaskCreationComponent } from './components/tasks/modal-close-task-creation/modal-close-task-creation.component';
+import {ErrorValidationComponent} from "../../shared/components/error-validation/error-validation.component";
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: CrmComponent },
@@ -87,6 +88,7 @@ const routes: Routes = [
         TotalProductPricePipe,
         NgOptionHighlightModule,
         FilteredTasksPipe,
+        ErrorValidationComponent,
     ],
 })
 export class CrmModule {}
