@@ -1,7 +1,7 @@
 <section class="wrapper">
   <ngx-datatable
     class="material table"
-    [columnMode]="'flex'"
+    [columnMode]="'force'"
     [headerHeight]="50"
     [footerHeight]="60"
     [rowHeight]="50"
@@ -14,7 +14,7 @@
     }"
   >
     <ngx-datatable-column [prop]="'id'" name="Идентификатор" [cellTemplate]="textTemplate" [flexGrow]="1" [resizeable]="false" [sortable]="false"> </ngx-datatable-column>
-    <ngx-datatable-column [prop]="'description'" name="Название" [cellTemplate]="textTemplate" [flexGrow]="1" [resizeable]="false" [sortable]="false"> </ngx-datatable-column>
+    <ngx-datatable-column [prop]="'description'" name="Название" [cellTemplate]="textTemplate" [flexGrow]="1" [resizeable]="true" [sortable]="false"> </ngx-datatable-column>
     <ngx-datatable-column [prop]="'price'" name="Цена" [cellTemplate]="priceTemplate" [flexGrow]="1" [resizeable]="false"></ngx-datatable-column>
     <ngx-datatable-column [cellTemplate]="editBtnTemplate" [flexGrow]="1" [resizeable]="false" [sortable]="false"></ngx-datatable-column>
     <ngx-datatable-column [cellTemplate]="deleteBtnTemplate" [flexGrow]="1" [resizeable]="false" [sortable]="false"></ngx-datatable-column>
